@@ -1,22 +1,3 @@
--- Stores metadata for each application being tracked.
-CREATE TABLE public.apps (
-  -- A unique identifier for the app.
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  
-  -- The user-facing name of the application, e.g., "My Awesome App".
-  name TEXT NOT NULL UNIQUE,
-  
-  -- The app's bundle identifier, e.g., "com.mycompany.myawesomeapp".
-  -- This is the key used to validate incoming reports.
-  bundle_identifier TEXT NOT NULL UNIQUE,
-  
-  -- Timestamp of when the app was added.
-  created_at TIMESTAMPTZ DEFAULT now()
-);
-
--- Enable Row Level Security to control data access.
-ALTER TABLE public.apps ENABLE ROW LEVEL SECURITY;
-
 -- Stores every individual, sanitized profile report received.
 CREATE TABLE public.reports (
   -- A unique, auto-incrementing identifier for each report.
@@ -61,3 +42,15 @@ CREATE INDEX idx_reports_cpu_arch ON public.reports(cpu_arch);
 
 -- Enable Row Level Security.
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read access to all reports
+CREATE POLICY "Allow public read access to reports"
+ON public.reports
+FOR SELECT
+USING (true);
+
+-- Note: The ingest API will need insert permissions. 
+-- This is typically handled by using the service_role key on the server-side,
+-- which bypasses RLS. If not using service_role, an appropriate RLS policy for insert
+-- would be needed, potentially tied to a specific role or condition.
+-- For simplicity with service_role key, this insert policy is not strictly needed for the API.

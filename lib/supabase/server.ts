@@ -1,7 +1,26 @@
 import { createClient } from "@supabase/supabase-js"
+import type { Database } from "@/lib/supabase/database.types"
 
-// Note: supabaseAdmin uses the SERVICE_ROLE_KEY which you must only use in a secure server environment
-// Never expose these keys to the browser
-export const supabaseAdmin = () => {
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+export function createSupabaseServerClient(useServiceRole = false) {
+  const supabaseUrl = process.env.SUPABASE_URL
+  let supabaseKey: string | undefined
+
+  if (useServiceRole) {
+    supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  } else {
+    supabaseKey = process.env.SUPABASE_ANON_KEY
+  }
+
+  if (!supabaseUrl) {
+    console.error("ERROR: SUPABASE_URL environment variable is not defined.")
+    throw new Error("Supabase URL is not defined in environment variables. Check SUPABASE_URL.")
+  }
+
+  if (!supabaseKey) {
+    const keyName = useServiceRole ? "SUPABASE_SERVICE_ROLE_KEY" : "SUPABASE_ANON_KEY"
+    console.error(`ERROR: ${keyName} environment variable is not defined.`)
+    throw new Error(`Supabase Key (${keyName}) is not defined in environment variables. Check ${keyName}.`)
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseKey)
 }
