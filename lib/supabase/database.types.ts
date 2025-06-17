@@ -69,7 +69,23 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_daily_report_counts: {
+        Args: {
+          app_id_filter?: string | null
+          start_date_filter?: string
+          end_date_filter?: string
+        }
+        Returns: { report_day: string; report_count: number }[]
+      }
+      get_latest_app_version: {
+        // Added new function
+        Args: {
+          app_id_filter?: string | null
+          start_date_filter?: string
+          end_date_filter?: string
+        }
+        Returns: string | null // The function returns TEXT which can be string or null
+      }
     }
     Enums: {
       [_ in never]: never

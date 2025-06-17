@@ -16,9 +16,9 @@ interface SparkleReportPayload {
 
 function mapCpuTypeToArch(cputype?: string): string | null {
   if (!cputype) return null
-  if (cputype === "16777228") return "arm64" // Standard Sparkle value for ARM64
-  if (cputype === "16777223") return "x86_64" // Standard Sparkle value for x86_64
-  return "unknown" // Or store raw cputype if preferred
+  if (cputype === "16777228") return "arm64"
+  if (cputype === "16777223") return "x86_64"
+  return "unknown"
 }
 
 async function getIp(request: NextRequest): Promise<string> {
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       ip_hash: ipHash,
       app_version: payload.appVersion || null,
       os_version: payload.osVersion || null,
-      cpu_arch: mapCpuTypeToArch(payload.cputype), // Use the mapped value
+      cpu_arch: mapCpuTypeToArch(payload.cputype),
       core_count: payload.ncpu ? Number.parseInt(payload.ncpu, 10) : null,
       language: payload.lang || null,
       model_identifier: payload.model || null,
