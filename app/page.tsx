@@ -22,7 +22,7 @@ import {
   CubeTransparentIcon,
   TagIcon,
   ExclamationCircleIcon,
-  ChartBarIcon, // For no data state
+  ChartBarIcon,
 } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
@@ -136,67 +136,70 @@ async function getDashboardData(
   const queryFrom = dateRange?.from ? startOfDay(dateRange.from) : startOfDay(subDays(new Date(), 29))
   const queryTo = dateRange?.to ? startOfDay(dateRange.to) : startOfDay(new Date())
 
-  const rpcStartDate = queryFrom.toISOString()
-  const rpcEndDate = queryTo.toISOString()
-  const rpcAppId = selectedAppIdParam && selectedAppIdParam !== "all" ? selectedAppIdParam : null
-
-  const endOfDayToForNonRpcQueries = new Date(queryTo)
-  endOfDayToForNonRpcQueries.setHours(23, 59, 59, 999)
-
-  // --- KPI: Total Reports ---
-  let totalReportsCount: number | string = 0
-  let totalReportsErrorMessage: string | undefined
-  let totalInstallsQuery = supabase.from("reports").select("id", { count: "exact", head: true })
-  if (selectedAppIdParam && selectedAppIdParam !== "all") {
-    totalInstallsQuery = totalInstallsQuery.eq("app_id", selectedAppIdParam)
+  const rpcParams = {
+    p_app_id_filter: selectedAppIdParam && selectedAppIdParam !== "all" ? selectedAppIdParam : null,
+    p_start_date_filter: queryFrom.toISOString(),
+    p_end_date_filter: queryTo.toISOString(),
   }
-  totalInstallsQuery = totalInstallsQuery.gte("received_at", queryFrom.toISOString())
-  totalInstallsQuery = totalInstallsQuery.lte("received_at", endOfDayToForNonRpcQueries.toISOString())
 
-  const { count: totalReportsData, error: totalReportsError } = await totalInstallsQuery
-  if (totalReportsError) {
-    console.error("Error fetching total reports:", totalReportsError.message)
-    totalReportsErrorMessage = "Could not load total reports."
-    totalReportsCount = "Error"
-  } else {
-    totalReportsCount = totalReportsData ?? 0
+  // --- KPI: Total Unique Installs & Reports This Period ---
+  let uniqueInstallsCount: number | string = 0
+  let reportsThisPeriodCount: number | string = 0
+  let kpiErrorMessage: string | undefined
+
+  try {
+    let query = supabase.from("reports").select("ip_hash", { count: "exact" })
+    if (rpcParams.p_app_id_filter) {
+      query = query.eq("app_id", rpcParams.p_app_id_filter)
+    }
+    query = query.gte("received_at", rpcParams.p_start_date_filter)
+    query = query.lte("received_at", rpcParams.p_end_date_filter)
+
+    const { data: reportCountsData, error: reportCountsError, count } = await query
+
+    if (reportCountsError) throw reportCountsError
+
+    reportsThisPeriodCount = count ?? 0
+    uniqueInstallsCount = new Set(reportCountsData?.map((r) => r.ip_hash)).size
+  } catch (e: any) {
+    console.error("Error fetching KPI report counts:", e.message)
+    kpiErrorMessage = "Could not load report counts."
+    uniqueInstallsCount = "Error"
+    reportsThisPeriodCount = "Error"
   }
-  const activeReportsCount = totalReportsCount
 
   // --- KPI: Latest Version Reported (using RPC) ---
   let latestVersionValue = "N/A"
   let latestVersionErrorMessage: string | undefined
   const { data: latestVersionDataRpc, error: latestVersionRpcError } = await supabase.rpc("get_latest_app_version", {
-    app_id_filter: rpcAppId,
-    start_date_filter: rpcStartDate,
-    end_date_filter: rpcEndDate,
+    app_id_filter: rpcParams.p_app_id_filter,
+    start_date_filter: rpcParams.p_start_date_filter,
+    end_date_filter: rpcParams.p_end_date_filter,
   })
 
   if (latestVersionRpcError) {
-    console.error("Error fetching latest app version:", latestVersionRpcError.message)
+    console.error("Error fetching latest app version (RPC):", latestVersionRpcError.message)
     latestVersionErrorMessage = "Could not load latest version."
     latestVersionValue = "Error"
   } else if (latestVersionDataRpc) {
     latestVersionValue = latestVersionDataRpc
-  } else {
-    latestVersionValue = "N/A"
   }
 
   // --- Chart: Installations Over Time (using RPC) ---
   let installsTimeseries: TimeSeriesDataPoint[] = []
   let installsTimeseriesErrorMessage: string | undefined
   const { data: dailyCountsData, error: dailyCountsError } = await supabase.rpc("get_daily_report_counts", {
-    app_id_filter: rpcAppId,
-    start_date_filter: rpcStartDate,
-    end_date_filter: rpcEndDate,
+    app_id_filter: rpcParams.p_app_id_filter,
+    start_date_filter: rpcParams.p_start_date_filter,
+    end_date_filter: rpcParams.p_end_date_filter,
   })
 
   if (dailyCountsError) {
-    console.error("Error fetching daily report counts:", dailyCountsError.message)
+    console.error("Error fetching daily report counts (RPC):", dailyCountsError.message)
     installsTimeseriesErrorMessage = "Could not load installations data."
   } else if (dailyCountsData) {
     const countsByDay: { [key: string]: number } = {}
-    dailyCountsData.forEach((row: { report_day: string; report_count: number }) => {
+    dailyCountsData.forEach((row) => {
       countsByDay[row.report_day] = Number(row.report_count) || 0
     })
     const dateInterval = eachDayOfInterval({ start: queryFrom, end: queryTo })
@@ -210,79 +213,48 @@ async function getDashboardData(
     })
   }
 
-  // --- Chart: macOS Version Distribution ---
+  // --- Chart: macOS Version Distribution (using RPC) ---
   let osBreakdown: OsBreakdownDataPoint[] = []
   let osBreakdownErrorMessage: string | undefined
-  let osBreakdownQuery = supabase
-    .from("reports")
-    .select("os_version, count:id(count)")
-    .gte("received_at", queryFrom.toISOString())
-    .lte("received_at", endOfDayToForNonRpcQueries.toISOString())
-  if (selectedAppIdParam && selectedAppIdParam !== "all") {
-    osBreakdownQuery = osBreakdownQuery.eq("app_id", selectedAppIdParam)
-  }
-  const { data: osData, error: osError } = await osBreakdownQuery
-    .group("os_version")
-    .order("count", { ascending: false })
-  if (osError) {
-    console.error("Error fetching OS breakdown:", osError.message)
+  const { data: osDataRpc, error: osErrorRpc } = await supabase.rpc("get_os_version_distribution", rpcParams)
+  if (osErrorRpc) {
+    console.error("Error fetching OS breakdown (RPC):", osErrorRpc.message)
     osBreakdownErrorMessage = "Could not load OS distribution."
-  } else if (osData) {
-    osBreakdown = osData.map((item) => ({
-      name: item.os_version ? `macOS ${item.os_version}` : "Unknown",
-      Users: item.count || 0,
+  } else if (osDataRpc) {
+    osBreakdown = osDataRpc.map((item) => ({
+      name: `macOS ${item.os_version_name}`,
+      Users: Number(item.user_count) || 0,
     }))
   }
 
-  // --- Chart: CPU Architecture ---
+  // --- Chart: CPU Architecture (using RPC) ---
   let cpuBreakdown: CpuBreakdownDataPoint[] = []
   let cpuBreakdownErrorMessage: string | undefined
-  let cpuBreakdownQuery = supabase
-    .from("reports")
-    .select("cpu_arch, count:id(count)")
-    .gte("received_at", queryFrom.toISOString())
-    .lte("received_at", endOfDayToForNonRpcQueries.toISOString())
-  if (selectedAppIdParam && selectedAppIdParam !== "all") {
-    cpuBreakdownQuery = cpuBreakdownQuery.eq("app_id", selectedAppIdParam)
-  }
-  const { data: cpuData, error: cpuError } = await cpuBreakdownQuery
-    .group("cpu_arch")
-    .order("count", { ascending: false })
-  if (cpuError) {
-    console.error("Error fetching CPU breakdown:", cpuError.message)
+  const { data: cpuDataRpc, error: cpuErrorRpc } = await supabase.rpc("get_cpu_architecture_distribution", rpcParams)
+  if (cpuErrorRpc) {
+    console.error("Error fetching CPU breakdown (RPC):", cpuErrorRpc.message)
     cpuBreakdownErrorMessage = "Could not load CPU architecture data."
-  } else if (cpuData) {
-    cpuBreakdown = cpuData.map((item) => {
-      let archName = "Unknown"
-      if (item.cpu_arch === "arm64") archName = "Apple Silicon"
-      else if (item.cpu_arch === "x86_64") archName = "Intel"
-      else if (item.cpu_arch) archName = item.cpu_arch
-      return { name: archName, Users: item.count || 0 }
-    })
+  } else if (cpuDataRpc) {
+    cpuBreakdown = cpuDataRpc.map((item) => ({
+      name: item.cpu_arch_name,
+      Users: Number(item.user_count) || 0,
+    }))
   }
 
-  // --- Table: Top Models ---
+  // --- Table: Top Models (using RPC) ---
   let topModels: TopModelsDataPoint[] = []
   let topModelsErrorMessage: string | undefined
-  let topModelsQuery = supabase
-    .from("reports")
-    .select("model_identifier, count:id(count)")
-    .gte("received_at", queryFrom.toISOString())
-    .lte("received_at", endOfDayToForNonRpcQueries.toISOString())
-  if (selectedAppIdParam && selectedAppIdParam !== "all") {
-    topModelsQuery = topModelsQuery.eq("app_id", selectedAppIdParam)
-  }
-  const { data: modelData, error: modelError } = await topModelsQuery
-    .group("model_identifier")
-    .order("count", { ascending: false })
-    .limit(5)
-  if (modelError) {
-    console.error("Error fetching top models:", modelError.message)
+  const { data: modelDataRpc, error: modelErrorRpc } = await supabase.rpc("get_top_models", {
+    ...rpcParams,
+    p_limit_count: 5,
+  })
+  if (modelErrorRpc) {
+    console.error("Error fetching top models (RPC):", modelErrorRpc.message)
     topModelsErrorMessage = "Could not load top models data."
-  } else if (modelData) {
-    topModels = modelData.map((item) => ({
-      model: item.model_identifier || "Unknown",
-      count: item.count || 0,
+  } else if (modelDataRpc) {
+    topModels = modelDataRpc.map((item) => ({
+      model: item.model_name,
+      count: Number(item.report_count) || 0,
     }))
   }
 
@@ -290,13 +262,13 @@ async function getDashboardData(
     apps: appsList,
     appsError: appsErrorMessage,
     kpis: {
-      unique_installs: totalReportsCount,
-      reports_this_period: activeReportsCount,
+      unique_installs: uniqueInstallsCount,
+      reports_this_period: reportsThisPeriodCount,
       latest_version: latestVersionValue,
     },
     kpisError: {
-      unique_installs: totalReportsErrorMessage,
-      reports_this_period: totalReportsErrorMessage,
+      unique_installs: kpiErrorMessage,
+      reports_this_period: kpiErrorMessage,
       latest_version: latestVersionErrorMessage,
     },
     installs_timeseries: installsTimeseries,
@@ -363,14 +335,14 @@ export default async function DashboardPage({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>
           <Flex alignItems="start">
-            <Text>Total Reports</Text>
+            <Text>Unique Users</Text>
             {data.kpisError?.unique_installs ? (
               <Icon icon={ExclamationCircleIcon} color="rose" tooltip={data.kpisError.unique_installs} size="sm" />
             ) : (
               <Icon
                 icon={UsersIcon}
                 variant="light"
-                tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
+                tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
                 color="blue"
                 size="sm"
               />
@@ -380,14 +352,14 @@ export default async function DashboardPage({
         </Card>
         <Card>
           <Flex alignItems="start">
-            <Text>Reports This Period</Text>
+            <Text>Total Reports</Text>
             {data.kpisError?.reports_this_period ? (
               <Icon icon={ExclamationCircleIcon} color="rose" tooltip={data.kpisError.reports_this_period} size="sm" />
             ) : (
               <Icon
                 icon={CubeTransparentIcon}
                 variant="light"
-                tooltip={`Reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
+                tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
                 color="green"
                 size="sm"
               />

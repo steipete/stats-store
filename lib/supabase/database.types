@@ -85,6 +85,31 @@ export interface Database {
         }
         Returns: string | null
       }
+      get_os_version_distribution: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+        }
+        Returns: { os_version_name: string; user_count: number }[]
+      }
+      get_cpu_architecture_distribution: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+        }
+        Returns: { cpu_arch_name: string; user_count: number }[]
+      }
+      get_top_models: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+          p_limit_count?: number
+        }
+        Returns: { model_name: string; report_count: number }[]
+      }
     }
     Enums: {
       [_ in never]: never

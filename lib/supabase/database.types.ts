@@ -78,13 +78,37 @@ export interface Database {
         Returns: { report_day: string; report_count: number }[]
       }
       get_latest_app_version: {
-        // Added new function
         Args: {
           app_id_filter?: string | null
           start_date_filter?: string
           end_date_filter?: string
         }
-        Returns: string | null // The function returns TEXT which can be string or null
+        Returns: string | null
+      }
+      get_os_version_distribution: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+        }
+        Returns: { os_version_name: string; user_count: number }[]
+      }
+      get_cpu_architecture_distribution: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+        }
+        Returns: { cpu_arch_name: string; user_count: number }[]
+      }
+      get_top_models: {
+        Args: {
+          p_app_id_filter?: string | null
+          p_start_date_filter?: string
+          p_end_date_filter?: string
+          p_limit_count?: number
+        }
+        Returns: { model_name: string; report_count: number }[]
       }
     }
     Enums: {
