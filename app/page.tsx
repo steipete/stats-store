@@ -25,10 +25,7 @@ import {
   ChartBarIcon,
 } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
-import { DashboardFilters } from "@/components/dashboard-filters"
-
-// Helper function to format numbers
-const valueFormatter = (number: number) => `${new Intl.NumberFormat("us").format(number).toString()}`
+import { DashboardFilters, valueFormatter } from "@/components/dashboard-filters"
 
 interface App {
   id: string

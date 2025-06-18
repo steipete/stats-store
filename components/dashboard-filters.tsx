@@ -5,6 +5,10 @@ import { ArrowPathIcon, ExclamationCircleIcon, InformationCircleIcon } from "@he
 import { useRouter, useSearchParams } from "next/navigation"
 import { format, startOfDay } from "date-fns"
 
+export const valueFormatter = (number: number): string => {
+  return `${new Intl.NumberFormat("us").format(number).toString()}`
+}
+
 interface App {
   id: string
   name: string
