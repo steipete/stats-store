@@ -38,6 +38,9 @@ describe("/api/v1/appcast/[...path]", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => mockAppcastXML,
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
     } as Response)
 
     const request = new NextRequest(
@@ -59,6 +62,9 @@ describe("/api/v1/appcast/[...path]", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => mockAppcastXML,
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
     } as Response)
 
     const request = new NextRequest(
@@ -78,6 +84,9 @@ describe("/api/v1/appcast/[...path]", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => "<xml></xml>",
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
     } as Response)
 
     // Mock Supabase to return a direct domain URL
@@ -115,6 +124,9 @@ describe("/api/v1/appcast/[...path]", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => "<xml></xml>",
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
     } as Response)
 
     // Mock Supabase to return a URL with .xml already included
@@ -153,6 +165,9 @@ describe("/api/v1/appcast/[...path]", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => "<xml></xml>",
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
     } as Response)
 
     // Mock Supabase to return a URL with .xml already included
@@ -242,5 +257,151 @@ describe("/api/v1/appcast/[...path]", () => {
 
     expect(response.status).toBe(502)
     expect(json.error).toBe("Failed to fetch appcast")
+  })
+
+  it("should handle network errors during appcast fetch", async () => {
+    vi.mocked(global.fetch).mockRejectedValueOnce(new Error("Network error"))
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" }
+    )
+
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
+    const json = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(json.error).toBe("Internal server error")
+  })
+
+  it("should handle apps with no appcast URL configured", async () => {
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
+      from: vi.fn(() => ({
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() =>
+              Promise.resolve({
+                data: {
+                  id: "test-app-id",
+                  appcast_base_url: null, // No URL configured
+                },
+                error: null,
+              })
+            ),
+          })),
+        })),
+      })),
+    } as any)
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" }
+    )
+
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
+    const json = await response.json()
+
+    expect(response.status).toBe(404)
+    expect(json.error).toBe("Appcast URL not configured for this application")
+  })
+
+  it("should handle database errors when recording telemetry", async () => {
+    const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
+    
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      text: async () => mockAppcastXML,
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+    } as Response)
+
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
+      from: vi.fn()
+        .mockReturnValueOnce({
+          // First call for app check - succeeds
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() =>
+                Promise.resolve({
+                  data: {
+                    id: "test-app-id",
+                    appcast_base_url: "https://example.com/appcast.xml",
+                  },
+                  error: null,
+                })
+              ),
+            })),
+          })),
+        })
+        .mockReturnValueOnce({
+          // Second call for telemetry insert - fails
+          insert: vi.fn(() =>
+            Promise.resolve({
+              error: { message: "Insert failed" },
+            })
+          ),
+        }),
+    } as any)
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app&bundleShortVersionString=1.0.0",
+      { method: "GET" }
+    )
+
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
+
+    // Should still return the appcast even if telemetry fails
+    expect(response.status).toBe(200)
+    expect(await response.text()).toBe(mockAppcastXML)
+  })
+
+  it("should handle multiple path segments correctly", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      text: async () => "<xml></xml>",
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+    } as Response)
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/updates/stable/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" }
+    )
+
+    await GET(request, { params: Promise.resolve({ path: ["updates", "stable", "appcast.xml"] }) })
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://raw.githubusercontent.com/owner/repo/refs/heads/main/updates/stable/appcast.xml",
+      expect.any(Object)
+    )
+  })
+
+  it("should pass through HTTP headers from upstream", async () => {
+    const mockHeaders = new Headers({
+      "Content-Type": "application/xml",
+      "Last-Modified": "Wed, 01 Jan 2024 00:00:00 GMT",
+      "ETag": '"123456"',
+    })
+
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      ok: true,
+      headers: mockHeaders,
+      text: async () => "<xml></xml>",
+    } as Response)
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" }
+    )
+
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
+
+    expect(response.headers.get("Content-Type")).toBe("application/xml")
+    expect(response.headers.get("Last-Modified")).toBe("Wed, 01 Jan 2024 00:00:00 GMT")
+    expect(response.headers.get("ETag")).toBe('"123456"')
   })
 })

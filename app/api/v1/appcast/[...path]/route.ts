@@ -157,14 +157,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const appcastContent = await appcastResponse.text()
 
+    // Prepare headers, passing through relevant ones from upstream
+    const responseHeaders = new Headers({
+      "Content-Type": appcastResponse.headers.get("Content-Type") || "application/xml",
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "X-Stats-Store-Proxied": "true",
+    })
+
+    // Pass through additional headers from upstream
+    const headersToPassThrough = ["Last-Modified", "ETag"]
+    headersToPassThrough.forEach(header => {
+      const value = appcastResponse.headers.get(header)
+      if (value) {
+        responseHeaders.set(header, value)
+      }
+    })
+
     // Return the appcast with appropriate headers
     return new NextResponse(appcastContent, {
       status: 200,
-      headers: {
-        "Content-Type": "application/xml",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "X-Stats-Store-Proxied": "true",
-      },
+      headers: responseHeaders,
     })
   } catch (error) {
     console.error("Appcast proxy error:", error)

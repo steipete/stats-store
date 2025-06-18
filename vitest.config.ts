@@ -9,6 +9,27 @@ export default defineConfig({
     globals: true,
     setupFiles: "./tests/setup.ts",
     exclude: ["**/node_modules/**", "**/tests/api/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      exclude: [
+        "**/*.d.ts",
+        "**/*.config.*",
+        "**/mockServiceWorker.js",
+        "tests/**",
+        "scripts/**",
+        ".next/**",
+        "node_modules/**",
+      ],
+      thresholds: {
+        global: {
+          statements: 25,
+          branches: 25,
+          functions: 25,
+          lines: 25,
+        },
+      },
+    },
   },
   resolve: {
     alias: {

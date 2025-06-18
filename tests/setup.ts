@@ -18,10 +18,8 @@ vi.mock("next/navigation", () => ({
 }))
 
 // Mock environment variables
-vi.mock("process", () => ({
-  env: {
-    SUPABASE_URL: "https://test.supabase.co",
-    SUPABASE_ANON_KEY: "test-anon-key",
-    SUPABASE_SERVICE_ROLE_KEY: "test-service-role-key",
-  },
-}))
+process.env.SUPABASE_URL = "https://test.supabase.co"
+process.env.SUPABASE_ANON_KEY = "test-anon-key" 
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key"
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co"
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key"

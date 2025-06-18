@@ -46,9 +46,14 @@ export async function POST(request: NextRequest) {
       .eq("bundle_identifier", payload.bundleIdentifier)
       .single()
 
-    if (appError || !app) {
-      console.error("App validation error or app not found:", appError?.message, "Bundle ID:", payload.bundleIdentifier)
-      return NextResponse.json({ error: "Invalid or unknown application" }, { status: 403 })
+    if (appError) {
+      console.error("App validation error:", appError.message, "Bundle ID:", payload.bundleIdentifier)
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    }
+    
+    if (!app) {
+      console.error("App not found:", payload.bundleIdentifier)
+      return NextResponse.json({ error: "Unknown bundle identifier" }, { status: 400 })
     }
 
     const dailySalt = new Date().toISOString().slice(0, 10)
@@ -72,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error("Error inserting report:", insertError)
-      return NextResponse.json({ error: "Failed to store report" }, { status: 500 })
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
 
     return NextResponse.json({ message: "Report received" }, { status: 201 })
