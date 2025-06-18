@@ -18,12 +18,14 @@ If you have a Mac app that uses [Sparkle](https://sparkle-project.org/) for upda
 ### Privacy First
 
 **What we collect:**
+
 - macOS version and CPU type (Intel vs Apple Silicon)
 - App version numbers
 - Daily unique users (anonymized)
 - Basic hardware info (RAM, Mac model)
 
 **What we DON'T collect:**
+
 - No IP addresses or personal data
 - No usage tracking or behavior analytics
 - No creepy fingerprinting
@@ -47,12 +49,14 @@ Instead of modifying your app's code, stats.store acts as a friendly middleman f
 ### Setup (One URL Change!)
 
 In your app's `Info.plist`, change your update URL from:
+
 ```xml
 <key>SUFeedURL</key>
 <string>https://raw.githubusercontent.com/you/yourapp/main/appcast.xml</string>
 ```
 
 To:
+
 ```xml
 <key>SUFeedURL</key>
 <string>https://stats.store/api/v1/appcast/appcast.xml</string>
@@ -63,6 +67,7 @@ That's it! stats.store will automatically find your real appcast file and serve 
 ### View Your Stats
 
 Check out your dashboard at [stats.store](https://stats.store) to see:
+
 - Daily active users
 - macOS version breakdown (pretty charts!)
 - CPU architecture distribution
@@ -90,6 +95,7 @@ pnpm dev
 ### Tech Stack
 
 Built with modern tools that make development fun:
+
 - [Next.js](https://nextjs.org/) - React framework
 - [Supabase](https://supabase.com/) - Database and real-time updates
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
