@@ -1,12 +1,7 @@
 "use client"
 
-import { DateRangePicker, Button, type DateRangePickerValue } from "@tremor/react"
-import {
-  ArrowPathIcon,
-  ExclamationCircleIcon,
-  InformationCircleIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline"
+import { DateRangePicker, type DateRangePickerValue } from "@tremor/react"
+import { ExclamationCircleIcon, InformationCircleIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format, startOfDay } from "date-fns"
 import { cn } from "@/lib/utils"
@@ -59,10 +54,6 @@ export function DashboardFilters({
       newParams.delete("to")
     }
     router.push(`/?${newParams.toString()}`)
-  }
-
-  const handleRefresh = () => {
-    router.refresh()
   }
 
   const commonInputBaseClasses =
@@ -120,7 +111,7 @@ export function DashboardFilters({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 items-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 items-center">
       {renderAppFilter()}
       <div
         className={cn(
@@ -138,13 +129,6 @@ export function DashboardFilters({
           enableYearNavigation
         />
       </div>
-      <Button
-        icon={ArrowPathIcon}
-        onClick={handleRefresh}
-        className="h-10 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:ring-2 focus:ring-ring focus:outline-none shadow-subtle transition-colors"
-      >
-        Refresh
-      </Button>
     </div>
   )
 }
