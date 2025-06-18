@@ -840,22 +840,25 @@ body {
   }
 
   /* Tremor DateRangePicker X button spacing fix */
-  .tremor-DateRangePicker-clearButton,
-  button[aria-label="Clear"],
-  button[aria-label="Clear date"],
-  button[aria-label="Clear dates"] {
-    padding: 0.5rem !important;
-    margin-right: 0.5rem !important;
+  /* Target the X button container and icon */
+  [class*="DateRangePicker"] button[type="button"]:not(:first-child) {
+    position: absolute !important;
+    right: 0.75rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 0.375rem !important;
+    margin: 0 !important;
   }
 
-  /* Target X icon inside DateRangePicker more specifically */
-  .tremor-DateRangePicker-root button:has(svg.h-4.w-4),
-  .tremor-DateRangePicker-root button:has(svg[width="16"]),
-  [class*="DateRangePicker"] button:has(svg.h-4.w-4) {
-    padding: 0.5rem !important;
-    margin-right: 0.25rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+  /* Ensure proper padding on the right side of the input to accommodate X button */
+  [class*="DateRangePicker"] > button:first-child {
+    padding-right: 3rem !important;
+  }
+
+  /* Style the X icon itself */
+  [class*="DateRangePicker"] svg.h-4.w-4,
+  [class*="DateRangePicker"] svg[width="16"] {
+    width: 1rem !important;
+    height: 1rem !important;
   }
 }
