@@ -1,8 +1,7 @@
-@import "tailwindcss/theme" layer(theme);
-@import "tailwindcss/utilities" layer(utilities);
+@import "tailwindcss";
 
-/* Configure dark mode for class-based approach */
-@variant dark (&:where(.dark, .dark *));
+/* Configure dark mode for class-based approach - MUST use @custom-variant */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Theme configuration */
 @theme {
@@ -566,39 +565,39 @@ body {
 
 @layer base {
   :root {
-    /* Map CSS variables to Tailwind theme tokens for light mode */
-    --background: var(--color-background);
-    --foreground: var(--color-foreground);
-    --card: var(--color-card);
-    --card-foreground: var(--color-card-foreground);
-    --popover: var(--color-popover);
-    --popover-foreground: var(--color-popover-foreground);
-    --primary: var(--color-primary);
-    --primary-foreground: var(--color-primary-foreground);
-    --secondary: var(--color-secondary);
-    --secondary-foreground: var(--color-secondary-foreground);
-    --muted: var(--color-muted);
-    --muted-foreground: var(--color-muted-foreground);
-    --accent: var(--color-accent);
-    --accent-foreground: var(--color-accent-foreground);
-    --destructive: var(--color-destructive);
-    --destructive-foreground: var(--color-destructive-foreground);
-    --border: var(--color-border);
-    --input-bg: var(--color-input);
-    --input-border: var(--color-input-border);
-    --ring: var(--color-ring);
-    --tooltip-bg: var(--color-tooltip);
-    --tooltip-foreground: var(--color-tooltip-foreground);
-    --chart-1: var(--color-chart-1);
-    --chart-2: var(--color-chart-2);
-    --chart-3: var(--color-chart-3);
-    --chart-4: var(--color-chart-4);
-    --chart-5: var(--color-chart-5);
+    /* Light mode colors */
+    --background: hsl(0 0% 98%);
+    --foreground: hsl(240 10% 3.9%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(240 10% 3.9%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(240 10% 3.9%);
+    --primary: hsl(221 83% 53%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(0 0% 94%);
+    --secondary-foreground: hsl(240 10% 3.9%);
+    --muted: hsl(0 0% 90%);
+    --muted-foreground: hsl(240 5% 45%);
+    --accent: hsl(0 0% 96.1%);
+    --accent-foreground: hsl(240 10% 3.9%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+    --border: hsl(0 0% 90%);
+    --input-bg: hsl(0 0% 100%);
+    --input-border: hsl(0 0% 86%);
+    --ring: hsl(221 83% 53%);
+    --tooltip-bg: hsl(240 6% 10%);
+    --tooltip-foreground: hsl(0 0% 98%);
+    --chart-1: hsl(221 83% 53%);
+    --chart-2: hsl(173 58% 39%);
+    --chart-3: hsl(240 50% 60%);
+    --chart-4: hsl(30 90% 55%);
+    --chart-5: hsl(340 80% 60%);
     --radius: var(--radius-lg);
   }
 
   .dark {
-    /* Dark mode color overrides */
+    /* Dark mode colors */
     --background: hsl(240 6% 10%);
     --foreground: hsl(0 0% 98%);
     --card: hsl(240 6% 12%);
@@ -664,52 +663,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Explicit dark mode styles */
-  .dark body {
-    background-color: hsl(240 6% 10%);
-    color: hsl(0 0% 98%);
-  }
-  
-  /* Dark mode for common elements */
-  .dark .bg-background {
-    background-color: hsl(240 6% 10%) !important;
-  }
-  
-  .dark .bg-card {
-    background-color: hsl(240 6% 12%) !important;
-  }
-  
-  .dark .text-foreground {
-    color: hsl(0 0% 98%) !important;
-  }
-  
-  .dark .text-card-foreground {
-    color: hsl(0 0% 98%) !important;
-  }
-  
-  .dark .text-muted-foreground {
-    color: hsl(240 5% 65%) !important;
-  }
-  
-  .dark .border-border {
-    border-color: hsl(240 4% 22%) !important;
-  }
-  
-  .dark .bg-muted {
-    background-color: hsl(240 4% 22%) !important;
-  }
-  
-  .dark .bg-input {
-    background-color: hsl(240 4% 15%) !important;
-  }
-  
-  .dark .border-input-border {
-    border-color: hsl(240 4% 25%) !important;
-  }
-  
-  .dark .shadow-subtle {
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-  }
   /* Custom scrollbar for a more refined look */
   ::-webkit-scrollbar {
     width: 6px;
@@ -821,28 +774,6 @@ body {
     background-color: hsl(var(--popover)) !important;
   }
   
-  /* Dark mode for Tremor components */
-  .dark [class*="tremor-Card"] {
-    background-color: hsl(240 6% 12%) !important;
-    border-color: hsl(240 4% 22%) !important;
-  }
-  
-  .dark [class*="tremor-Title"] {
-    color: hsl(0 0% 98%) !important;
-  }
-  
-  .dark [class*="tremor-Text"] {
-    color: hsl(240 5% 65%) !important;
-  }
-  
-  .dark [class*="tremor-TableCell"] {
-    color: hsl(0 0% 98%) !important;
-  }
-  
-  .dark [class*="tremor-TableHeaderCell"] {
-    color: hsl(240 5% 65%) !important;
-    border-color: hsl(240 4% 22%) !important;
-  }
 
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
   .recharts-tooltip-wrapper,
