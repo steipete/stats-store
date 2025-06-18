@@ -22,7 +22,7 @@ import { KpiCard } from "@/components/kpi-card"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
-  title: "stats.store | Real-Time Sparkle Metrics",
+  title: "stats.store - Open Sparkle Statistics",
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
 }

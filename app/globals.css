@@ -139,30 +139,70 @@ body {
   }
 
   /* Ensure Tremor DateRangePicker text is themed */
-  .dark .tremor-DateRangePicker-input {
+  .tremor-DateRangePicker-input {
     color: hsl(var(--foreground)) !important;
   }
-  .dark .tremor-DateRangePicker-calendar {
+  .tremor-DateRangePicker-calendar {
     /* Calendar popup */
     background-color: hsl(var(--popover)) !important;
     border-color: hsl(var(--border)) !important;
   }
-  .dark .tremor-DateRangePicker-day {
+  .tremor-DateRangePicker-day {
     color: hsl(var(--foreground)) !important;
   }
-  .dark .tremor-DateRangePicker-day:hover:not(.selected) {
+  .tremor-DateRangePicker-day:hover:not(.selected) {
     background-color: hsl(var(--accent)) !important;
   }
-  .dark .tremor-DateRangePicker-day.selected {
+  .tremor-DateRangePicker-day.selected {
     background-color: hsl(var(--primary)) !important;
     color: hsl(var(--primary-foreground)) !important;
   }
-  .dark .tremor-DateRangePicker-month,
-  .dark .tremor-DateRangePicker-year,
-  .dark .tremor-DateRangePicker-weekday {
+  .tremor-DateRangePicker-month,
+  .tremor-DateRangePicker-year,
+  .tremor-DateRangePicker-weekday {
     color: hsl(var(--muted-foreground)) !important;
   }
-  .dark .tremor-DateRangePicker-header button svg {
+  .tremor-DateRangePicker-header button svg {
     stroke: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Light mode specific styles for DateRangePicker */
+  .tremor-DateRangePicker-calendar {
+    background-color: hsl(var(--popover)) !important;
+  }
+  
+  /* Dark mode specific overrides */
+  .dark .tremor-DateRangePicker-calendar {
+    background-color: hsl(var(--popover)) !important;
+  }
+  
+  /* Ensure all Radix UI popovers have proper backgrounds */
+  [data-radix-popper-content-wrapper] {
+    --radix-popover-bg: hsl(var(--popover));
+    --radix-popover-border: hsl(var(--border));
+  }
+  
+  /* Radix Select content */
+  [data-radix-select-content] {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Radix Dropdown Menu content */
+  [data-radix-dropdown-menu-content] {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Radix Context Menu content */
+  [data-radix-context-menu-content] {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Radix Popover content */
+  [data-radix-popover-content] {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
   }
 }
