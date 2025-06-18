@@ -683,12 +683,32 @@ body {
     color: hsl(0 0% 98%) !important;
   }
   
+  .dark .text-card-foreground {
+    color: hsl(0 0% 98%) !important;
+  }
+  
   .dark .text-muted-foreground {
     color: hsl(240 5% 65%) !important;
   }
   
   .dark .border-border {
     border-color: hsl(240 4% 22%) !important;
+  }
+  
+  .dark .bg-muted {
+    background-color: hsl(240 4% 22%) !important;
+  }
+  
+  .dark .bg-input {
+    background-color: hsl(240 4% 15%) !important;
+  }
+  
+  .dark .border-input-border {
+    border-color: hsl(240 4% 25%) !important;
+  }
+  
+  .dark .shadow-subtle {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
   }
   /* Custom scrollbar for a more refined look */
   ::-webkit-scrollbar {
@@ -799,6 +819,29 @@ body {
   /* Dark mode specific overrides */
   .dark .tremor-DateRangePicker-calendar {
     background-color: hsl(var(--popover)) !important;
+  }
+  
+  /* Dark mode for Tremor components */
+  .dark [class*="tremor-Card"] {
+    background-color: hsl(240 6% 12%) !important;
+    border-color: hsl(240 4% 22%) !important;
+  }
+  
+  .dark [class*="tremor-Title"] {
+    color: hsl(0 0% 98%) !important;
+  }
+  
+  .dark [class*="tremor-Text"] {
+    color: hsl(240 5% 65%) !important;
+  }
+  
+  .dark [class*="tremor-TableCell"] {
+    color: hsl(0 0% 98%) !important;
+  }
+  
+  .dark [class*="tremor-TableHeaderCell"] {
+    color: hsl(240 5% 65%) !important;
+    border-color: hsl(240 4% 22%) !important;
   }
 
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
