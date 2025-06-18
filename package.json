@@ -69,7 +69,7 @@
     "framer-motion": "latest",
     "happy-dom": "latest",
     "input-otp": "latest",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.517.0",
     "next": "15.2.4",
     "next-themes": "latest",
     "path": "latest",
