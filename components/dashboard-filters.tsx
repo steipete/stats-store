@@ -5,6 +5,8 @@ import { ArrowPathIcon, ExclamationCircleIcon, InformationCircleIcon } from "@he
 import { useRouter, useSearchParams } from "next/navigation"
 import { format, startOfDay } from "date-fns"
 
+// valueFormatter is no longer defined or imported here
+
 interface App {
   id: string
   name: string
@@ -18,7 +20,7 @@ interface DashboardFiltersProps {
 }
 
 export function DashboardFilters({
-  apps: initialApps, // Renamed to avoid conflict with state if we were to use it
+  apps: initialApps,
   currentAppId,
   currentDateRange,
   appsError,
@@ -26,7 +28,6 @@ export function DashboardFilters({
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Use initialApps directly, or an empty array if null
   const apps = initialApps || []
 
   const handleAppChange = (value: string) => {
@@ -46,7 +47,6 @@ export function DashboardFilters({
       if (value.to) {
         newParams.set("to", format(startOfDay(value.to), "yyyy-MM-dd"))
       } else {
-        // If only 'from' is selected, default 'to' to be the same as 'from'
         newParams.set("to", format(startOfDay(value.from), "yyyy-MM-dd"))
       }
     } else {

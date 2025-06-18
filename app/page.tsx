@@ -26,13 +26,21 @@ import {
 } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
-import { valueFormatter } from "@/lib/formatters"
+// Removed: import { valueFormatter } from "@/lib/formatters"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
+}
+
+// Define valueFormatter directly in the Server Component
+const valueFormatter = (number: number): string => {
+  if (typeof number !== "number" || isNaN(number)) {
+    return "0" // Default for non-numeric or NaN to prevent errors
+  }
+  return new Intl.NumberFormat("us").format(number).toString()
 }
 
 interface App {
@@ -315,6 +323,7 @@ export default async function DashboardPage({
 
   const renderKpiMetric = (value: number | string) => {
     if (typeof value === "string") return value
+    // valueFormatter is now defined in this file's scope
     return valueFormatter(value)
   }
 
@@ -402,7 +411,7 @@ export default async function DashboardPage({
               index="date"
               categories={["Installs"]}
               colors={["blue"]}
-              valueFormatter={valueFormatter}
+              valueFormatter={valueFormatter} // Passed as prop
               yAxisWidth={48}
               showAnimation
             />
@@ -423,7 +432,7 @@ export default async function DashboardPage({
               index="name"
               categories={["Users"]}
               colors={["teal"]}
-              valueFormatter={valueFormatter}
+              valueFormatter={valueFormatter} // Passed as prop
               layout="vertical"
               yAxisWidth={120}
               showAnimation
@@ -448,7 +457,7 @@ export default async function DashboardPage({
               category="Users"
               index="name"
               colors={["cyan", "indigo", "rose"]}
-              valueFormatter={valueFormatter}
+              valueFormatter={valueFormatter} // Passed as prop
               showAnimation
             />
           ) : (
