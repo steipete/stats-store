@@ -6,9 +6,7 @@ import {
   Flex,
   Title,
   Icon,
-  LineChart,
-  BarChart,
-  DonutChart,
+  // LineChart, BarChart, DonutChart, // Removed direct Tremor imports
   Table,
   TableHead,
   TableRow,
@@ -21,8 +19,11 @@ import { UsersIcon, CubeTransparentIcon, TagIcon, ExclamationCircleIcon } from "
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
 import type { Metadata } from "next"
-import { valueFormatter } from "@/lib/formatters"
+import { valueFormatter } from "@/lib/formatters" // Still needed for KPIs and Table
 import { CardStatusDisplay } from "@/components/card-status-display"
+import { ClientLineChart } from "@/components/client-line-chart"
+import { ClientBarChart } from "@/components/client-bar-chart"
+import { ClientDonutChart } from "@/components/client-donut-chart"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
@@ -87,9 +88,6 @@ async function getDashboardData(
   selectedAppIdParam: string | undefined,
   dateRange: DateRangePickerValue | undefined,
 ): Promise<DashboardData> {
-  // Ensuring no artificial delays are present in data fetching.
-  // If a line like `await new Promise(resolve => setTimeout(resolve, 2000));` was here for testing, it's now removed.
-
   const supabase = createSupabaseServerClient()
 
   let appsList: App[] = []
@@ -112,7 +110,6 @@ async function getDashboardData(
     p_end_date_filter: queryTo.toISOString(),
   }
 
-  // --- KPI: Total Unique Installs & Reports This Period ---
   let uniqueInstallsCount: number | string = 0
   let reportsThisPeriodCount: number | string = 0
   let kpiErrorMessage: string | undefined
@@ -124,11 +121,8 @@ async function getDashboardData(
     }
     query = query.gte("received_at", rpcParams.p_start_date_filter)
     query = query.lte("received_at", rpcParams.p_end_date_filter)
-
     const { data: reportCountsData, error: reportCountsError, count } = await query
-
     if (reportCountsError) throw reportCountsError
-
     reportsThisPeriodCount = count ?? 0
     uniqueInstallsCount = new Set(reportCountsData?.map((r) => r.ip_hash)).size
   } catch (e: any) {
@@ -138,7 +132,6 @@ async function getDashboardData(
     reportsThisPeriodCount = "Error"
   }
 
-  // --- KPI: Latest Version Reported (using RPC) ---
   let latestVersionValue = "N/A"
   let latestVersionErrorMessage: string | undefined
   const { data: latestVersionDataRpc, error: latestVersionRpcError } = await supabase.rpc("get_latest_app_version", {
@@ -146,7 +139,6 @@ async function getDashboardData(
     start_date_filter: rpcParams.p_start_date_filter,
     end_date_filter: rpcParams.p_end_date_filter,
   })
-
   if (latestVersionRpcError) {
     console.error("Error fetching latest app version (RPC):", latestVersionRpcError.message)
     latestVersionErrorMessage = "Could not load latest version."
@@ -155,7 +147,6 @@ async function getDashboardData(
     latestVersionValue = latestVersionDataRpc
   }
 
-  // --- Chart: Installations Over Time (using RPC) ---
   let installsTimeseries: TimeSeriesDataPoint[] = []
   let installsTimeseriesErrorMessage: string | undefined
   const { data: dailyCountsData, error: dailyCountsError } = await supabase.rpc("get_daily_report_counts", {
@@ -163,7 +154,6 @@ async function getDashboardData(
     start_date_filter: rpcParams.p_start_date_filter,
     end_date_filter: rpcParams.p_end_date_filter,
   })
-
   if (dailyCountsError) {
     console.error("Error fetching daily report counts (RPC):", dailyCountsError.message)
     installsTimeseriesErrorMessage = "Could not load installations data."
@@ -183,7 +173,6 @@ async function getDashboardData(
     })
   }
 
-  // --- Chart: macOS Version Distribution (using RPC) ---
   let osBreakdown: OsBreakdownDataPoint[] = []
   let osBreakdownErrorMessage: string | undefined
   const { data: osDataRpc, error: osErrorRpc } = await supabase.rpc("get_os_version_distribution", rpcParams)
@@ -197,7 +186,6 @@ async function getDashboardData(
     }))
   }
 
-  // --- Chart: CPU Architecture (using RPC) ---
   let cpuBreakdown: CpuBreakdownDataPoint[] = []
   let cpuBreakdownErrorMessage: string | undefined
   const { data: cpuDataRpc, error: cpuErrorRpc } = await supabase.rpc("get_cpu_architecture_distribution", rpcParams)
@@ -211,7 +199,6 @@ async function getDashboardData(
     }))
   }
 
-  // --- Table: Top Models (using RPC) ---
   let topModels: TopModelsDataPoint[] = []
   let topModelsErrorMessage: string | undefined
   const { data: modelDataRpc, error: modelErrorRpc } = await supabase.rpc("get_top_models", {
@@ -258,7 +245,6 @@ export default async function DashboardPage({
   searchParams?: { [key: string]: string | string[] | undefined }
 }) {
   const selectedAppId = typeof searchParams?.app === "string" ? searchParams.app : "all"
-
   let dateRange: DateRangePickerValue | undefined = undefined
   const defaultFrom = startOfDay(subDays(new Date(), 29))
   const defaultTo = startOfDay(new Date())
@@ -277,7 +263,6 @@ export default async function DashboardPage({
   }
 
   const data = await getDashboardData(selectedAppId, dateRange)
-
   const showInstallationsChart = !data.installs_timeseries_error && data.installs_timeseries.length > 0
   const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0
   const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0
@@ -288,7 +273,6 @@ export default async function DashboardPage({
       <Flex justifyContent="between" alignItems="center" className="mb-8">
         <Title className="text-3xl font-semibold">App Stats Store</Title>
       </Flex>
-
       <DashboardFilters
         apps={data.apps}
         currentAppId={selectedAppId}
@@ -296,7 +280,6 @@ export default async function DashboardPage({
         appsError={data.appsError}
       />
 
-      {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>
           <Flex alignItems="start">
@@ -359,18 +342,16 @@ export default async function DashboardPage({
         </Card>
       </div>
 
-      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card>
           <Title>Installations Over Time</Title>
           {showInstallationsChart ? (
-            <LineChart
+            <ClientLineChart
               className="mt-6 h-72"
               data={data.installs_timeseries}
               index="date"
               categories={["Installs"]}
               colors={["blue"]}
-              valueFormatter={valueFormatter} // Passed as prop
               yAxisWidth={48}
               showAnimation
             />
@@ -385,13 +366,12 @@ export default async function DashboardPage({
         <Card>
           <Title>macOS Version Distribution</Title>
           {showOsChart ? (
-            <BarChart
+            <ClientBarChart
               className="mt-6 h-72"
               data={data.os_breakdown}
               index="name"
               categories={["Users"]}
               colors={["teal"]}
-              valueFormatter={valueFormatter} // Passed as prop
               layout="vertical"
               yAxisWidth={120}
               showAnimation
@@ -410,13 +390,12 @@ export default async function DashboardPage({
         <Card className="lg:col-span-1">
           <Title>CPU Architecture</Title>
           {showCpuChart ? (
-            <DonutChart
+            <ClientDonutChart
               className="mt-6 h-56"
               data={data.cpu_breakdown}
               category="Users"
               index="name"
               colors={["cyan", "indigo", "rose"]}
-              valueFormatter={valueFormatter} // Passed as prop
               showAnimation
             />
           ) : (
