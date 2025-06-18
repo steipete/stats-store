@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "stats.store | App Analytics Dashboard",
+  title: "stats.store | Real-Time Sparkle Metrics",
   description: "Track your macOS application performance with Sparkle-integrated analytics.",
   generator: "v0.dev",
 }
