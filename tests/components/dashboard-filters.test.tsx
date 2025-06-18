@@ -151,31 +151,13 @@ describe("DashboardFilters", () => {
     })
   })
 
-  describe("refresh button", () => {
-    it("renders refresh button", () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
-
-      const refreshButton = screen.getByRole("button", { name: /refresh/i })
-      expect(refreshButton).toBeInTheDocument()
-    })
-
-    it("calls router.refresh when clicked", async () => {
-      const user = userEvent.setup()
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
-
-      const refreshButton = screen.getByRole("button", { name: /refresh/i })
-      await user.click(refreshButton)
-
-      expect(mockRefresh).toHaveBeenCalledTimes(1)
-    })
-  })
 
   describe("styling and layout", () => {
     it("applies responsive grid layout", () => {
       const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
 
       const grid = container.firstChild
-      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-3", "gap-4")
+      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "gap-4")
     })
 
     it("applies correct styling to inputs", () => {
