@@ -55,7 +55,7 @@
     "@supabase/supabase-js": "latest",
     "@sveltejs/kit": "latest",
     "@testing-library/dom": "latest",
-    "@tremor/react": "latest",
+    "@tremor/react": "3.18.7",
     "@types/debug": "latest",
     "@types/eslint": "latest",
     "@vercel/analytics": "latest",
