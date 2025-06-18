@@ -68,10 +68,11 @@ function constructAppcastUrl(baseUrl: string, appcastPath: string): string {
   return `https://${cleanBaseUrl}/${appcastPath}`
 }
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
     // Extract appcast filename from path (e.g., "appcast.xml" or "appcast-prerelease.xml")
-    const appcastPath = params.path.join("/")
+    const resolvedParams = await params
+    const appcastPath = resolvedParams.path.join("/")
 
     // Parse query parameters sent by Sparkle
     const searchParams = request.nextUrl.searchParams
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
       return NextResponse.json({ error: "Missing bundleIdentifier parameter" }, { status: 400 })
     }
 
-    const supabase = createSupabaseServerClient(true)
+    const supabase = createSupabaseServerClient()
 
     // Look up app and get appcast URL
     const { data: app, error: appError } = await supabase

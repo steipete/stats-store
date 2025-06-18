@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 import { createBrowserClient } from "@supabase/ssr"
 import { RealtimeChannel } from "@supabase/supabase-js"
 
@@ -37,10 +37,11 @@ export function useRealtimeStats(options: UseRealtimeStatsOptions = {}) {
   const [realtimeEvents, setRealtimeEvents] = useState<RealtimeEvent[]>([])
   const [statsCache, setStatsCache] = useState<StatsCache>({})
 
-  const supabase = createBrowserClient(
+  // Memoize supabase client to prevent recreating on every render
+  const supabase = useMemo(() => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  ), [])
 
   // Fetch initial stats cache
   const fetchStatsCache = useCallback(async () => {
@@ -81,8 +82,12 @@ export function useRealtimeStats(options: UseRealtimeStatsOptions = {}) {
 
   useEffect(() => {
     let channel: RealtimeChannel | null = null
+    let isSubscribed = false
 
     const setupRealtimeSubscription = async () => {
+      // Prevent multiple subscriptions
+      if (isSubscribed) return
+      
       // Fetch initial cache
       await fetchStatsCache()
 
@@ -177,18 +182,26 @@ export function useRealtimeStats(options: UseRealtimeStatsOptions = {}) {
           }
         )
         .subscribe((status) => {
-          setIsConnected(status === "SUBSCRIBED")
+          if (status === "SUBSCRIBED") {
+            setIsConnected(true)
+            isSubscribed = true
+          } else if (status === "CLOSED") {
+            setIsConnected(false)
+            isSubscribed = false
+          }
         })
     }
 
     setupRealtimeSubscription()
 
     return () => {
+      isSubscribed = false
       if (channel) {
+        channel.unsubscribe()
         supabase.removeChannel(channel)
       }
     }
-  }, [options.appId, fetchStatsCache, supabase, options])
+  }, [options.appId, fetchStatsCache, supabase])
 
   return {
     isConnected,

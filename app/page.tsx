@@ -238,17 +238,18 @@ async function getDashboardData(
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const selectedAppId = typeof searchParams?.app === "string" ? searchParams.app : "all"
+  const params = await searchParams
+  const selectedAppId = typeof params?.app === "string" ? params.app : "all"
   let dateRange: DateRangePickerValue | undefined = undefined
   const defaultFrom = startOfDay(subDays(new Date(), 29))
   const defaultTo = startOfDay(new Date())
-  if (typeof searchParams?.from === "string") {
-    const fromDate = parseISO(searchParams.from)
+  if (typeof params?.from === "string") {
+    const fromDate = parseISO(params.from)
     dateRange = { from: startOfDay(fromDate) }
-    if (typeof searchParams?.to === "string") {
-      const toDate = parseISO(searchParams.to)
+    if (typeof params?.to === "string") {
+      const toDate = parseISO(params.to)
       dateRange.to = startOfDay(toDate)
     } else {
       dateRange.to = defaultTo

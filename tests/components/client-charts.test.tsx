@@ -168,7 +168,7 @@ describe("Client Chart Components", () => {
         { name: "Intel", value: 25 },
       ]
 
-      render(<ClientDonutChart data={mockData} category="name" value="value" />)
+      render(<ClientDonutChart data={mockData} category="value" index="name" />)
 
       expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
       expect(screen.getByText("Apple Silicon")).toBeInTheDocument()
@@ -182,7 +182,7 @@ describe("Client Chart Components", () => {
         { browser: "Firefox", users: 500 },
       ]
 
-      render(<ClientDonutChart data={mockData} category="browser" value="users" />)
+      render(<ClientDonutChart data={mockData} category="users" index="browser" />)
 
       expect(screen.getByText("1,500")).toBeInTheDocument()
       expect(screen.getByText("2,500")).toBeInTheDocument()
@@ -190,7 +190,7 @@ describe("Client Chart Components", () => {
     })
 
     it("handles empty data", () => {
-      render(<ClientDonutChart data={[]} category="name" value="value" />)
+      render(<ClientDonutChart data={[]} category="value" index="name" />)
 
       expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
@@ -201,7 +201,7 @@ describe("Client Chart Components", () => {
         { type: "B", count: 40 },
       ]
 
-      render(<ClientDonutChart data={mockData} category="type" value="count" variant="pie" />)
+      render(<ClientDonutChart data={mockData} category="count" index="type" variant="pie" />)
 
       expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
@@ -215,8 +215,8 @@ describe("Client Chart Components", () => {
       render(
         <ClientDonutChart
           data={mockData}
-          category="status"
-          value="count"
+          category="count"
+          index="status"
           label="User Status"
           colors={["green", "gray"]}
         />
@@ -236,7 +236,7 @@ describe("Client Chart Components", () => {
       rerender(<ClientBarChart data={null as any} index="x" categories={["y"]} />)
       expect(screen.getByTestId("bar-chart")).toBeInTheDocument()
 
-      rerender(<ClientDonutChart data={null as any} category="x" value="y" />)
+      rerender(<ClientDonutChart data={null as any} category="y" index="x" />)
       expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
 
@@ -253,7 +253,7 @@ describe("Client Chart Components", () => {
       rerender(<ClientBarChart data={[]} index="x" categories={["y"]} {...commonProps} />)
       expect(screen.getByTestId("bar-chart")).toHaveClass("custom-chart")
 
-      rerender(<ClientDonutChart data={[]} category="x" value="y" {...commonProps} />)
+      rerender(<ClientDonutChart data={[]} category="y" index="x" {...commonProps} />)
       expect(screen.getByTestId("donut-chart")).toHaveClass("custom-chart")
     })
   })

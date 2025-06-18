@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing bundleIdentifier" }, { status: 400 })
     }
 
-    const supabase = createSupabaseServerClient(true)
+    const supabase = createSupabaseServerClient()
 
     const { data: app, error: appError } = await supabase
       .from("apps")
