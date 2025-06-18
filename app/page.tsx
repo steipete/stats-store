@@ -25,7 +25,15 @@ import {
   ChartBarIcon,
 } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
-import { DashboardFilters, valueFormatter } from "@/components/dashboard-filters"
+import { DashboardFilters } from "@/components/dashboard-filters"
+import { valueFormatter } from "@/lib/formatters"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "App Stats Dashboard | Track Your Application Performance",
+  description:
+    "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
+}
 
 interface App {
   id: string
