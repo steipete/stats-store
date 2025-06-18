@@ -93,5 +93,12 @@ const config: Config = {
   	}
   },
   plugins: [require("tailwindcss-animate")],
+  safelist: [
+    // Tremor color classes for charts
+    {
+      pattern: /^(bg|text|fill|stroke)-(blue|teal|cyan|indigo|rose|green|amber)-(50|100|200|300|400|500|600|700|800|900|950)$/,
+      variants: ['hover', 'focus', 'dark', 'dark:hover', 'dark:focus'],
+    },
+  ],
 };
 export default config;
