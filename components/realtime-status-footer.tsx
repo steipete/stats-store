@@ -21,7 +21,7 @@ export function RealtimeStatusFooter({ isConnected, lastUpdate, realtimeEventsCo
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="mt-8 mb-4 flex items-center justify-between py-4 border-t border-border"
+          className="mt-8 mb-4 flex items-center justify-between py-4"
         >
           <div className="flex items-center gap-2">
             <div className="relative">

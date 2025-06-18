@@ -603,8 +603,8 @@ body {
     --input-bg: hsl(240 4% 15%);
     --input-border: hsl(240 4% 25%);
     --ring: hsl(217 91% 60%);
-    --tooltip-bg: hsl(0 0% 98%);
-    --tooltip-foreground: hsl(240 10% 3.9%);
+    --tooltip-bg: hsl(240 10% 3.9%);
+    --tooltip-foreground: hsl(0 0% 98%);
     --chart-1: hsl(217 91% 60%);
     --chart-2: hsl(173 65% 55%);
     --chart-3: hsl(240 50% 70%);
@@ -791,17 +791,46 @@ body {
   
   /* Fix DateRangePicker dark mode styling */
   .dark .tremor-DateRangePicker-root {
-    background-color: hsl(240 4% 15%) !important;
-    border-color: hsl(240 4% 25%) !important;
+    background-color: transparent !important;
+    border: none !important;
+  }
+  
+  /* Remove double borders from DateRangePicker wrapper */
+  [class*="tremor-DateRangePicker"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+  
+  /* Style the actual button inside */
+  [class*="tremor-DateRangePicker"] > button:first-child {
+    background-color: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    width: 100% !important;
+  }
+  
+  .dark [class*="tremor-DateRangePicker"] > button:first-child {
+    background-color: hsl(240 10% 3.9%) !important;
+    border-color: hsl(240 3.7% 15.9%) !important;
   }
   
   .dark [class*="tremor-DateRangePicker"] input {
     background-color: transparent !important;
     color: hsl(0 0% 98%) !important;
+    border: none !important;
   }
   
   .dark [class*="tremor-DateRangePicker"] button {
     color: hsl(0 0% 98%) !important;
+    background-color: transparent !important;
+    border: none !important;
+  }
+  
+  /* Fix the internal flex container */
+  [class*="tremor-DateRangePicker"] > div {
+    background-color: transparent !important;
+    border: none !important;
   }
   
   .dark [class*="tremor-DateRangePicker"] svg {
@@ -890,9 +919,23 @@ body {
   /* All tooltip backgrounds - fix transparency issue */
   [role="tooltip"],
   [data-state="open"][data-side][style*="--radix-tooltip"],
+  [data-radix-popper-content-wrapper],
   .bg-tooltip {
     background-color: var(--tooltip-bg) !important;
     color: var(--tooltip-foreground) !important;
+    backdrop-filter: blur(12px) !important;
+    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    padding: 6px 10px !important;
+    border-radius: 6px !important;
+  }
+  
+  .dark [role="tooltip"],
+  .dark [data-state="open"][data-side][style*="--radix-tooltip"],
+  .dark [data-radix-popper-content-wrapper],
+  .dark .bg-tooltip {
+    background-color: hsl(240 6% 10%) !important;
+    color: hsl(0 0% 98%) !important;
+    border: 1px solid hsl(240 3.7% 25%) !important;
   }
   
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
@@ -900,13 +943,15 @@ body {
   .recharts-tooltip-wrapper .recharts-default-tooltip,
   .recharts-tooltip-wrapper > div,
   .recharts-tooltip-wrapper [role="tooltip"],
-  .recharts-tooltip-content-wrapper {
-    background-color: hsl(var(--popover)) !important;
+  .recharts-tooltip-content-wrapper,
+  .recharts-default-tooltip {
+    background-color: var(--tooltip-bg) !important;
+    color: var(--tooltip-foreground) !important;
     border: 1px solid hsl(var(--border)) !important;
-    border-radius: var(--radius);
-    box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    border-radius: 6px !important;
+    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(12px) !important;
+    padding: 8px 12px !important;
   }
 
   /* Tremor's custom tooltip styling - comprehensive */
@@ -915,13 +960,18 @@ body {
   [class*="tremor-ChartTooltip-frame"],
   [class*="tremor-ChartTooltip-content"],
   .tremor-ChartTooltip-root {
-    background-color: hsl(var(--popover)) !important;
+    background-color: var(--tooltip-bg) !important;
+    color: var(--tooltip-foreground) !important;
     border: 1px solid hsl(var(--border)) !important;
+    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(12px) !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
   }
 
   /* Force tooltip container backgrounds */
   div[style*="pointer-events: none"] div[style*="position: absolute"] {
-    background-color: hsl(var(--popover)) !important;
+    background-color: var(--tooltip-bg) !important;
   }
 
   /* Ensure tooltip text is visible */
@@ -929,13 +979,26 @@ body {
   .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item,
   .recharts-tooltip-wrapper p,
   .recharts-tooltip-wrapper span {
-    color: hsl(var(--foreground)) !important;
+    color: var(--tooltip-foreground) !important;
   }
 
   /* Ensure all Radix UI popovers have proper backgrounds */
   [data-radix-popper-content-wrapper] {
-    --radix-popover-bg: hsl(var(--popover));
+    --radix-popover-bg: var(--tooltip-bg);
     --radix-popover-border: hsl(var(--border));
+  }
+  
+  /* KPI Card specific tooltip styling */
+  .bg-tooltip.rounded-md {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    max-width: 250px !important;
+  }
+  
+  /* Force dark tooltips in dark mode */
+  .dark [role="tooltip"] {
+    background-color: hsl(240 10% 3.9%) !important;
+    color: hsl(0 0% 98%) !important;
   }
 
   /* Global fix for any floating/popup elements */
@@ -989,25 +1052,23 @@ body {
     color: hsl(var(--popover-foreground)) !important;
   }
 
-  /* Tremor DateRangePicker X button spacing fix */
-  /* Target the X button container and icon */
-  [class*="DateRangePicker"] button[type="button"]:not(:first-child) {
-    position: absolute !important;
-    right: 0.75rem !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
+  /* Tremor DateRangePicker button styling */
+  [class*="DateRangePicker"] button[type="button"] {
     padding: 0.375rem !important;
-    margin: 0 !important;
+    border-radius: 4px !important;
+    transition: background-color 0.2s !important;
+  }
+  
+  [class*="DateRangePicker"] button[type="button"]:hover {
+    background-color: hsl(var(--muted)) !important;
+  }
+  
+  .dark [class*="DateRangePicker"] button[type="button"]:hover {
+    background-color: hsl(240 3.7% 20%) !important;
   }
 
-  /* Ensure proper padding on the right side of the input to accommodate X button */
-  [class*="DateRangePicker"] > button:first-child {
-    padding-right: 3rem !important;
-  }
-
-  /* Style the X icon itself */
-  [class*="DateRangePicker"] svg.h-4.w-4,
-  [class*="DateRangePicker"] svg[width="16"] {
+  /* Make sure icons maintain consistent size */
+  [class*="DateRangePicker"] svg {
     width: 1rem !important;
     height: 1rem !important;
   }

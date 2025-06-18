@@ -76,8 +76,8 @@ export function KpiCard({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
-        <TooltipContent className="bg-tooltip text-tooltip-foreground rounded-md px-2 py-1 text-xs shadow-lg border border-border">
-          <p>{tooltip}</p>
+        <TooltipContent className="bg-tooltip text-tooltip-foreground rounded-md">
+          <p className="text-xs font-normal">{tooltip}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

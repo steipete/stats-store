@@ -120,7 +120,7 @@ export function RealtimeDashboard({ selectedAppId, dateRange, initialData, hideS
           iconName="users"
           iconColor="blue"
           error={!!initialData.kpisError?.unique_installs}
-          tooltip={`Unique users (based on IP hash) from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`}
+          tooltip="Distinct users identified by daily IP hash"
           isRealtime={isConnected}
           lastUpdate={lastUpdate || undefined}
         />
@@ -140,7 +140,7 @@ export function RealtimeDashboard({ selectedAppId, dateRange, initialData, hideS
           iconName="cube"
           iconColor="green"
           error={!!initialData.kpisError?.reports_this_period}
-          tooltip={`Total reports received from ${format(dateRange.from, "MMM dd, yyyy")} to ${format(dateRange.to, "MMM dd, yyyy")}`}
+          tooltip="All telemetry reports received"
           isRealtime={isConnected}
           lastUpdate={lastUpdate || undefined}
         />
