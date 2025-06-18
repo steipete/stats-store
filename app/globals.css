@@ -662,6 +662,11 @@ body {
   .ring-ring { --tw-ring-color: var(--ring); }
   
   .shadow-subtle { box-shadow: var(--shadow-subtle); }
+  
+  /* Dark mode shadow for cards */
+  .dark .shadow-subtle {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
 }
 
 @layer base {
@@ -720,6 +725,20 @@ body {
     fill: hsl(240 5% 65%) !important;
   }
   
+  /* Dark mode donut chart center text */
+  .dark .recharts-pie-label-text {
+    fill: hsl(0 0% 98%) !important;
+  }
+  
+  /* Fix any text elements inside SVGs */
+  .dark svg text {
+    fill: hsl(240 5% 65%) !important;
+  }
+  
+  .dark svg .recharts-text {
+    fill: hsl(0 0% 98%) !important;
+  }
+  
   /* Dark mode table text */
   .dark [class*="tremor-TableCell"] {
     color: hsl(0 0% 98%) !important;
@@ -732,6 +751,25 @@ body {
   /* Ensure Tremor DateRangePicker text is themed */
   .tremor-DateRangePicker-input {
     color: hsl(var(--foreground)) !important;
+  }
+  
+  /* Fix DateRangePicker dark mode styling */
+  .dark .tremor-DateRangePicker-root {
+    background-color: hsl(240 4% 15%) !important;
+    border-color: hsl(240 4% 25%) !important;
+  }
+  
+  .dark [class*="tremor-DateRangePicker"] input {
+    background-color: transparent !important;
+    color: hsl(0 0% 98%) !important;
+  }
+  
+  .dark [class*="tremor-DateRangePicker"] button {
+    color: hsl(0 0% 98%) !important;
+  }
+  
+  .dark [class*="tremor-DateRangePicker"] svg {
+    color: hsl(240 5% 65%) !important;
   }
 
   /* Calendar container styles - ensure proper background */
