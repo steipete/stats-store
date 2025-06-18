@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { Suspense } from "react"
+import { RealtimeWrapper } from "@/components/realtime-wrapper"
 import {
   Flex,
   Title,
@@ -21,7 +22,6 @@ import { ClientBarChart } from "@/components/client-bar-chart"
 import { ClientDonutChart } from "@/components/client-donut-chart"
 import { KpiCard } from "@/components/kpi-card"
 import { cn } from "@/lib/utils"
-import { RealtimeDashboard } from "@/components/realtime-dashboard"
 
 export const metadata: Metadata = {
   title: "stats.store - Fast, open, privacy-first analytics for Sparkle",
@@ -288,8 +288,8 @@ export default async function DashboardPage({
           appsError={data.appsError}
         />
       </Suspense>
-      {/* Real-time KPI Dashboard */}
-      <RealtimeDashboard
+      {/* Real-time wrapper for managing state */}
+      <RealtimeWrapper
         selectedAppId={selectedAppId}
         dateRange={{
           from: dateRange.from || defaultFrom,
@@ -299,8 +299,8 @@ export default async function DashboardPage({
           kpis: data.kpis,
           kpisError: data.kpisError,
         }}
-      />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <KpiCard className={chartCardClassName}>
           <Title className="text-card-foreground mb-1">Installations Over Time</Title>
           {showInstallationsChart ? (
@@ -391,6 +391,8 @@ export default async function DashboardPage({
           )}
         </KpiCard>
       </div>
+      </RealtimeWrapper>
+      
       <footer className="mt-12 py-6 text-center text-sm text-muted-foreground border-t border-border">
         Sparkle Statistics by{" "}
         <a
