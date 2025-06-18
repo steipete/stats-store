@@ -26,21 +26,13 @@ import {
 } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
-// Removed: import { valueFormatter } from "@/lib/formatters"
 import type { Metadata } from "next"
+import { valueFormatter } from "@/lib/formatters"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
-}
-
-// Define valueFormatter directly in the Server Component
-const valueFormatter = (number: number): string => {
-  if (typeof number !== "number" || isNaN(number)) {
-    return "0" // Default for non-numeric or NaN to prevent errors
-  }
-  return new Intl.NumberFormat("us").format(number).toString()
 }
 
 interface App {
@@ -133,6 +125,9 @@ async function getDashboardData(
   selectedAppIdParam: string | undefined,
   dateRange: DateRangePickerValue | undefined,
 ): Promise<DashboardData> {
+  // Ensuring no artificial delays are present in data fetching.
+  // If a line like `await new Promise(resolve => setTimeout(resolve, 2000));` was here for testing, it's now removed.
+
   const supabase = createSupabaseServerClient()
 
   let appsList: App[] = []
@@ -321,12 +316,6 @@ export default async function DashboardPage({
 
   const data = await getDashboardData(selectedAppId, dateRange)
 
-  const renderKpiMetric = (value: number | string) => {
-    if (typeof value === "string") return value
-    // valueFormatter is now defined in this file's scope
-    return valueFormatter(value)
-  }
-
   const showInstallationsChart = !data.installs_timeseries_error && data.installs_timeseries.length > 0
   const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0
   const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0
@@ -362,7 +351,11 @@ export default async function DashboardPage({
               />
             )}
           </Flex>
-          <Metric className="mt-2">{renderKpiMetric(data.kpis.unique_installs)}</Metric>
+          <Metric className="mt-2">
+            {typeof data.kpis.unique_installs === "string"
+              ? data.kpis.unique_installs
+              : valueFormatter(data.kpis.unique_installs)}
+          </Metric>
         </Card>
         <Card>
           <Flex alignItems="start">
@@ -379,7 +372,11 @@ export default async function DashboardPage({
               />
             )}
           </Flex>
-          <Metric className="mt-2">{renderKpiMetric(data.kpis.reports_this_period)}</Metric>
+          <Metric className="mt-2">
+            {typeof data.kpis.reports_this_period === "string"
+              ? data.kpis.reports_this_period
+              : valueFormatter(data.kpis.reports_this_period)}
+          </Metric>
         </Card>
         <Card>
           <Flex alignItems="start">
