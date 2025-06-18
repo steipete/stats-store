@@ -13,7 +13,6 @@ vi.mock("next/navigation", () => ({
 
 describe("DashboardFilters", () => {
   const mockPush = vi.fn()
-  const mockRefresh = vi.fn()
   const mockSearchParams = new URLSearchParams()
 
   const mockApps = [
@@ -26,7 +25,6 @@ describe("DashboardFilters", () => {
     vi.clearAllMocks()
     ;(useRouter as any).mockReturnValue({
       push: mockPush,
-      refresh: mockRefresh,
     })
     ;(useSearchParams as any).mockReturnValue(mockSearchParams)
   })
@@ -213,7 +211,6 @@ describe("DashboardFilters", () => {
 
       const select = screen.getByRole("combobox") as HTMLSelectElement
       expect(select.value).toBe("2")
-      expect(screen.getByRole("button", { name: /refresh/i })).toBeInTheDocument()
       expect(screen.getByRole("button", { name: /select/i })).toBeInTheDocument()
     })
 
