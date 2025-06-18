@@ -35,6 +35,6 @@ Add any other context about the problem here.
 
 **Logs**
 
-```
+\`\`\`
 Include any relevant error messages or logs
-```
+\`\`\`

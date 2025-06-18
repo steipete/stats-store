@@ -24,19 +24,19 @@ Thanks for your interest in contributing! 🎉
 Awesome! Here's how:
 
 1. **Fork & Clone**
-   ```bash
+   \`\`\`bash
    # Fork on GitHub first, then:
    git clone https://github.com/YOUR_USERNAME/stats-store.git
    cd stats-store
    pnpm install
-   ```
+   \`\`\`
 
 2. **Create a Branch**
-   ```bash
+   \`\`\`bash
    git checkout -b fix/awesome-bug-fix
    # or
    git checkout -b feature/cool-new-thing
-   ```
+   \`\`\`
 
 3. **Make Your Changes**
    - Write clean, readable code
@@ -44,20 +44,20 @@ Awesome! Here's how:
    - Add tests if needed
 
 4. **Test Everything**
-   ```bash
+   \`\`\`bash
    pnpm test        # Run tests
    pnpm lint        # Check linting
    pnpm typecheck   # TypeScript checks
    pnpm build       # Make sure it builds
-   ```
+   \`\`\`
 
 5. **Commit Your Changes**
-   ```bash
+   \`\`\`bash
    git add .
    git commit -m "fix: solve the awesome bug"
    # or
    git commit -m "feat: add cool new thing"
-   ```
+   \`\`\`
 
    We use [conventional commits](https://www.conventionalcommits.org/):
    - `fix:` for bug fixes
@@ -67,9 +67,9 @@ Awesome! Here's how:
    - `refactor:` for code refactoring
 
 6. **Push and Create PR**
-   ```bash
+   \`\`\`bash
    git push origin your-branch-name
-   ```
+   \`\`\`
    Then open a Pull Request on GitHub!
 
 ## Development Setup
@@ -88,14 +88,14 @@ Awesome! Here's how:
 
 ### Useful Commands
 
-```bash
+\`\`\`bash
 pnpm dev         # Start dev server
 pnpm test        # Run tests
 pnpm test:watch  # Run tests in watch mode
 pnpm lint        # Run linter
 pnpm format      # Format code
 pnpm build       # Build for production
-```
+\`\`\`
 
 ## Code Style
 

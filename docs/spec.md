@@ -48,7 +48,7 @@ The data will be stored in a Supabase PostgreSQL database. The schema is designe
 
 Stores information about each tracked application. An application must be registered here to have its reports accepted.
 
-```sql
+\`\`\`sql
 -- Stores metadata for each application being tracked.
 CREATE TABLE public.apps (
   -- A unique identifier for the app.
@@ -67,13 +67,13 @@ CREATE TABLE public.apps (
 
 -- Enable Row Level Security to control data access.
 ALTER TABLE public.apps ENABLE ROW LEVEL SECURITY;
-```
+\`\`\`
 
 #### 3.2. Table: `reports`
 
 Stores sanitized data from each individual Sparkle profile report.
 
-```sql
+\`\`\`sql
 -- Stores every individual, sanitized profile report received.
 CREATE TABLE public.reports (
   -- A unique, auto-incrementing identifier for each report.
@@ -118,7 +118,7 @@ CREATE INDEX idx_reports_cpu_arch ON public.reports(cpu_arch);
 
 -- Enable Row Level Security.
 ALTER TABLE public.reports ENABLE ROW LEVEL SECURITY;
-```
+\`\`\`
 
 ### 4. API Design (Next.js API Routes)
 
@@ -129,7 +129,7 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
 - **Purpose:** The public endpoint to receive new profile data from Sparkle clients.
 - **Security:** This endpoint is open but validates incoming data. It checks that the `bundle_identifier` in the payload matches an application pre-registered in the `apps` table. This prevents data from unknown applications from being stored. It is a deliberate design choice to accept that a malicious actor could send fake data for a known application.
 - **Request Body:**
-  ```json
+  \`\`\`json
   {
     "bundleIdentifier": "com.mycompany.myawesomeapp",
     "ip": "123.45.67.89",
@@ -141,7 +141,7 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
     "model": "MacBookPro17,1",
     "ramMB": "16384"
   }
-  ```
+  \`\`\`
 - **Action:**
   1.  The API route receives the JSON payload.
   2.  It extracts the `bundleIdentifier`.
@@ -158,7 +158,7 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
   - Filter by `app_id` (optional, UUID).
   - Filter by `start_date` and `end_date` (optional, ISO 8601).
 - **Response Payload (Passed as props to the dashboard component):**
-  ```json
+  \`\`\`json
   {
     "kpis": {
       "unique_installs": 12543,
@@ -178,7 +178,7 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
       { "name": "Intel", "value": 2667 }
     ]
   }
-  ```
+  \`\`\`
 
 ### 5. Frontend Design (UI/UX)
 
@@ -186,7 +186,7 @@ The dashboard will be clean, modern, and data-focused, using a dark theme with v
 
 #### 5.1. Dashboard Wireframe & Layout
 
-```
+\`\`\`
 /-------------------------------------------------------------------------------------\
 | [App Stats Store]                                               [User: dev@email] |
 |-------------------------------------------------------------------------------------|
@@ -220,7 +220,7 @@ The dashboard will be clean, modern, and data-focused, using a dark theme with v
 |  \---------------------------/  \-----------------------------------------------/  |
 |                                                                                     |
 \-------------------------------------------------------------------------------------/
-```
+\`\`\`
 
 #### 5.2. Key UI Components and Technology Choices
 

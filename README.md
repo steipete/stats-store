@@ -44,16 +44,16 @@ Your users get their updates, you get your stats. Everyone wins!
 ### Setting It Up (It's Just One URL Change!)
 
 In your app's `Info.plist`, change your update URL from:
-```xml
+\`\`\`xml
 <key>SUFeedURL</key>
 <string>https://raw.githubusercontent.com/you/yourapp/main/appcast.xml</string>
-```
+\`\`\`
 
 To:
-```xml
+\`\`\`xml
 <key>SUFeedURL</key>
 <string>https://stats.store/api/v1/appcast/appcast.xml</string>
-```
+\`\`\`
 
 That's it! stats.store will automatically find your real appcast file and serve it while collecting anonymous stats.
 
@@ -72,7 +72,7 @@ Want to run your own instance? Cool! Check out the [deployment guide](docs/deplo
 
 ### Quick Start for Developers
 
-```bash
+\`\`\`bash
 # Clone and install
 git clone https://github.com/steipete/stats-store.git
 cd stats-store
@@ -87,7 +87,7 @@ cp .env.example .env.local
 
 # Start development server
 pnpm dev
-```
+\`\`\`
 
 ## Technical Stuff
 

@@ -47,23 +47,30 @@ Click the button and fill in your Supabase credentials!
 ### Option B: Manual Deploy
 
 1. **Fork the repository**
-   ```bash
+   \`\`\`bash
    # On GitHub, click "Fork" button
    # Then clone your fork:
    git clone https://github.com/YOUR_USERNAME/stats-store.git
-   ```
+   \`\`\`
 
 2. **Import to Vercel**
    - Go to [vercel.com/new](https://vercel.com/new)
    - Import your forked repository
    - Configure environment variables:
-     ```
+     \`\`\`
      SUPABASE_URL=your_supabase_url
      SUPABASE_ANON_KEY=your_anon_key
      SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
      NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
      NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-     ```
+     \`\`\`
+     Alternatively, in Vercel UI, set:
+     - `SUPABASE_URL`
+     - `SUPABASE_ANON_KEY`
+     - `SUPABASE_SERVICE_ROLE_KEY`
+     - `NEXT_PUBLIC_SUPABASE_URL` (same as `SUPABASE_URL`)
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (same as `SUPABASE_ANON_KEY`)
+
 
 3. **Deploy!**
    - Click "Deploy"
@@ -75,11 +82,11 @@ Click the button and fill in your Supabase credentials!
 1. **Go to your Supabase dashboard**
 2. **Navigate to Table Editor → apps**
 3. **Insert a new row:**
-   ```
+   \`\`\`
    name: Your App Name
    bundle_identifier: com.yourcompany.yourapp
    appcast_base_url: https://github.com/you/yourapp
-   ```
+   \`\`\`
 
 4. **Update your app's Sparkle URL** (see README)
 
@@ -111,12 +118,12 @@ Want to use your own domain instead of `*.vercel.app`?
 When new features are released:
 
 1. **Sync your fork** (if you forked)
-   ```bash
+   \`\`\`bash
    git remote add upstream https://github.com/steipete/stats-store.git
    git fetch upstream
    git merge upstream/main
    git push origin main
-   ```
+   \`\`\`
 
 2. **Run new migrations** (if any)
    - Check the `scripts/` directory for new SQL files
