@@ -751,6 +751,38 @@ body {
   .dark [class*="tremor-TableHeaderCell"] {
     color: hsl(240 5% 65%) !important;
   }
+  
+  /* Fix Tremor Icon colors in dark mode */
+  .dark [class*="tremor-Icon"] {
+    /* Adjust opacity for icon backgrounds in dark mode */
+    opacity: 0.9;
+  }
+  
+  /* Override specific icon background colors for better visibility */
+  .dark [class*="bg-blue-50"] {
+    background-color: hsl(217 91% 20%) !important;
+  }
+  
+  .dark [class*="bg-emerald-50"], .dark [class*="bg-green-50"] {
+    background-color: hsl(173 65% 20%) !important;
+  }
+  
+  .dark [class*="bg-amber-50"], .dark [class*="bg-yellow-50"] {
+    background-color: hsl(35 95% 25%) !important;
+  }
+  
+  /* Make icon colors brighter in dark mode */
+  .dark [class*="text-blue-500"] {
+    color: hsl(217 91% 70%) !important;
+  }
+  
+  .dark [class*="text-emerald-500"], .dark [class*="text-green-500"] {
+    color: hsl(173 65% 65%) !important;
+  }
+  
+  .dark [class*="text-amber-500"], .dark [class*="text-yellow-500"] {
+    color: hsl(35 95% 70%) !important;
+  }
 
   /* Ensure Tremor DateRangePicker text is themed */
   .tremor-DateRangePicker-input {
