@@ -4,51 +4,51 @@
 @theme {
   --color-background: hsl(0 0% 98%);
   --color-foreground: hsl(240 10% 3.9%);
-  
+
   --color-card: hsl(0 0% 100%);
   --color-card-foreground: hsl(240 10% 3.9%);
-  
+
   --color-popover: hsl(0 0% 100%);
   --color-popover-foreground: hsl(240 10% 3.9%);
-  
+
   --color-primary: hsl(221 83% 53%);
   --color-primary-foreground: hsl(0 0% 100%);
-  
+
   --color-secondary: hsl(0 0% 94%);
   --color-secondary-foreground: hsl(240 10% 3.9%);
-  
+
   --color-muted: hsl(0 0% 90%);
   --color-muted-foreground: hsl(240 5% 45%);
-  
+
   --color-accent: hsl(0 0% 96.1%);
   --color-accent-foreground: hsl(240 10% 3.9%);
-  
+
   --color-destructive: hsl(0 84.2% 60.2%);
   --color-destructive-foreground: hsl(0 0% 98%);
-  
+
   --color-border: hsl(0 0% 90%);
   --color-input: hsl(0 0% 100%);
   --color-input-border: hsl(0 0% 86%);
   --color-ring: hsl(221 83% 53%);
-  
+
   --color-tooltip: hsl(240 6% 10%);
   --color-tooltip-foreground: hsl(0 0% 98%);
-  
+
   --color-chart-1: hsl(221 83% 53%);
   --color-chart-2: hsl(173 58% 39%);
   --color-chart-3: hsl(240 50% 60%);
   --color-chart-4: hsl(30 90% 55%);
   --color-chart-5: hsl(340 80% 60%);
-  
+
   --radius: 0.75rem;
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
-  
+
   --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.03);
   --shadow-subtle-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-  
+
   /* Tremor color definitions for Tailwind v4 compatibility */
   /* Tremor brand colors */
   --color-tremor-brand-faint: #eff6ff;
@@ -57,26 +57,26 @@
   --color-tremor-brand: #3b82f6;
   --color-tremor-brand-emphasis: #1d4ed8;
   --color-tremor-brand-inverted: #ffffff;
-  
+
   /* Tremor background colors */
   --color-tremor-background-muted: #f9fafb;
   --color-tremor-background-subtle: #f3f4f6;
   --color-tremor-background: #ffffff;
   --color-tremor-background-emphasis: #374151;
-  
+
   /* Tremor border colors */
   --color-tremor-border: #e5e7eb;
-  
+
   /* Tremor ring colors */
   --color-tremor-ring: #3b82f6;
-  
+
   /* Tremor content colors */
   --color-tremor-content-subtle: #9ca3af;
   --color-tremor-content: #6b7280;
   --color-tremor-content-emphasis: #374151;
   --color-tremor-content-strong: #111827;
   --color-tremor-content-inverted: #ffffff;
-  
+
   /* Tremor chart colors */
   --color-blue-500: #3b82f6;
   --color-teal-500: #14b8a6;
@@ -110,176 +110,454 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   /* Tremor color system for Tailwind v4 compatibility */
   /* These utilities are required for Tremor charts to display colors properly */
-  
+
   /* Background colors - all shades for Tremor */
-  .bg-blue-50 { background-color: #eff6ff; }
-  .bg-blue-100 { background-color: #dbeafe; }
-  .bg-blue-200 { background-color: #bfdbfe; }
-  .bg-blue-300 { background-color: #93c5fd; }
-  .bg-blue-400 { background-color: #60a5fa; }
-  .bg-blue-500 { background-color: #3b82f6; }
-  .bg-blue-600 { background-color: #2563eb; }
-  
-  .bg-teal-50 { background-color: #f0fdfa; }
-  .bg-teal-100 { background-color: #ccfbf1; }
-  .bg-teal-200 { background-color: #99f6e4; }
-  .bg-teal-300 { background-color: #5eead4; }
-  .bg-teal-400 { background-color: #2dd4bf; }
-  .bg-teal-500 { background-color: #14b8a6; }
-  .bg-teal-600 { background-color: #0d9488; }
-  
-  .bg-cyan-50 { background-color: #ecfeff; }
-  .bg-cyan-100 { background-color: #cffafe; }
-  .bg-cyan-200 { background-color: #a5f3fc; }
-  .bg-cyan-300 { background-color: #67e8f9; }
-  .bg-cyan-400 { background-color: #22d3ee; }
-  .bg-cyan-500 { background-color: #06b6d4; }
-  .bg-cyan-600 { background-color: #0891b2; }
-  
-  .bg-purple-50 { background-color: #faf5ff; }
-  .bg-purple-100 { background-color: #f3e8ff; }
-  .bg-purple-200 { background-color: #e9d5ff; }
-  .bg-purple-300 { background-color: #d8b4fe; }
-  .bg-purple-400 { background-color: #c084fc; }
-  .bg-purple-500 { background-color: #a855f7; }
-  .bg-purple-600 { background-color: #9333ea; }
-  
-  .bg-rose-50 { background-color: #fff1f2; }
-  .bg-rose-100 { background-color: #ffe4e6; }
-  .bg-rose-200 { background-color: #fecdd3; }
-  .bg-rose-300 { background-color: #fda4af; }
-  .bg-rose-400 { background-color: #fb7185; }
-  .bg-rose-500 { background-color: #f43f5e; }
-  .bg-rose-600 { background-color: #e11d48; }
-  
+  .bg-blue-50 {
+    background-color: #eff6ff;
+  }
+  .bg-blue-100 {
+    background-color: #dbeafe;
+  }
+  .bg-blue-200 {
+    background-color: #bfdbfe;
+  }
+  .bg-blue-300 {
+    background-color: #93c5fd;
+  }
+  .bg-blue-400 {
+    background-color: #60a5fa;
+  }
+  .bg-blue-500 {
+    background-color: #3b82f6;
+  }
+  .bg-blue-600 {
+    background-color: #2563eb;
+  }
+
+  .bg-teal-50 {
+    background-color: #f0fdfa;
+  }
+  .bg-teal-100 {
+    background-color: #ccfbf1;
+  }
+  .bg-teal-200 {
+    background-color: #99f6e4;
+  }
+  .bg-teal-300 {
+    background-color: #5eead4;
+  }
+  .bg-teal-400 {
+    background-color: #2dd4bf;
+  }
+  .bg-teal-500 {
+    background-color: #14b8a6;
+  }
+  .bg-teal-600 {
+    background-color: #0d9488;
+  }
+
+  .bg-cyan-50 {
+    background-color: #ecfeff;
+  }
+  .bg-cyan-100 {
+    background-color: #cffafe;
+  }
+  .bg-cyan-200 {
+    background-color: #a5f3fc;
+  }
+  .bg-cyan-300 {
+    background-color: #67e8f9;
+  }
+  .bg-cyan-400 {
+    background-color: #22d3ee;
+  }
+  .bg-cyan-500 {
+    background-color: #06b6d4;
+  }
+  .bg-cyan-600 {
+    background-color: #0891b2;
+  }
+
+  .bg-purple-50 {
+    background-color: #faf5ff;
+  }
+  .bg-purple-100 {
+    background-color: #f3e8ff;
+  }
+  .bg-purple-200 {
+    background-color: #e9d5ff;
+  }
+  .bg-purple-300 {
+    background-color: #d8b4fe;
+  }
+  .bg-purple-400 {
+    background-color: #c084fc;
+  }
+  .bg-purple-500 {
+    background-color: #a855f7;
+  }
+  .bg-purple-600 {
+    background-color: #9333ea;
+  }
+
+  .bg-rose-50 {
+    background-color: #fff1f2;
+  }
+  .bg-rose-100 {
+    background-color: #ffe4e6;
+  }
+  .bg-rose-200 {
+    background-color: #fecdd3;
+  }
+  .bg-rose-300 {
+    background-color: #fda4af;
+  }
+  .bg-rose-400 {
+    background-color: #fb7185;
+  }
+  .bg-rose-500 {
+    background-color: #f43f5e;
+  }
+  .bg-rose-600 {
+    background-color: #e11d48;
+  }
+
   /* SVG Fill colors - required for charts */
-  .fill-blue-50 { fill: #eff6ff; }
-  .fill-blue-100 { fill: #dbeafe; }
-  .fill-blue-200 { fill: #bfdbfe; }
-  .fill-blue-300 { fill: #93c5fd; }
-  .fill-blue-400 { fill: #60a5fa; }
-  .fill-blue-500 { fill: #3b82f6; }
-  .fill-blue-600 { fill: #2563eb; }
-  
-  .fill-teal-50 { fill: #f0fdfa; }
-  .fill-teal-100 { fill: #ccfbf1; }
-  .fill-teal-200 { fill: #99f6e4; }
-  .fill-teal-300 { fill: #5eead4; }
-  .fill-teal-400 { fill: #2dd4bf; }
-  .fill-teal-500 { fill: #14b8a6; }
-  .fill-teal-600 { fill: #0d9488; }
-  
-  .fill-cyan-50 { fill: #ecfeff; }
-  .fill-cyan-100 { fill: #cffafe; }
-  .fill-cyan-200 { fill: #a5f3fc; }
-  .fill-cyan-300 { fill: #67e8f9; }
-  .fill-cyan-400 { fill: #22d3ee; }
-  .fill-cyan-500 { fill: #06b6d4; }
-  .fill-cyan-600 { fill: #0891b2; }
-  
-  .fill-purple-50 { fill: #faf5ff; }
-  .fill-purple-100 { fill: #f3e8ff; }
-  .fill-purple-200 { fill: #e9d5ff; }
-  .fill-purple-300 { fill: #d8b4fe; }
-  .fill-purple-400 { fill: #c084fc; }
-  .fill-purple-500 { fill: #a855f7; }
-  .fill-purple-600 { fill: #9333ea; }
-  
-  .fill-rose-50 { fill: #fff1f2; }
-  .fill-rose-100 { fill: #ffe4e6; }
-  .fill-rose-200 { fill: #fecdd3; }
-  .fill-rose-300 { fill: #fda4af; }
-  .fill-rose-400 { fill: #fb7185; }
-  .fill-rose-500 { fill: #f43f5e; }
-  .fill-rose-600 { fill: #e11d48; }
-  
+  .fill-blue-50 {
+    fill: #eff6ff;
+  }
+  .fill-blue-100 {
+    fill: #dbeafe;
+  }
+  .fill-blue-200 {
+    fill: #bfdbfe;
+  }
+  .fill-blue-300 {
+    fill: #93c5fd;
+  }
+  .fill-blue-400 {
+    fill: #60a5fa;
+  }
+  .fill-blue-500 {
+    fill: #3b82f6;
+  }
+  .fill-blue-600 {
+    fill: #2563eb;
+  }
+
+  .fill-teal-50 {
+    fill: #f0fdfa;
+  }
+  .fill-teal-100 {
+    fill: #ccfbf1;
+  }
+  .fill-teal-200 {
+    fill: #99f6e4;
+  }
+  .fill-teal-300 {
+    fill: #5eead4;
+  }
+  .fill-teal-400 {
+    fill: #2dd4bf;
+  }
+  .fill-teal-500 {
+    fill: #14b8a6;
+  }
+  .fill-teal-600 {
+    fill: #0d9488;
+  }
+
+  .fill-cyan-50 {
+    fill: #ecfeff;
+  }
+  .fill-cyan-100 {
+    fill: #cffafe;
+  }
+  .fill-cyan-200 {
+    fill: #a5f3fc;
+  }
+  .fill-cyan-300 {
+    fill: #67e8f9;
+  }
+  .fill-cyan-400 {
+    fill: #22d3ee;
+  }
+  .fill-cyan-500 {
+    fill: #06b6d4;
+  }
+  .fill-cyan-600 {
+    fill: #0891b2;
+  }
+
+  .fill-purple-50 {
+    fill: #faf5ff;
+  }
+  .fill-purple-100 {
+    fill: #f3e8ff;
+  }
+  .fill-purple-200 {
+    fill: #e9d5ff;
+  }
+  .fill-purple-300 {
+    fill: #d8b4fe;
+  }
+  .fill-purple-400 {
+    fill: #c084fc;
+  }
+  .fill-purple-500 {
+    fill: #a855f7;
+  }
+  .fill-purple-600 {
+    fill: #9333ea;
+  }
+
+  .fill-rose-50 {
+    fill: #fff1f2;
+  }
+  .fill-rose-100 {
+    fill: #ffe4e6;
+  }
+  .fill-rose-200 {
+    fill: #fecdd3;
+  }
+  .fill-rose-300 {
+    fill: #fda4af;
+  }
+  .fill-rose-400 {
+    fill: #fb7185;
+  }
+  .fill-rose-500 {
+    fill: #f43f5e;
+  }
+  .fill-rose-600 {
+    fill: #e11d48;
+  }
+
   /* Stroke colors for line charts */
-  .stroke-blue-50 { stroke: #eff6ff; }
-  .stroke-blue-100 { stroke: #dbeafe; }
-  .stroke-blue-200 { stroke: #bfdbfe; }
-  .stroke-blue-300 { stroke: #93c5fd; }
-  .stroke-blue-400 { stroke: #60a5fa; }
-  .stroke-blue-500 { stroke: #3b82f6; }
-  .stroke-blue-600 { stroke: #2563eb; }
-  
-  .stroke-teal-50 { stroke: #f0fdfa; }
-  .stroke-teal-100 { stroke: #ccfbf1; }
-  .stroke-teal-200 { stroke: #99f6e4; }
-  .stroke-teal-300 { stroke: #5eead4; }
-  .stroke-teal-400 { stroke: #2dd4bf; }
-  .stroke-teal-500 { stroke: #14b8a6; }
-  .stroke-teal-600 { stroke: #0d9488; }
-  
-  .stroke-cyan-50 { stroke: #ecfeff; }
-  .stroke-cyan-100 { stroke: #cffafe; }
-  .stroke-cyan-200 { stroke: #a5f3fc; }
-  .stroke-cyan-300 { stroke: #67e8f9; }
-  .stroke-cyan-400 { stroke: #22d3ee; }
-  .stroke-cyan-500 { stroke: #06b6d4; }
-  .stroke-cyan-600 { stroke: #0891b2; }
-  
-  .stroke-purple-50 { stroke: #faf5ff; }
-  .stroke-purple-100 { stroke: #f3e8ff; }
-  .stroke-purple-200 { stroke: #e9d5ff; }
-  .stroke-purple-300 { stroke: #d8b4fe; }
-  .stroke-purple-400 { stroke: #c084fc; }
-  .stroke-purple-500 { stroke: #a855f7; }
-  .stroke-purple-600 { stroke: #9333ea; }
-  
-  .stroke-rose-50 { stroke: #fff1f2; }
-  .stroke-rose-100 { stroke: #ffe4e6; }
-  .stroke-rose-200 { stroke: #fecdd3; }
-  .stroke-rose-300 { stroke: #fda4af; }
-  .stroke-rose-400 { stroke: #fb7185; }
-  .stroke-rose-500 { stroke: #f43f5e; }
-  .stroke-rose-600 { stroke: #e11d48; }
-  
+  .stroke-blue-50 {
+    stroke: #eff6ff;
+  }
+  .stroke-blue-100 {
+    stroke: #dbeafe;
+  }
+  .stroke-blue-200 {
+    stroke: #bfdbfe;
+  }
+  .stroke-blue-300 {
+    stroke: #93c5fd;
+  }
+  .stroke-blue-400 {
+    stroke: #60a5fa;
+  }
+  .stroke-blue-500 {
+    stroke: #3b82f6;
+  }
+  .stroke-blue-600 {
+    stroke: #2563eb;
+  }
+
+  .stroke-teal-50 {
+    stroke: #f0fdfa;
+  }
+  .stroke-teal-100 {
+    stroke: #ccfbf1;
+  }
+  .stroke-teal-200 {
+    stroke: #99f6e4;
+  }
+  .stroke-teal-300 {
+    stroke: #5eead4;
+  }
+  .stroke-teal-400 {
+    stroke: #2dd4bf;
+  }
+  .stroke-teal-500 {
+    stroke: #14b8a6;
+  }
+  .stroke-teal-600 {
+    stroke: #0d9488;
+  }
+
+  .stroke-cyan-50 {
+    stroke: #ecfeff;
+  }
+  .stroke-cyan-100 {
+    stroke: #cffafe;
+  }
+  .stroke-cyan-200 {
+    stroke: #a5f3fc;
+  }
+  .stroke-cyan-300 {
+    stroke: #67e8f9;
+  }
+  .stroke-cyan-400 {
+    stroke: #22d3ee;
+  }
+  .stroke-cyan-500 {
+    stroke: #06b6d4;
+  }
+  .stroke-cyan-600 {
+    stroke: #0891b2;
+  }
+
+  .stroke-purple-50 {
+    stroke: #faf5ff;
+  }
+  .stroke-purple-100 {
+    stroke: #f3e8ff;
+  }
+  .stroke-purple-200 {
+    stroke: #e9d5ff;
+  }
+  .stroke-purple-300 {
+    stroke: #d8b4fe;
+  }
+  .stroke-purple-400 {
+    stroke: #c084fc;
+  }
+  .stroke-purple-500 {
+    stroke: #a855f7;
+  }
+  .stroke-purple-600 {
+    stroke: #9333ea;
+  }
+
+  .stroke-rose-50 {
+    stroke: #fff1f2;
+  }
+  .stroke-rose-100 {
+    stroke: #ffe4e6;
+  }
+  .stroke-rose-200 {
+    stroke: #fecdd3;
+  }
+  .stroke-rose-300 {
+    stroke: #fda4af;
+  }
+  .stroke-rose-400 {
+    stroke: #fb7185;
+  }
+  .stroke-rose-500 {
+    stroke: #f43f5e;
+  }
+  .stroke-rose-600 {
+    stroke: #e11d48;
+  }
+
   /* Text colors */
-  .text-blue-500 { color: #3b82f6; }
-  .text-teal-500 { color: #14b8a6; }
-  .text-cyan-500 { color: #06b6d4; }
-  .text-purple-500 { color: #a855f7; }
-  .text-rose-500 { color: #f43f5e; }
-  
+  .text-blue-500 {
+    color: #3b82f6;
+  }
+  .text-teal-500 {
+    color: #14b8a6;
+  }
+  .text-cyan-500 {
+    color: #06b6d4;
+  }
+  .text-purple-500 {
+    color: #a855f7;
+  }
+  .text-rose-500 {
+    color: #f43f5e;
+  }
+
   /* Border colors */
-  .border-blue-500 { border-color: #3b82f6; }
-  .border-teal-500 { border-color: #14b8a6; }
-  .border-cyan-500 { border-color: #06b6d4; }
-  .border-purple-500 { border-color: #a855f7; }
-  .border-rose-500 { border-color: #f43f5e; }
-  
+  .border-blue-500 {
+    border-color: #3b82f6;
+  }
+  .border-teal-500 {
+    border-color: #14b8a6;
+  }
+  .border-cyan-500 {
+    border-color: #06b6d4;
+  }
+  .border-purple-500 {
+    border-color: #a855f7;
+  }
+  .border-rose-500 {
+    border-color: #f43f5e;
+  }
+
   /* Ring colors */
-  .ring-blue-500 { --tw-ring-color: #3b82f6; }
-  .ring-teal-500 { --tw-ring-color: #14b8a6; }
-  .ring-cyan-500 { --tw-ring-color: #06b6d4; }
-  .ring-purple-500 { --tw-ring-color: #a855f7; }
-  .ring-rose-500 { --tw-ring-color: #f43f5e; }
-  
+  .ring-blue-500 {
+    --tw-ring-color: #3b82f6;
+  }
+  .ring-teal-500 {
+    --tw-ring-color: #14b8a6;
+  }
+  .ring-cyan-500 {
+    --tw-ring-color: #06b6d4;
+  }
+  .ring-purple-500 {
+    --tw-ring-color: #a855f7;
+  }
+  .ring-rose-500 {
+    --tw-ring-color: #f43f5e;
+  }
+
   /* Hover states */
-  .hover\:bg-blue-50:hover { background-color: #eff6ff; }
-  .hover\:bg-blue-100:hover { background-color: #dbeafe; }
-  .hover\:bg-teal-50:hover { background-color: #f0fdfa; }
-  .hover\:bg-teal-100:hover { background-color: #ccfbf1; }
-  .hover\:bg-cyan-50:hover { background-color: #ecfeff; }
-  .hover\:bg-cyan-100:hover { background-color: #cffafe; }
-  .hover\:bg-purple-50:hover { background-color: #faf5ff; }
-  .hover\:bg-purple-100:hover { background-color: #f3e8ff; }
-  .hover\:bg-rose-50:hover { background-color: #fff1f2; }
-  .hover\:bg-rose-100:hover { background-color: #ffe4e6; }
-  
+  .hover\:bg-blue-50:hover {
+    background-color: #eff6ff;
+  }
+  .hover\:bg-blue-100:hover {
+    background-color: #dbeafe;
+  }
+  .hover\:bg-teal-50:hover {
+    background-color: #f0fdfa;
+  }
+  .hover\:bg-teal-100:hover {
+    background-color: #ccfbf1;
+  }
+  .hover\:bg-cyan-50:hover {
+    background-color: #ecfeff;
+  }
+  .hover\:bg-cyan-100:hover {
+    background-color: #cffafe;
+  }
+  .hover\:bg-purple-50:hover {
+    background-color: #faf5ff;
+  }
+  .hover\:bg-purple-100:hover {
+    background-color: #f3e8ff;
+  }
+  .hover\:bg-rose-50:hover {
+    background-color: #fff1f2;
+  }
+  .hover\:bg-rose-100:hover {
+    background-color: #ffe4e6;
+  }
+
   /* Opacity modifiers for Tremor */
-  .bg-opacity-10 { --tw-bg-opacity: 0.1; }
-  .bg-opacity-20 { --tw-bg-opacity: 0.2; }
-  .bg-opacity-30 { --tw-bg-opacity: 0.3; }
-  .bg-opacity-40 { --tw-bg-opacity: 0.4; }
-  .bg-opacity-50 { --tw-bg-opacity: 0.5; }
-  .bg-opacity-60 { --tw-bg-opacity: 0.6; }
-  .bg-opacity-70 { --tw-bg-opacity: 0.7; }
-  .bg-opacity-80 { --tw-bg-opacity: 0.8; }
-  .bg-opacity-90 { --tw-bg-opacity: 0.9; }
+  .bg-opacity-10 {
+    --tw-bg-opacity: 0.1;
+  }
+  .bg-opacity-20 {
+    --tw-bg-opacity: 0.2;
+  }
+  .bg-opacity-30 {
+    --tw-bg-opacity: 0.3;
+  }
+  .bg-opacity-40 {
+    --tw-bg-opacity: 0.4;
+  }
+  .bg-opacity-50 {
+    --tw-bg-opacity: 0.5;
+  }
+  .bg-opacity-60 {
+    --tw-bg-opacity: 0.6;
+  }
+  .bg-opacity-70 {
+    --tw-bg-opacity: 0.7;
+  }
+  .bg-opacity-80 {
+    --tw-bg-opacity: 0.8;
+  }
+  .bg-opacity-90 {
+    --tw-bg-opacity: 0.9;
+  }
 }
 
 @layer base {
@@ -344,7 +622,7 @@ body {
     --chart-3: hsl(240 50% 70%);
     --chart-4: hsl(35 95% 65%);
     --chart-5: hsl(340 85% 70%);
-    
+
     /* Dark mode Tremor overrides */
     --color-tremor-brand-faint: #0f172a;
     --color-tremor-brand-muted: #1e3a8a;
@@ -352,15 +630,15 @@ body {
     --color-tremor-brand: #3b82f6;
     --color-tremor-brand-emphasis: #60a5fa;
     --color-tremor-brand-inverted: #030712;
-    
+
     --color-tremor-background-muted: #111827;
     --color-tremor-background-subtle: #1f2937;
     --color-tremor-background: #030712;
     --color-tremor-background-emphasis: #d1d5db;
-    
+
     --color-tremor-border: #374151;
     --color-tremor-ring: #3b82f6;
-    
+
     --color-tremor-content-subtle: #6b7280;
     --color-tremor-content: #9ca3af;
     --color-tremor-content-emphasis: #e5e7eb;
