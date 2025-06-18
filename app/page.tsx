@@ -17,17 +17,12 @@ import {
   TableCell,
   type DateRangePickerValue,
 } from "@tremor/react"
-import {
-  UsersIcon,
-  CubeTransparentIcon,
-  TagIcon,
-  ExclamationCircleIcon,
-  ChartBarIcon,
-} from "@heroicons/react/24/outline"
+import { UsersIcon, CubeTransparentIcon, TagIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
 import type { Metadata } from "next"
 import { valueFormatter } from "@/lib/formatters"
+import { CardStatusDisplay } from "@/components/card-status-display"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
@@ -86,39 +81,6 @@ interface DashboardData {
 
   top_models: TopModelsDataPoint[]
   top_models_error?: string
-}
-
-// Helper component for displaying status within cards (Error or No Data)
-const CardStatusDisplay = ({
-  error,
-  noData,
-  minHeightClassName,
-  noDataMessage = "No data for selected period.",
-}: {
-  error?: string
-  noData?: boolean
-  minHeightClassName: string
-  noDataMessage?: string
-}) => {
-  if (error) {
-    return (
-      <Flex className={`${minHeightClassName} items-center justify-center p-4`} flexDirection="col">
-        <Icon icon={ExclamationCircleIcon} color="rose" variant="light" size="lg" />
-        <Text className="mt-2 text-center" color="rose">
-          {error}
-        </Text>
-      </Flex>
-    )
-  }
-  if (noData) {
-    return (
-      <Flex className={`${minHeightClassName} items-center justify-center p-4`} flexDirection="col">
-        <Icon icon={ChartBarIcon} color="gray" variant="light" size="lg" />
-        <Text className="mt-2 text-center text-gray-500">{noDataMessage}</Text>
-      </Flex>
-    )
-  }
-  return null
 }
 
 async function getDashboardData(
