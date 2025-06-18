@@ -2,6 +2,8 @@
 
 A privacy-focused analytics dashboard for Sparkle-enabled macOS applications. Track app usage, version distribution, and system metrics without compromising user privacy.
 
+[![CI](https://github.com/steipete/stats-store/actions/workflows/ci.yml/badge.svg)](https://github.com/steipete/stats-store/actions/workflows/ci.yml)
+[![Test Coverage](https://github.com/steipete/stats-store/actions/workflows/coverage.yml/badge.svg)](https://github.com/steipete/stats-store/actions/workflows/coverage.yml)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/amantus/v0-stats-store)
 [![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/DBgAoEiWrMO)
 

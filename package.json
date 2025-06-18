@@ -1,7 +1,12 @@
 {
-  "name": "my-v0-project",
+  "name": "stats-store",
   "version": "0.1.0",
   "private": true,
+  "description": "Privacy-focused analytics dashboard for Sparkle-enabled macOS applications",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -83,6 +88,7 @@
     "@typescript-eslint/eslint-plugin": "^8.34.1",
     "@typescript-eslint/parser": "^8.34.1",
     "@vitejs/plugin-react": "^4.5.2",
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.29.0",
