@@ -27,7 +27,7 @@ yarn-error.log*
 next-env.d.ts
 
 # supabase
-supabase/
+/supabase/
 
 # temp files
 temp_url.txt
