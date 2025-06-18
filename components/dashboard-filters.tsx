@@ -100,7 +100,7 @@ export function DashboardFilters({
           className="w-full h-full appearance-none pl-3 pr-10 py-0 bg-transparent text-foreground focus:outline-none rounded-lg"
         >
           {options.map((opt) => (
-            <option key={opt.id} value={opt.id} className="text-foreground bg-background dark:bg-popover">
+            <option key={opt.id} value={opt.id} className="text-foreground bg-popover">
               {opt.name}
             </option>
           ))}

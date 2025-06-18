@@ -593,13 +593,69 @@ body {
     --radius: var(--radius-lg);
   }
 
+  /* Media query for system dark mode preference */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Dark mode color overrides */
+      --background: hsl(240 6% 10%);
+      --foreground: hsl(0 0% 98%);
+      --card: hsl(240 6% 12%);
+      --card-foreground: hsl(0 0% 98%);
+      --popover: hsl(240 6% 12%);
+      --popover-foreground: hsl(0 0% 98%);
+      --primary: hsl(217 91% 60%);
+      --primary-foreground: hsl(0 0% 100%);
+      --secondary: hsl(240 4% 18%);
+      --secondary-foreground: hsl(0 0% 98%);
+      --muted: hsl(240 4% 22%);
+      --muted-foreground: hsl(240 5% 65%);
+      --accent: hsl(240 4% 18%);
+      --accent-foreground: hsl(0 0% 98%);
+      --destructive: hsl(0 62.8% 30.6%);
+      --destructive-foreground: hsl(0 0% 98%);
+      --border: hsl(240 4% 22%);
+      --input-bg: hsl(240 4% 15%);
+      --input-border: hsl(240 4% 25%);
+      --ring: hsl(217 91% 60%);
+      --tooltip-bg: hsl(0 0% 98%);
+      --tooltip-foreground: hsl(240 10% 3.9%);
+      --chart-1: hsl(217 91% 60%);
+      --chart-2: hsl(173 65% 55%);
+      --chart-3: hsl(240 50% 70%);
+      --chart-4: hsl(35 95% 65%);
+      --chart-5: hsl(340 85% 70%);
+
+      /* Dark mode Tremor overrides */
+      --color-tremor-brand-faint: #0f172a;
+      --color-tremor-brand-muted: #1e3a8a;
+      --color-tremor-brand-subtle: #2563eb;
+      --color-tremor-brand: #3b82f6;
+      --color-tremor-brand-emphasis: #60a5fa;
+      --color-tremor-brand-inverted: #030712;
+
+      --color-tremor-background-muted: #111827;
+      --color-tremor-background-subtle: #1f2937;
+      --color-tremor-background: hsl(240 6% 12%);
+      --color-tremor-background-emphasis: #d1d5db;
+
+      --color-tremor-border: #374151;
+      --color-tremor-ring: #3b82f6;
+
+      --color-tremor-content-subtle: #6b7280;
+      --color-tremor-content: #9ca3af;
+      --color-tremor-content-emphasis: #e5e7eb;
+      --color-tremor-content-strong: #f9fafb;
+      --color-tremor-content-inverted: #000000;
+    }
+  }
+
   .dark {
-    /* Dark mode color overrides */
+    /* Dark mode color overrides when explicitly set */
     --background: hsl(240 6% 10%);
     --foreground: hsl(0 0% 98%);
     --card: hsl(240 6% 12%);
     --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(240 6% 10%);
+    --popover: hsl(240 6% 12%);
     --popover-foreground: hsl(0 0% 98%);
     --primary: hsl(217 91% 60%);
     --primary-foreground: hsl(0 0% 100%);
@@ -633,7 +689,7 @@ body {
 
     --color-tremor-background-muted: #111827;
     --color-tremor-background-subtle: #1f2937;
-    --color-tremor-background: #030712;
+    --color-tremor-background: hsl(240 6% 12%);
     --color-tremor-background-emphasis: #d1d5db;
 
     --color-tremor-border: #374151;
@@ -700,11 +756,22 @@ body {
   [data-radix-popper-content-wrapper] > div,
   [data-radix-popper-content-wrapper] [role="dialog"] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius);
     box-shadow:
       0 10px 15px -3px rgb(0 0 0 / 0.1),
       0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  /* Ensure all child elements inherit text color */
+  [role="dialog"][aria-label*="calendar"] *,
+  [data-state="open"][data-side] *,
+  .tremor-DateRangePicker-dropdownContainer *,
+  .tremor-DateRangePicker-dropdown *,
+  [data-radix-popper-content-wrapper] > div *,
+  [data-radix-popper-content-wrapper] [role="dialog"] * {
+    color: inherit;
   }
 
   /* Force popover backgrounds on all Radix popover elements */
@@ -714,6 +781,7 @@ body {
 
   [data-radix-popper-content-wrapper] > * {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
   }
 
   .tremor-DateRangePicker-calendar,
@@ -806,6 +874,7 @@ body {
   [data-radix-presence] > div,
   div[style*="z-index: 2147483647"] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
   }
 
   /* Specific fix for Tremor date picker popover content */
@@ -818,25 +887,37 @@ body {
   /* Radix Select content */
   [data-radix-select-content] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
 
   /* Radix Dropdown Menu content */
   [data-radix-dropdown-menu-content] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
 
   /* Radix Context Menu content */
   [data-radix-context-menu-content] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
 
   /* Radix Popover content */
   [data-radix-popover-content] {
     background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
+  }
+  
+  /* Specific fix for Tremor DateRangePicker calendar */
+  [class*="tremor-DateRangePicker"] [role="dialog"],
+  [class*="tremor-DateRangePicker"] [data-radix-popper-content-wrapper],
+  [class*="tremor-DateRangePicker"] [data-state="open"] {
+    background-color: hsl(var(--popover)) !important;
+    color: hsl(var(--popover-foreground)) !important;
   }
 
   /* Tremor DateRangePicker X button spacing fix */
