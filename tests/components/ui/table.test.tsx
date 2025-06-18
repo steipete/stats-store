@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect } from "vitest"
+import { render, screen } from "@testing-library/react"
 import {
   Table,
   TableBody,
@@ -9,10 +9,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
+} from "@/components/ui/table"
 
-describe('Table Components', () => {
-  it('renders Table with proper styling', () => {
+describe("Table Components", () => {
+  it("renders Table with proper styling", () => {
     render(
       <Table data-testid="table">
         <TableBody>
@@ -22,12 +22,12 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    const table = screen.getByTestId('table')
-    expect(table).toHaveClass('w-full', 'caption-bottom', 'text-sm')
+
+    const table = screen.getByTestId("table")
+    expect(table).toHaveClass("w-full", "caption-bottom", "text-sm")
   })
 
-  it('renders TableHeader with proper styling', () => {
+  it("renders TableHeader with proper styling", () => {
     render(
       <Table>
         <TableHeader data-testid="header">
@@ -37,12 +37,12 @@ describe('Table Components', () => {
         </TableHeader>
       </Table>
     )
-    
-    const header = screen.getByTestId('header')
-    expect(header).toHaveClass('[&_tr]:border-b')
+
+    const header = screen.getByTestId("header")
+    expect(header).toHaveClass("[&_tr]:border-b")
   })
 
-  it('renders TableBody with proper styling', () => {
+  it("renders TableBody with proper styling", () => {
     render(
       <Table>
         <TableBody data-testid="body">
@@ -52,12 +52,12 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    const body = screen.getByTestId('body')
-    expect(body).toHaveClass('[&_tr:last-child]:border-0')
+
+    const body = screen.getByTestId("body")
+    expect(body).toHaveClass("[&_tr:last-child]:border-0")
   })
 
-  it('renders TableFooter with proper styling', () => {
+  it("renders TableFooter with proper styling", () => {
     render(
       <Table>
         <TableFooter data-testid="footer">
@@ -67,12 +67,12 @@ describe('Table Components', () => {
         </TableFooter>
       </Table>
     )
-    
-    const footer = screen.getByTestId('footer')
-    expect(footer).toHaveClass('border-t', 'bg-muted/50', 'font-medium')
+
+    const footer = screen.getByTestId("footer")
+    expect(footer).toHaveClass("border-t", "bg-muted/50", "font-medium")
   })
 
-  it('renders TableRow with proper styling', () => {
+  it("renders TableRow with proper styling", () => {
     render(
       <Table>
         <TableBody>
@@ -82,17 +82,12 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    const row = screen.getByTestId('row')
-    expect(row).toHaveClass(
-      'border-b',
-      'transition-colors',
-      'hover:bg-muted/50',
-      'data-[state=selected]:bg-muted'
-    )
+
+    const row = screen.getByTestId("row")
+    expect(row).toHaveClass("border-b", "transition-colors", "hover:bg-muted/50", "data-[state=selected]:bg-muted")
   })
 
-  it('renders TableHead with proper styling', () => {
+  it("renders TableHead with proper styling", () => {
     render(
       <Table>
         <TableHeader>
@@ -102,19 +97,12 @@ describe('Table Components', () => {
         </TableHeader>
       </Table>
     )
-    
-    const head = screen.getByTestId('head')
-    expect(head).toHaveClass(
-      'h-12',
-      'px-4',
-      'text-left',
-      'align-middle',
-      'font-medium',
-      'text-muted-foreground'
-    )
+
+    const head = screen.getByTestId("head")
+    expect(head).toHaveClass("h-12", "px-4", "text-left", "align-middle", "font-medium", "text-muted-foreground")
   })
 
-  it('renders TableCell with proper styling', () => {
+  it("renders TableCell with proper styling", () => {
     render(
       <Table>
         <TableBody>
@@ -124,12 +112,12 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    const cell = screen.getByTestId('cell')
-    expect(cell).toHaveClass('p-4', 'align-middle')
+
+    const cell = screen.getByTestId("cell")
+    expect(cell).toHaveClass("p-4", "align-middle")
   })
 
-  it('renders TableCaption with proper styling', () => {
+  it("renders TableCaption with proper styling", () => {
     render(
       <Table>
         <TableCaption data-testid="caption">Table Caption</TableCaption>
@@ -140,12 +128,12 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    const caption = screen.getByTestId('caption')
-    expect(caption).toHaveClass('mt-4', 'text-sm', 'text-muted-foreground')
+
+    const caption = screen.getByTestId("caption")
+    expect(caption).toHaveClass("mt-4", "text-sm", "text-muted-foreground")
   })
 
-  it('renders complete table structure', () => {
+  it("renders complete table structure", () => {
     render(
       <Table>
         <TableCaption>A list of recent invoices.</TableCaption>
@@ -179,15 +167,15 @@ describe('Table Components', () => {
         </TableFooter>
       </Table>
     )
-    
+
     // Check all parts are rendered
-    expect(screen.getByText('A list of recent invoices.')).toBeInTheDocument()
-    expect(screen.getByText('Invoice')).toBeInTheDocument()
-    expect(screen.getByText('INV001')).toBeInTheDocument()
-    expect(screen.getByText('$400.00')).toBeInTheDocument()
+    expect(screen.getByText("A list of recent invoices.")).toBeInTheDocument()
+    expect(screen.getByText("Invoice")).toBeInTheDocument()
+    expect(screen.getByText("INV001")).toBeInTheDocument()
+    expect(screen.getByText("$400.00")).toBeInTheDocument()
   })
 
-  it('accepts custom className on all components', () => {
+  it("accepts custom className on all components", () => {
     render(
       <Table className="custom-table">
         <TableHeader className="custom-header">
@@ -202,7 +190,7 @@ describe('Table Components', () => {
         </TableBody>
       </Table>
     )
-    
-    expect(screen.getByRole('table')).toHaveClass('custom-table')
+
+    expect(screen.getByRole("table")).toHaveClass("custom-table")
   })
 })

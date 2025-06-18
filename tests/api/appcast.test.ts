@@ -308,7 +308,7 @@ describe("/api/v1/appcast/[...path]", () => {
 
   it("should handle database errors when recording telemetry", async () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
-    
+
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: true,
       text: async () => mockAppcastXML,
@@ -319,7 +319,8 @@ describe("/api/v1/appcast/[...path]", () => {
 
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
-      from: vi.fn()
+      from: vi
+        .fn()
         .mockReturnValueOnce({
           // First call for app check - succeeds
           select: vi.fn(() => ({
@@ -384,7 +385,7 @@ describe("/api/v1/appcast/[...path]", () => {
     const mockHeaders = new Headers({
       "Content-Type": "application/xml",
       "Last-Modified": "Wed, 01 Jan 2024 00:00:00 GMT",
-      "ETag": '"123456"',
+      ETag: '"123456"',
     })
 
     vi.mocked(global.fetch).mockResolvedValueOnce({

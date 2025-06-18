@@ -166,7 +166,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Pass through additional headers from upstream
     const headersToPassThrough = ["Last-Modified", "ETag"]
-    headersToPassThrough.forEach(header => {
+    headersToPassThrough.forEach((header) => {
       const value = appcastResponse.headers.get(header)
       if (value) {
         responseHeaders.set(header, value)

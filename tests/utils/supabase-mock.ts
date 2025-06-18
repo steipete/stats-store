@@ -1,5 +1,5 @@
-import { vi } from 'vitest'
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { vi } from "vitest"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
 interface MockData {
   apps?: any[]
@@ -54,27 +54,27 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
   const mockRpc = (functionName: string, params?: any) => ({
     then: (resolve: any) => {
       let data = null
-      
+
       switch (functionName) {
-        case 'get_daily_report_counts':
+        case "get_daily_report_counts":
           data = mockData.daily_counts || []
           break
-        case 'get_os_version_distribution':
+        case "get_os_version_distribution":
           data = mockData.os_distribution || []
           break
-        case 'get_cpu_architecture_distribution':
+        case "get_cpu_architecture_distribution":
           data = mockData.cpu_distribution || []
           break
-        case 'get_top_models':
+        case "get_top_models":
           data = mockData.top_models || []
           break
-        case 'get_latest_app_version':
-          data = mockData.latest_version || 'N/A'
+        case "get_latest_app_version":
+          data = mockData.latest_version || "N/A"
           break
         default:
           data = null
       }
-      
+
       resolve({ data, error: null })
       return Promise.resolve({ data, error: null })
     },

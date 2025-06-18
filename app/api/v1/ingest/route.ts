@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       console.error("App validation error:", appError.message, "Bundle ID:", payload.bundleIdentifier)
       return NextResponse.json({ error: "Internal server error" }, { status: 500 })
     }
-    
+
     if (!app) {
       console.error("App not found:", payload.bundleIdentifier)
       return NextResponse.json({ error: "Unknown bundle identifier" }, { status: 400 })

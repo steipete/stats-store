@@ -176,7 +176,8 @@ describe("/api/v1/ingest", () => {
   it("should handle database errors when inserting report", async () => {
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
-      from: vi.fn()
+      from: vi
+        .fn()
         .mockReturnValueOnce({
           // First call for app check - succeeds
           select: vi.fn(() => ({
@@ -219,7 +220,7 @@ describe("/api/v1/ingest", () => {
   it("should handle missing IP address gracefully", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         // No x-forwarded-for header
       },
@@ -266,7 +267,7 @@ describe("/api/v1/ingest", () => {
     })
 
     const response = await POST(request)
-    
+
     expect(response.status).toBe(201)
     // In a real test, we'd verify the parsed values were inserted correctly
   })

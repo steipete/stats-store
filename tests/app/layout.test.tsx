@@ -1,87 +1,87 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import RootLayout from '@/app/layout'
-import { Metadata } from 'next'
-import { ThemeProvider } from '@/components/theme-provider'
-import { Analytics } from '@vercel/analytics/react'
+import { describe, it, expect, vi } from "vitest"
+import { render, screen } from "@testing-library/react"
+import RootLayout from "@/app/layout"
+import { Metadata } from "next"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Analytics } from "@vercel/analytics/react"
 
 // Mock next/font
-vi.mock('next/font/google', () => ({
+vi.mock("next/font/google", () => ({
   Inter: () => ({
-    className: 'inter-font',
+    className: "inter-font",
   }),
 }))
 
 // Mock components
-vi.mock('@/components/theme-provider', () => ({
+vi.mock("@/components/theme-provider", () => ({
   ThemeProvider: ({ children, ...props }: any) => {
     // Return a React element-like object
     return {
-      $$typeof: Symbol.for('react.element'),
-      type: 'div',
+      $$typeof: Symbol.for("react.element"),
+      type: "div",
       key: null,
       ref: null,
       props: {
-        'data-testid': 'theme-provider',
+        "data-testid": "theme-provider",
         ...props,
-        children
+        children,
       },
       _owner: null,
-      _store: {}
+      _store: {},
     }
   },
 }))
 
-vi.mock('@vercel/analytics/react', () => ({
+vi.mock("@vercel/analytics/react", () => ({
   Analytics: () => ({
-    $$typeof: Symbol.for('react.element'),
-    type: 'div',
+    $$typeof: Symbol.for("react.element"),
+    type: "div",
     key: null,
     ref: null,
     props: {
-      'data-testid': 'vercel-analytics'
+      "data-testid": "vercel-analytics",
     },
     _owner: null,
-    _store: {}
+    _store: {},
   }),
 }))
 
-describe('Root Layout', () => {
-  it('renders with correct structure', () => {
+describe("Root Layout", () => {
+  it("renders with correct structure", () => {
     const TestChild = () => <div>Test Content</div>
-    
+
     const layout = RootLayout({ children: <TestChild /> })
-    
+
     // Verify HTML structure
-    expect(layout.type).toBe('html')
-    expect(layout.props.lang).toBe('en')
+    expect(layout.type).toBe("html")
+    expect(layout.props.lang).toBe("en")
     expect(layout.props.suppressHydrationWarning).toBe(true)
-    
+
     // Check body exists - body is the only child of html
     const body = layout.props.children
-    expect(body.type).toBe('body')
-    
+    expect(body.type).toBe("body")
+
     // Check that body has children (the exact structure depends on React internals)
     expect(body.props.children).toBeDefined()
-    
+
     // The mocked components should have been created
     // We can verify this by checking that our mocks were called/imported
     expect(vi.mocked(ThemeProvider)).toBeDefined()
     expect(vi.mocked(Analytics)).toBeDefined()
   })
 
-  it('passes children to ThemeProvider', () => {
+  it("passes children to ThemeProvider", () => {
     const TestContent = () => <main>Main Content</main>
-    
+
     const layout = RootLayout({ children: <TestContent /> })
     const body = layout.props.children
     const themeProvider = body.props.children[0]
-    
+
     // Verify children are passed through
     expect(themeProvider.props.children.type).toBe(TestContent)
   })
 
-  it('renders multiple children correctly', () => {
+  it("renders multiple children correctly", () => {
     const MultipleChildren = () => (
       <>
         <header>Header</header>
@@ -89,32 +89,31 @@ describe('Root Layout', () => {
         <footer>Footer</footer>
       </>
     )
-    
+
     const layout = RootLayout({ children: <MultipleChildren /> })
     const body = layout.props.children
     const themeProvider = body.props.children[0]
-    
+
     expect(themeProvider.props.children.type).toBe(MultipleChildren)
   })
 })
 
-describe('Layout Metadata', () => {
-  it('exports correct metadata', async () => {
+describe("Layout Metadata", () => {
+  it("exports correct metadata", async () => {
     // Import the metadata export
-    const layoutModule = await import('@/app/layout')
+    const layoutModule = await import("@/app/layout")
     const metadata = layoutModule.metadata as Metadata
 
     expect(metadata.title).toEqual({
-      default: 'stats.store - Fast, open, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects and indie developers.',
-      template: '%s | stats.store',
+      default:
+        "stats.store - Fast, open, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects and indie developers.",
+      template: "%s | stats.store",
     })
     expect(metadata.description).toBe(
-      'Fast, open, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects and indie developers.'
+      "Fast, open, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects and indie developers."
     )
-    expect(metadata.authors).toEqual([
-      { name: 'Peter Steinberger', url: 'https://steipete.me' }
-    ])
-    expect(metadata.creator).toBe('Peter Steinberger')
-    expect(metadata.publisher).toBe('Peter Steinberger')
+    expect(metadata.authors).toEqual([{ name: "Peter Steinberger", url: "https://steipete.me" }])
+    expect(metadata.creator).toBe("Peter Steinberger")
+    expect(metadata.publisher).toBe("Peter Steinberger")
   })
 })
