@@ -159,7 +159,7 @@ async function getDashboardData(
     installsTimeseriesErrorMessage = "Could not load installations data."
   } else if (dailyCountsData) {
     const countsByDay: { [key: string]: number } = {}
-    dailyCountsData.forEach((row) => {
+    dailyCountsData.forEach((row: any) => {
       countsByDay[row.report_day] = Number(row.report_count) || 0
     })
     const dateInterval = eachDayOfInterval({ start: queryFrom, end: queryTo })
@@ -180,7 +180,7 @@ async function getDashboardData(
     console.error("Error fetching OS breakdown (RPC):", osErrorRpc.message)
     osBreakdownErrorMessage = "Could not load OS distribution."
   } else if (osDataRpc) {
-    osBreakdown = osDataRpc.map((item) => ({
+    osBreakdown = osDataRpc.map((item: any) => ({
       name: `macOS ${item.os_version_name}`,
       Users: Number(item.user_count) || 0,
     }))
@@ -193,7 +193,7 @@ async function getDashboardData(
     console.error("Error fetching CPU breakdown (RPC):", cpuErrorRpc.message)
     cpuBreakdownErrorMessage = "Could not load CPU architecture data."
   } else if (cpuDataRpc) {
-    cpuBreakdown = cpuDataRpc.map((item) => ({
+    cpuBreakdown = cpuDataRpc.map((item: any) => ({
       name: item.cpu_arch_name,
       Users: Number(item.user_count) || 0,
     }))
@@ -209,7 +209,7 @@ async function getDashboardData(
     console.error("Error fetching top models (RPC):", modelErrorRpc.message)
     topModelsErrorMessage = "Could not load top models data."
   } else if (modelDataRpc) {
-    topModels = modelDataRpc.map((item) => ({
+    topModels = modelDataRpc.map((item: any) => ({
       model: item.model_name,
       count: Number(item.report_count) || 0,
     }))
@@ -285,12 +285,11 @@ export default async function DashboardPage({
           <Flex alignItems="start">
             <Text>Unique Users</Text>
             {data.kpisError?.unique_installs ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" tooltip={data.kpisError.unique_installs} size="sm" />
+              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
             ) : (
               <Icon
                 icon={UsersIcon}
                 variant="light"
-                tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
                 color="blue"
                 size="sm"
               />
@@ -306,12 +305,11 @@ export default async function DashboardPage({
           <Flex alignItems="start">
             <Text>Total Reports</Text>
             {data.kpisError?.reports_this_period ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" tooltip={data.kpisError.reports_this_period} size="sm" />
+              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
             ) : (
               <Icon
                 icon={CubeTransparentIcon}
                 variant="light"
-                tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
                 color="green"
                 size="sm"
               />
@@ -327,12 +325,11 @@ export default async function DashboardPage({
           <Flex alignItems="start">
             <Text>Latest Version Reported</Text>
             {data.kpisError?.latest_version ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" tooltip={data.kpisError.latest_version} size="sm" />
+              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
             ) : (
               <Icon
                 icon={TagIcon}
                 variant="light"
-                tooltip="Highest reported application version (semantically sorted)"
                 color="amber"
                 size="sm"
               />

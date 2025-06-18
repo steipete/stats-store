@@ -65,7 +65,7 @@ export function DashboardFilters({
       return (
         <div className="flex items-center space-x-2 p-2 border border-rose-500 rounded-md bg-rose-50 dark:bg-rose-900/30 h-10">
           <ExclamationCircleIcon className="h-5 w-5 text-rose-500 flex-shrink-0" />
-          <Text color="rose" truncate>
+          <Text color="rose">
             {appsError}
           </Text>
         </div>
@@ -79,7 +79,7 @@ export function DashboardFilters({
       return (
         <div className="flex items-center space-x-2 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800 h-10">
           <InformationCircleIcon className="h-5 w-5 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-          <Text color="gray" truncate>
+          <Text color="gray">
             No applications found.
           </Text>
         </div>

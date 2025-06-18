@@ -14,8 +14,8 @@ interface SparkleReportPayload {
   ramMB?: string
 }
 
-function mapCpuTypeToArch(cputype?: string): string | null {
-  if (!cputype) return null
+function mapCpuTypeToArch(cputype?: string): string | undefined {
+  if (!cputype) return undefined
   if (cputype === "16777228") return "arm64"
   if (cputype === "16777223") return "x86_64"
   return "unknown"
@@ -24,11 +24,9 @@ function mapCpuTypeToArch(cputype?: string): string | null {
 async function getIp(request: NextRequest): Promise<string> {
   let ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim()
   if (ip) return ip
-  ip = request.headers.get("x-real-ip")
-  if (ip) return ip
-  if (request.ip) return request.ip
-  // @ts-ignore
-  return request.socket?.remoteAddress || "unknown_ip"
+  const realIp = request.headers.get("x-real-ip")
+  if (realIp) return realIp
+  return "unknown_ip"
 }
 
 export async function POST(request: NextRequest) {
