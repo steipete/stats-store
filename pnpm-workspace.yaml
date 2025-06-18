@@ -1,2 +1,5 @@
+packages:
+  - '.'
+
 overrides:
   cookie@<0.7.0: '>=0.7.0'
