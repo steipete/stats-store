@@ -5,34 +5,19 @@
 
 /* Theme configuration */
 @theme {
-  --color-background: hsl(0 0% 98%);
-  --color-foreground: hsl(240 10% 3.9%);
-
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(240 10% 3.9%);
-
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(240 10% 3.9%);
-
-  --color-primary: hsl(221 83% 53%);
-  --color-primary-foreground: hsl(0 0% 100%);
-
-  --color-secondary: hsl(0 0% 94%);
-  --color-secondary-foreground: hsl(240 10% 3.9%);
-
-  --color-muted: hsl(0 0% 90%);
-  --color-muted-foreground: hsl(240 5% 45%);
-
-  --color-accent: hsl(0 0% 96.1%);
-  --color-accent-foreground: hsl(240 10% 3.9%);
-
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(0 0% 98%);
-
-  --color-border: hsl(0 0% 90%);
-  --color-input: hsl(0 0% 100%);
-  --color-input-border: hsl(0 0% 86%);
-  --color-ring: hsl(221 83% 53%);
+  /* Define semantic color names that Tailwind will use */
+  --color-background: var(--background);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input: var(--input-bg);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-popover: var(--popover);
 
   --color-tooltip: hsl(240 6% 10%);
   --color-tooltip-foreground: hsl(0 0% 98%);
@@ -713,11 +698,35 @@ body {
   .dark text.recharts-text /* For labels inside charts like Donut */,
   .dark .tremor-chart-tooltip-label /* Tremor's tooltip label */,
   .dark .tremor-chart-tooltip-value /* Tremor's tooltip value */ {
-    fill: hsl(var(--muted-foreground)) !important; /* Use muted-foreground for less emphasis */
+    fill: hsl(240 5% 65%) !important; /* Use muted-foreground for less emphasis */
   }
 
   .dark .recharts-label /* For axis labels if any */ {
-    fill: hsl(var(--foreground)) !important;
+    fill: hsl(0 0% 98%) !important;
+  }
+  
+  /* Dark mode chart grid and axis lines */
+  .dark .recharts-cartesian-grid-horizontal line,
+  .dark .recharts-cartesian-grid-vertical line {
+    stroke: hsl(240 4% 22%) !important;
+  }
+  
+  .dark .recharts-cartesian-axis-line {
+    stroke: hsl(240 4% 22%) !important;
+  }
+  
+  /* Dark mode chart text colors */
+  .dark .recharts-text {
+    fill: hsl(240 5% 65%) !important;
+  }
+  
+  /* Dark mode table text */
+  .dark [class*="tremor-TableCell"] {
+    color: hsl(0 0% 98%) !important;
+  }
+  
+  .dark [class*="tremor-TableHeaderCell"] {
+    color: hsl(240 5% 65%) !important;
   }
 
   /* Ensure Tremor DateRangePicker text is themed */
