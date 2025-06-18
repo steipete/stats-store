@@ -30,16 +30,20 @@ vi.mock("@tremor/react", () => ({
       ))}
     </div>
   ),
-  DonutChart: ({ data, category, value, valueFormatter, ...props }: any) => (
-    <div data-testid="donut-chart" {...props}>
-      {data?.map((item: any, i: number) => (
-        <div key={i}>
-          {category && item[category]}
-          <span>{valueFormatter ? valueFormatter(item[value]) : item[value]}</span>
-        </div>
-      ))}
-    </div>
-  ),
+  DonutChart: ({ data, category, index, valueFormatter, ...props }: any) => {
+    // Remove the 'index' prop from props before spreading to avoid React warnings
+    const { index: _, ...restProps } = props
+    return (
+      <div data-testid="donut-chart" {...restProps}>
+        {data?.map((item: any, i: number) => (
+          <div key={i}>
+            <span>{item[index]}</span>
+            <span>{valueFormatter ? valueFormatter(item[category]) : item[category]}</span>
+          </div>
+        ))}
+      </div>
+    )
+  },
 }))
 
 describe("Client Chart Components", () => {

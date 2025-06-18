@@ -34,7 +34,9 @@ The real-time system uses an aggregated update approach (Option 2) that provides
 Execute the following SQL scripts in your Supabase dashboard:
 
 \`\`\`bash
+
 # In Supabase SQL Editor, run these scripts in order:
+
 scripts/12-create-realtime-tables.sql
 scripts/13-create-realtime-triggers.sql
 \`\`\`
@@ -131,10 +133,10 @@ Modify toast notifications in `components/realtime-dashboard-wrapper.tsx`:
 
 \`\`\`typescript
 onNewUser: (event) => {
-  toast.success(`New user detected!`, {
-    description: `App version: ${event.event_data.app_version}`,
-    icon: <SparklesIcon className="h-4 w-4" />,
-  })
+toast.success(`New user detected!`, {
+description: `App version: ${event.event_data.app_version}`,
+icon: <SparklesIcon className="h-4 w-4" />,
+})
 }
 \`\`\`
 

@@ -38,10 +38,10 @@ export function useRealtimeStats(options: UseRealtimeStatsOptions = {}) {
   const [statsCache, setStatsCache] = useState<StatsCache>({})
 
   // Memoize supabase client to prevent recreating on every render
-  const supabase = useMemo(() => createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  ), [])
+  const supabase = useMemo(
+    () => createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!),
+    []
+  )
 
   // Fetch initial stats cache
   const fetchStatsCache = useCallback(async () => {
@@ -87,7 +87,7 @@ export function useRealtimeStats(options: UseRealtimeStatsOptions = {}) {
     const setupRealtimeSubscription = async () => {
       // Prevent multiple subscriptions
       if (isSubscribed) return
-      
+
       // Fetch initial cache
       await fetchStatsCache()
 

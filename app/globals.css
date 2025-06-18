@@ -163,7 +163,7 @@ body {
   [data-radix-popper-content-wrapper] {
     z-index: 50;
   }
-  
+
   [data-radix-popper-content-wrapper] > * {
     background-color: hsl(var(--popover)) !important;
   }
@@ -252,14 +252,14 @@ body {
     --radix-popover-bg: hsl(var(--popover));
     --radix-popover-border: hsl(var(--border));
   }
-  
+
   /* Global fix for any floating/popup elements */
   [data-floating-ui-portal] > div,
   [data-radix-presence] > div,
   div[style*="z-index: 2147483647"] {
     background-color: hsl(var(--popover)) !important;
   }
-  
+
   /* Specific fix for Tremor date picker popover content */
   div[data-state="open"][style*="--radix-popover"] {
     background-color: hsl(var(--popover)) !important;

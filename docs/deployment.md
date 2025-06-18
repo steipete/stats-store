@@ -11,12 +11,14 @@ This guide will help you deploy your own instance of stats.store.
 ## Step 1: Set Up Supabase
 
 1. **Create a new Supabase project**
+
    - Go to [app.supabase.com](https://app.supabase.com/)
    - Click "New project"
    - Choose a name and password
    - Select a region close to your users
 
 2. **Run the database migrations**
+
    - In your Supabase dashboard, go to SQL Editor
    - Run each file from the `scripts/` directory in order:
      - Start with `01-create-apps-table.sql`
@@ -24,6 +26,7 @@ This guide will help you deploy your own instance of stats.store.
    - Each script should show "Success" ✅
 
 3. **Enable real-time (optional but cool!)**
+
    - Go to Database → Replication
    - Enable replication for:
      - `realtime_events` table
@@ -48,12 +51,16 @@ Click the button and fill in your Supabase credentials!
 
 1. **Fork the repository**
    \`\`\`bash
+
    # On GitHub, click "Fork" button
+
    # Then clone your fork:
+
    git clone https://github.com/YOUR_USERNAME/stats-store.git
    \`\`\`
 
 2. **Import to Vercel**
+
    - Go to [vercel.com/new](https://vercel.com/new)
    - Import your forked repository
    - Configure environment variables:
@@ -70,7 +77,6 @@ Click the button and fill in your Supabase credentials!
      - `SUPABASE_SERVICE_ROLE_KEY`
      - `NEXT_PUBLIC_SUPABASE_URL` (same as `SUPABASE_URL`)
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (same as `SUPABASE_ANON_KEY`)
-
 
 3. **Deploy!**
    - Click "Deploy"
@@ -102,14 +108,17 @@ Want to use your own domain instead of `*.vercel.app`?
 ## Troubleshooting
 
 ### "Application not found" error
+
 - Double-check the bundle identifier in the apps table
 - Make sure it matches exactly (case-sensitive!)
 
 ### Database connection errors
+
 - Verify all environment variables are set correctly
 - Check that your Supabase project is not paused
 
 ### Build failures
+
 - Make sure you're using Node.js 20+
 - Check the Vercel build logs for specific errors
 
@@ -126,6 +135,7 @@ When new features are released:
    \`\`\`
 
 2. **Run new migrations** (if any)
+
    - Check the `scripts/` directory for new SQL files
    - Run them in order in your Supabase SQL editor
 
