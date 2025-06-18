@@ -1,8 +1,7 @@
 "use client"
 
-import { DateRangePicker, Button, type DateRangePickerValue } from "@tremor/react"
+import { DateRangePicker, type DateRangePickerValue } from "@tremor/react"
 import {
-  ArrowPathIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
   ChevronDownIcon,
@@ -61,9 +60,6 @@ export function DashboardFilters({
     router.push(`/?${newParams.toString()}`)
   }
 
-  const handleRefresh = () => {
-    router.refresh()
-  }
 
   const commonInputBaseClasses =
     "w-full h-10 rounded-lg bg-input text-foreground border border-input-border shadow-subtle focus-within:ring-2 focus-within:ring-ring focus-within:border-primary transition-colors duration-150 ease-in-out"
