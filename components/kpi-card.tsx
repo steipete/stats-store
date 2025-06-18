@@ -58,7 +58,7 @@ export function KpiCard({
                 variant={error ? "simple" : iconVariant}
                 color={error ? "rose" : iconColor}
                 size="sm"
-                className={error ? "text-destructive" : "text-muted-foreground"} // Ensure icon color contrasts
+                className={error ? "text-destructive" : ""} // Let Tremor handle the color
               />
             )}
         </Flex>
