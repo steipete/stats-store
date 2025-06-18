@@ -143,7 +143,7 @@ body {
   .tremor-DateRangePicker-input {
     color: hsl(var(--foreground)) !important;
   }
-  
+
   /* Calendar container styles - ensure proper background */
   [role="dialog"][aria-label*="calendar"],
   [data-state="open"][data-side],
@@ -151,20 +151,22 @@ body {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
-  
+
   .tremor-DateRangePicker-calendar {
     /* Calendar popup */
     background-color: hsl(var(--popover)) !important;
     border-color: hsl(var(--border)) !important;
   }
-  
+
   /* Ensure calendar dropdown has background */
   .tremor-DateRangePicker-calendarContainer {
     background-color: hsl(var(--popover)) !important;
   }
-  
+
   .tremor-DateRangePicker-day {
     color: hsl(var(--foreground)) !important;
   }
@@ -193,27 +195,29 @@ body {
   .dark .tremor-DateRangePicker-calendar {
     background-color: hsl(var(--popover)) !important;
   }
-  
+
   /* Recharts/Tremor tooltip backgrounds */
   .recharts-tooltip-wrapper .recharts-default-tooltip {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
-  
+
   /* Tremor's custom tooltip styling */
   [class*="tremor-ChartTooltip-frame"],
   [class*="tremor-chart-tooltip"] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
-  
+
   /* Ensure tooltip text is visible */
   .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label {
     color: hsl(var(--foreground)) !important;
   }
-  
+
   .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item {
     color: hsl(var(--foreground)) !important;
   }

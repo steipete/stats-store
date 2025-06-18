@@ -35,7 +35,7 @@ describe("KpiCardSimple", () => {
 
     it("renders with icon variant prop", () => {
       render(<KpiCardSimple title="Test" value="123" icon={UsersIcon} iconVariant="solid" />)
-      
+
       expect(screen.getByText("Test")).toBeInTheDocument()
       // The component accepts the iconVariant prop without errors
     })

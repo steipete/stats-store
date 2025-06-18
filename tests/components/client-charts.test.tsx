@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { ClientLineChart } from '../../components/client-line-chart'
-import { ClientBarChart } from '../../components/client-bar-chart'
-import { ClientDonutChart } from '../../components/client-donut-chart'
+import { describe, it, expect, vi } from "vitest"
+import { render, screen } from "@testing-library/react"
+import { ClientLineChart } from "../../components/client-line-chart"
+import { ClientBarChart } from "../../components/client-bar-chart"
+import { ClientDonutChart } from "../../components/client-donut-chart"
 
 // Mock Tremor charts
-vi.mock('@tremor/react', () => ({
+vi.mock("@tremor/react", () => ({
   LineChart: ({ data, categories, index, valueFormatter, ...props }: any) => (
     <div data-testid="line-chart" {...props}>
       {data?.map((item: any, i: number) => (
@@ -42,242 +42,174 @@ vi.mock('@tremor/react', () => ({
   ),
 }))
 
-describe('Client Chart Components', () => {
-  describe('ClientLineChart', () => {
-    it('renders with basic props', () => {
+describe("Client Chart Components", () => {
+  describe("ClientLineChart", () => {
+    it("renders with basic props", () => {
       const mockData = [
-        { date: '2024-01-01', users: 100 },
-        { date: '2024-01-02', users: 150 },
+        { date: "2024-01-01", users: 100 },
+        { date: "2024-01-02", users: 150 },
       ]
 
-      render(
-        <ClientLineChart
-          data={mockData}
-          index="date"
-          categories={['users']}
-        />
-      )
+      render(<ClientLineChart data={mockData} index="date" categories={["users"]} />)
 
-      expect(screen.getByTestId('line-chart')).toBeInTheDocument()
-      expect(screen.getByText('2024-01-01')).toBeInTheDocument()
-      expect(screen.getByText('2024-01-02')).toBeInTheDocument()
+      expect(screen.getByTestId("line-chart")).toBeInTheDocument()
+      expect(screen.getByText("2024-01-01")).toBeInTheDocument()
+      expect(screen.getByText("2024-01-02")).toBeInTheDocument()
     })
 
-    it('applies valueFormatter to data', () => {
+    it("applies valueFormatter to data", () => {
       const mockData = [
-        { date: '2024-01-01', count: 1000 },
-        { date: '2024-01-02', count: 2500 },
+        { date: "2024-01-01", count: 1000 },
+        { date: "2024-01-02", count: 2500 },
       ]
 
-      render(
-        <ClientLineChart
-          data={mockData}
-          index="date"
-          categories={['count']}
-        />
-      )
+      render(<ClientLineChart data={mockData} index="date" categories={["count"]} />)
 
       // valueFormatter should format numbers with commas
-      expect(screen.getByText('1,000')).toBeInTheDocument()
-      expect(screen.getByText('2,500')).toBeInTheDocument()
+      expect(screen.getByText("1,000")).toBeInTheDocument()
+      expect(screen.getByText("2,500")).toBeInTheDocument()
     })
 
-    it('renders empty state when no data', () => {
+    it("renders empty state when no data", () => {
+      render(<ClientLineChart data={[]} index="date" categories={["users"]} />)
+
+      expect(screen.getByTestId("line-chart")).toBeInTheDocument()
+    })
+
+    it("passes through additional props", () => {
       render(
         <ClientLineChart
           data={[]}
           index="date"
-          categories={['users']}
-        />
-      )
-
-      expect(screen.getByTestId('line-chart')).toBeInTheDocument()
-    })
-
-    it('passes through additional props', () => {
-      render(
-        <ClientLineChart
-          data={[]}
-          index="date"
-          categories={['users']}
+          categories={["users"]}
           className="custom-class"
-          colors={['blue', 'red']}
+          colors={["blue", "red"]}
           showLegend={false}
         />
       )
 
-      const chart = screen.getByTestId('line-chart')
-      expect(chart).toHaveClass('custom-class')
+      const chart = screen.getByTestId("line-chart")
+      expect(chart).toHaveClass("custom-class")
     })
 
-    it('handles multiple categories', () => {
+    it("handles multiple categories", () => {
       const mockData = [
-        { date: '2024-01-01', mobile: 100, desktop: 200 },
-        { date: '2024-01-02', mobile: 150, desktop: 250 },
+        { date: "2024-01-01", mobile: 100, desktop: 200 },
+        { date: "2024-01-02", mobile: 150, desktop: 250 },
       ]
 
-      render(
-        <ClientLineChart
-          data={mockData}
-          index="date"
-          categories={['mobile', 'desktop']}
-        />
-      )
+      render(<ClientLineChart data={mockData} index="date" categories={["mobile", "desktop"]} />)
 
-      expect(screen.getByText('100')).toBeInTheDocument()
-      expect(screen.getByText('200')).toBeInTheDocument()
-      expect(screen.getByText('150')).toBeInTheDocument()
-      expect(screen.getByText('250')).toBeInTheDocument()
+      expect(screen.getByText("100")).toBeInTheDocument()
+      expect(screen.getByText("200")).toBeInTheDocument()
+      expect(screen.getByText("150")).toBeInTheDocument()
+      expect(screen.getByText("250")).toBeInTheDocument()
     })
   })
 
-  describe('ClientBarChart', () => {
-    it('renders with basic props', () => {
+  describe("ClientBarChart", () => {
+    it("renders with basic props", () => {
       const mockData = [
-        { os: 'macOS 14', count: 100 },
-        { os: 'macOS 13', count: 50 },
+        { os: "macOS 14", count: 100 },
+        { os: "macOS 13", count: 50 },
       ]
 
-      render(
-        <ClientBarChart
-          data={mockData}
-          index="os"
-          categories={['count']}
-        />
-      )
+      render(<ClientBarChart data={mockData} index="os" categories={["count"]} />)
 
-      expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
-      expect(screen.getByText('macOS 14')).toBeInTheDocument()
-      expect(screen.getByText('macOS 13')).toBeInTheDocument()
+      expect(screen.getByTestId("bar-chart")).toBeInTheDocument()
+      expect(screen.getByText("macOS 14")).toBeInTheDocument()
+      expect(screen.getByText("macOS 13")).toBeInTheDocument()
     })
 
-    it('applies valueFormatter to data', () => {
+    it("applies valueFormatter to data", () => {
       const mockData = [
-        { version: '1.0', downloads: 5000 },
-        { version: '2.0', downloads: 10000 },
+        { version: "1.0", downloads: 5000 },
+        { version: "2.0", downloads: 10000 },
       ]
 
-      render(
-        <ClientBarChart
-          data={mockData}
-          index="version"
-          categories={['downloads']}
-        />
-      )
+      render(<ClientBarChart data={mockData} index="version" categories={["downloads"]} />)
 
-      expect(screen.getByText('5,000')).toBeInTheDocument()
-      expect(screen.getByText('10,000')).toBeInTheDocument()
+      expect(screen.getByText("5,000")).toBeInTheDocument()
+      expect(screen.getByText("10,000")).toBeInTheDocument()
     })
 
-    it('handles stacked bar charts', () => {
+    it("handles stacked bar charts", () => {
       const mockData = [
-        { month: 'Jan', arm64: 100, x86_64: 50 },
-        { month: 'Feb', arm64: 120, x86_64: 40 },
+        { month: "Jan", arm64: 100, x86_64: 50 },
+        { month: "Feb", arm64: 120, x86_64: 40 },
       ]
 
-      render(
-        <ClientBarChart
-          data={mockData}
-          index="month"
-          categories={['arm64', 'x86_64']}
-          stack={true}
-        />
-      )
+      render(<ClientBarChart data={mockData} index="month" categories={["arm64", "x86_64"]} stack={true} />)
 
-      expect(screen.getByText('100')).toBeInTheDocument()
-      expect(screen.getByText('50')).toBeInTheDocument()
-      expect(screen.getByText('120')).toBeInTheDocument()
-      expect(screen.getByText('40')).toBeInTheDocument()
+      expect(screen.getByText("100")).toBeInTheDocument()
+      expect(screen.getByText("50")).toBeInTheDocument()
+      expect(screen.getByText("120")).toBeInTheDocument()
+      expect(screen.getByText("40")).toBeInTheDocument()
     })
 
-    it('renders with custom colors', () => {
+    it("renders with custom colors", () => {
       render(
         <ClientBarChart
-          data={[{ category: 'A', value: 10 }]}
+          data={[{ category: "A", value: 10 }]}
           index="category"
-          categories={['value']}
-          colors={['emerald']}
+          categories={["value"]}
+          colors={["emerald"]}
         />
       )
 
-      expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+      expect(screen.getByTestId("bar-chart")).toBeInTheDocument()
     })
   })
 
-  describe('ClientDonutChart', () => {
-    it('renders with basic props', () => {
+  describe("ClientDonutChart", () => {
+    it("renders with basic props", () => {
       const mockData = [
-        { name: 'Apple Silicon', value: 75 },
-        { name: 'Intel', value: 25 },
+        { name: "Apple Silicon", value: 75 },
+        { name: "Intel", value: 25 },
       ]
 
-      render(
-        <ClientDonutChart
-          data={mockData}
-          category="name"
-          value="value"
-        />
-      )
+      render(<ClientDonutChart data={mockData} category="name" value="value" />)
 
-      expect(screen.getByTestId('donut-chart')).toBeInTheDocument()
-      expect(screen.getByText('Apple Silicon')).toBeInTheDocument()
-      expect(screen.getByText('Intel')).toBeInTheDocument()
+      expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
+      expect(screen.getByText("Apple Silicon")).toBeInTheDocument()
+      expect(screen.getByText("Intel")).toBeInTheDocument()
     })
 
-    it('applies valueFormatter to values', () => {
+    it("applies valueFormatter to values", () => {
       const mockData = [
-        { browser: 'Chrome', users: 1500 },
-        { browser: 'Safari', users: 2500 },
-        { browser: 'Firefox', users: 500 },
+        { browser: "Chrome", users: 1500 },
+        { browser: "Safari", users: 2500 },
+        { browser: "Firefox", users: 500 },
       ]
 
-      render(
-        <ClientDonutChart
-          data={mockData}
-          category="browser"
-          value="users"
-        />
-      )
+      render(<ClientDonutChart data={mockData} category="browser" value="users" />)
 
-      expect(screen.getByText('1,500')).toBeInTheDocument()
-      expect(screen.getByText('2,500')).toBeInTheDocument()
-      expect(screen.getByText('500')).toBeInTheDocument()
+      expect(screen.getByText("1,500")).toBeInTheDocument()
+      expect(screen.getByText("2,500")).toBeInTheDocument()
+      expect(screen.getByText("500")).toBeInTheDocument()
     })
 
-    it('handles empty data', () => {
-      render(
-        <ClientDonutChart
-          data={[]}
-          category="name"
-          value="value"
-        />
-      )
+    it("handles empty data", () => {
+      render(<ClientDonutChart data={[]} category="name" value="value" />)
 
-      expect(screen.getByTestId('donut-chart')).toBeInTheDocument()
+      expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
 
-    it('renders with custom variant', () => {
+    it("renders with custom variant", () => {
       const mockData = [
-        { type: 'A', count: 60 },
-        { type: 'B', count: 40 },
+        { type: "A", count: 60 },
+        { type: "B", count: 40 },
       ]
 
-      render(
-        <ClientDonutChart
-          data={mockData}
-          category="type"
-          value="count"
-          variant="pie"
-        />
-      )
+      render(<ClientDonutChart data={mockData} category="type" value="count" variant="pie" />)
 
-      expect(screen.getByTestId('donut-chart')).toBeInTheDocument()
+      expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
 
-    it('handles label and custom colors', () => {
+    it("handles label and custom colors", () => {
       const mockData = [
-        { status: 'Active', count: 80 },
-        { status: 'Inactive', count: 20 },
+        { status: "Active", count: 80 },
+        { status: "Inactive", count: 20 },
       ]
 
       render(
@@ -286,82 +218,43 @@ describe('Client Chart Components', () => {
           category="status"
           value="count"
           label="User Status"
-          colors={['green', 'gray']}
+          colors={["green", "gray"]}
         />
       )
 
-      expect(screen.getByTestId('donut-chart')).toBeInTheDocument()
-      expect(screen.getByText('Active')).toBeInTheDocument()
-      expect(screen.getByText('Inactive')).toBeInTheDocument()
+      expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
+      expect(screen.getByText("Active")).toBeInTheDocument()
+      expect(screen.getByText("Inactive")).toBeInTheDocument()
     })
   })
 
-  describe('Common chart behaviors', () => {
-    it('all charts handle null/undefined data gracefully', () => {
-      const { rerender } = render(
-        <ClientLineChart
-          data={undefined as any}
-          index="x"
-          categories={['y']}
-        />
-      )
-      expect(screen.getByTestId('line-chart')).toBeInTheDocument()
+  describe("Common chart behaviors", () => {
+    it("all charts handle null/undefined data gracefully", () => {
+      const { rerender } = render(<ClientLineChart data={undefined as any} index="x" categories={["y"]} />)
+      expect(screen.getByTestId("line-chart")).toBeInTheDocument()
 
-      rerender(
-        <ClientBarChart
-          data={null as any}
-          index="x"
-          categories={['y']}
-        />
-      )
-      expect(screen.getByTestId('bar-chart')).toBeInTheDocument()
+      rerender(<ClientBarChart data={null as any} index="x" categories={["y"]} />)
+      expect(screen.getByTestId("bar-chart")).toBeInTheDocument()
 
-      rerender(
-        <ClientDonutChart
-          data={null as any}
-          category="x"
-          value="y"
-        />
-      )
-      expect(screen.getByTestId('donut-chart')).toBeInTheDocument()
+      rerender(<ClientDonutChart data={null as any} category="x" value="y" />)
+      expect(screen.getByTestId("donut-chart")).toBeInTheDocument()
     })
 
-    it('all charts preserve Tremor props', () => {
+    it("all charts preserve Tremor props", () => {
       const commonProps = {
-        className: 'custom-chart',
+        className: "custom-chart",
         showAnimation: true,
         animationDuration: 500,
       }
 
-      const { rerender } = render(
-        <ClientLineChart
-          data={[]}
-          index="x"
-          categories={['y']}
-          {...commonProps}
-        />
-      )
-      expect(screen.getByTestId('line-chart')).toHaveClass('custom-chart')
+      const { rerender } = render(<ClientLineChart data={[]} index="x" categories={["y"]} {...commonProps} />)
+      expect(screen.getByTestId("line-chart")).toHaveClass("custom-chart")
 
-      rerender(
-        <ClientBarChart
-          data={[]}
-          index="x"
-          categories={['y']}
-          {...commonProps}
-        />
-      )
-      expect(screen.getByTestId('bar-chart')).toHaveClass('custom-chart')
+      rerender(<ClientBarChart data={[]} index="x" categories={["y"]} {...commonProps} />)
+      expect(screen.getByTestId("bar-chart")).toHaveClass("custom-chart")
 
-      rerender(
-        <ClientDonutChart
-          data={[]}
-          category="x"
-          value="y"
-          {...commonProps}
-        />
-      )
-      expect(screen.getByTestId('donut-chart')).toHaveClass('custom-chart')
+      rerender(<ClientDonutChart data={[]} category="x" value="y" {...commonProps} />)
+      expect(screen.getByTestId("donut-chart")).toHaveClass("custom-chart")
     })
   })
 })

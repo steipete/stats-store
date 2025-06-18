@@ -24,7 +24,7 @@ updates:
       types:
         patterns:
           - "@types/*"
-    
+
   # Enable version updates for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"

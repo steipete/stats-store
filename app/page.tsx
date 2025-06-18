@@ -20,6 +20,7 @@ import { ClientBarChart } from "@/components/client-bar-chart"
 import { ClientDonutChart } from "@/components/client-donut-chart"
 import { KpiCard } from "@/components/kpi-card"
 import { cn } from "@/lib/utils"
+import { RealtimeDashboard } from "@/components/realtime-dashboard"
 
 export const metadata: Metadata = {
   title: "stats.store - Fast, open, privacy-first analytics for Sparkle",
@@ -265,7 +266,9 @@ export default async function DashboardPage({
   return (
     <main className="p-4 md:p-6 lg:p-8 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
       <Flex justifyContent="between" alignItems="center" className="mb-8">
-        <Title className="text-3xl font-semibold text-foreground">stats.store - Fast, open, privacy-first analytics for Sparkle</Title>
+        <Title className="text-3xl font-semibold text-foreground">
+          stats.store - Fast, open, privacy-first analytics for Sparkle
+        </Title>
       </Flex>
       <DashboardFilters
         apps={data.apps}
@@ -273,40 +276,18 @@ export default async function DashboardPage({
         currentDateRange={dateRange}
         appsError={data.appsError}
       />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <KpiCard
-          title="Unique Users"
-          value={
-            typeof data.kpis.unique_installs === "string"
-              ? data.kpis.unique_installs
-              : valueFormatter(data.kpis.unique_installs)
-          }
-          iconName="users"
-          iconColor="blue" // Corresponds to chart-1 in light, chart-1 in dark
-          error={!!data.kpisError?.unique_installs}
-          tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
-        />
-        <KpiCard
-          title="Total Reports"
-          value={
-            typeof data.kpis.reports_this_period === "string"
-              ? data.kpis.reports_this_period
-              : valueFormatter(data.kpis.reports_this_period)
-          }
-          iconName="cube"
-          iconColor="green" // Corresponds to chart-2 (teal)
-          error={!!data.kpisError?.reports_this_period}
-          tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
-        />
-        <KpiCard
-          title="Latest Version Reported"
-          value={data.kpis.latest_version}
-          iconName="tag"
-          iconColor="amber" // Corresponds to chart-4 (orange)
-          error={!!data.kpisError?.latest_version}
-          tooltip="Highest reported application version (semantically sorted)"
-        />
-      </div>
+      {/* Real-time KPI Dashboard */}
+      <RealtimeDashboard
+        selectedAppId={selectedAppId}
+        dateRange={{
+          from: dateRange.from || defaultFrom,
+          to: dateRange.to || defaultTo,
+        }}
+        initialData={{
+          kpis: data.kpis,
+          kpisError: data.kpisError,
+        }}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <KpiCard className={chartCardClassName}>
           <Title className="text-card-foreground mb-1">Installations Over Time</Title>
