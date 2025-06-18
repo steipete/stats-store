@@ -663,6 +663,10 @@ body {
   
   .shadow-subtle { box-shadow: var(--shadow-subtle); }
   
+  /* Tooltip backgrounds */
+  .bg-tooltip { background-color: var(--tooltip-bg); }
+  .text-tooltip-foreground { color: var(--tooltip-foreground); }
+  
   /* Dark mode shadow for cards */
   .dark .shadow-subtle {
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -851,6 +855,14 @@ body {
   }
   
 
+  /* All tooltip backgrounds - fix transparency issue */
+  [role="tooltip"],
+  [data-state="open"][data-side][style*="--radix-tooltip"],
+  .bg-tooltip {
+    background-color: var(--tooltip-bg) !important;
+    color: var(--tooltip-foreground) !important;
+  }
+  
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
   .recharts-tooltip-wrapper,
   .recharts-tooltip-wrapper .recharts-default-tooltip,
