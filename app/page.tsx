@@ -22,7 +22,7 @@ import { KpiCard } from "@/components/kpi-card"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
-  title: "stats.store - Open Sparkle Statistics",
+  title: "stats store - Open Sparkle App Statistics",
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
 }
@@ -265,7 +265,7 @@ export default async function DashboardPage({
   return (
     <main className="p-4 md:p-6 lg:p-8 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
       <Flex justifyContent="between" alignItems="center" className="mb-8">
-        <Title className="text-3xl font-semibold text-foreground">stats.store</Title>
+        <Title className="text-3xl font-semibold text-foreground">stats store - Open Sparkle App Statistics</Title>
       </Flex>
       <DashboardFilters
         apps={data.apps}

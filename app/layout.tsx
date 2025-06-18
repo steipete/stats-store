@@ -5,7 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "stats.store - Open Sparkle Statistics",
+  title: "stats store - Open Sparkle App Statistics",
   description: "Track your macOS application performance with Sparkle-integrated analytics.",
   generator: "v0.dev",
 }
