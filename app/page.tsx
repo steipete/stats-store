@@ -381,7 +381,7 @@ export default async function DashboardPage({
         <Card className="lg:col-span-2">
           <Title>Top Models</Title>
           {showTopModelsTable ? (
-            <Table className="mt-5 h-[calc(theme(height.56)_+_theme(spacing.5))]">
+            <Table className="mt-5 h-0">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Model Identifier</TableHeaderCell>
@@ -401,7 +401,7 @@ export default async function DashboardPage({
             <CardStatusDisplay
               error={data.top_models_error}
               noData={!data.top_models_error && data.top_models.length === 0}
-              minHeightClassName="h-[calc(theme(height.56)_+_theme(spacing.5))]"
+              minHeightClassName="h-0"
             />
           )}
         </Card>

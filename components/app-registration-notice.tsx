@@ -13,7 +13,7 @@ export function AppRegistrationNotice() {
     <Card className="mb-6 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-3">
-          <InformationCircleIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+          <InformationCircleIcon className="h-6 w-6 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
           <div className="space-y-2">
             <Title className="text-blue-900 dark:text-blue-100">App Registration Required</Title>
             <Text className="text-blue-800 dark:text-blue-200">
