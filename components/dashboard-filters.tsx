@@ -90,7 +90,7 @@ export function DashboardFilters({
       <select
         value={selectValue}
         onChange={(e) => handleAppChange(e.target.value)}
-        className="w-full h-10 border border-gray-300 rounded-md shadow-xs px-3 py-1.5 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        className="w-full h-10 border border-gray-300 rounded-md shadow-sm px-3 py-1.5 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         {options.map((opt) => (
           <option key={opt.id} value={opt.id}>
