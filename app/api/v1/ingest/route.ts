@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import crypto from "crypto"
+import { createHash } from "crypto"
 
 interface SparkleReportPayload {
   bundleIdentifier: string
@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     const dailySalt = new Date().toISOString().slice(0, 10)
-    const ipHash = crypto
-      .createHash("sha256")
+    const ipHash = createHash("sha256")
       .update(clientIp + dailySalt)
       .digest("hex")
 

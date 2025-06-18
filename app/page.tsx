@@ -24,6 +24,8 @@ import { CardStatusDisplay } from "@/components/card-status-display"
 import { ClientLineChart } from "@/components/client-line-chart"
 import { ClientBarChart } from "@/components/client-bar-chart"
 import { ClientDonutChart } from "@/components/client-donut-chart"
+import { KpiCard } from "@/components/kpi-card"
+import { AppRegistrationNotice } from "@/components/app-registration-notice"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
@@ -280,63 +282,40 @@ export default async function DashboardPage({
         appsError={data.appsError}
       />
 
+      <AppRegistrationNotice />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <Card>
-          <Flex alignItems="start">
-            <Text>Unique Users</Text>
-            {data.kpisError?.unique_installs ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
-            ) : (
-              <Icon
-                icon={UsersIcon}
-                variant="light"
-                color="blue"
-                size="sm"
-              />
-            )}
-          </Flex>
-          <Metric className="mt-2">
-            {typeof data.kpis.unique_installs === "string"
-              ? data.kpis.unique_installs
-              : valueFormatter(data.kpis.unique_installs)}
-          </Metric>
-        </Card>
-        <Card>
-          <Flex alignItems="start">
-            <Text>Total Reports</Text>
-            {data.kpisError?.reports_this_period ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
-            ) : (
-              <Icon
-                icon={CubeTransparentIcon}
-                variant="light"
-                color="green"
-                size="sm"
-              />
-            )}
-          </Flex>
-          <Metric className="mt-2">
-            {typeof data.kpis.reports_this_period === "string"
-              ? data.kpis.reports_this_period
-              : valueFormatter(data.kpis.reports_this_period)}
-          </Metric>
-        </Card>
-        <Card>
-          <Flex alignItems="start">
-            <Text>Latest Version Reported</Text>
-            {data.kpisError?.latest_version ? (
-              <Icon icon={ExclamationCircleIcon} color="rose" size="sm" />
-            ) : (
-              <Icon
-                icon={TagIcon}
-                variant="light"
-                color="amber"
-                size="sm"
-              />
-            )}
-          </Flex>
-          <Metric className="mt-2">{data.kpis.latest_version}</Metric>
-        </Card>
+        <KpiCard
+          title="Unique Users"
+          value={typeof data.kpis.unique_installs === "string"
+            ? data.kpis.unique_installs
+            : valueFormatter(data.kpis.unique_installs)}
+          icon={UsersIcon}
+          iconColor="blue"
+          error={!!data.kpisError?.unique_installs}
+          errorIcon={ExclamationCircleIcon}
+          tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
+        />
+        <KpiCard
+          title="Total Reports"
+          value={typeof data.kpis.reports_this_period === "string"
+            ? data.kpis.reports_this_period
+            : valueFormatter(data.kpis.reports_this_period)}
+          icon={CubeTransparentIcon}
+          iconColor="green"
+          error={!!data.kpisError?.reports_this_period}
+          errorIcon={ExclamationCircleIcon}
+          tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
+        />
+        <KpiCard
+          title="Latest Version Reported"
+          value={data.kpis.latest_version}
+          icon={TagIcon}
+          iconColor="amber"
+          error={!!data.kpisError?.latest_version}
+          errorIcon={ExclamationCircleIcon}
+          tooltip="Highest reported application version (semantically sorted)"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
