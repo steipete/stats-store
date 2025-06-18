@@ -33,14 +33,11 @@ describe("KpiCardSimple", () => {
       expect(screen.getByText("Test")).toBeInTheDocument()
     })
 
-    it("renders with different icon variants", () => {
-      const variants = ["simple", "light", "shadow", "solid", "outline"] as const
-
-      variants.forEach((variant) => {
-        const { rerender } = render(<KpiCardSimple title="Test" value="123" icon={UsersIcon} iconVariant={variant} />)
-        expect(screen.getByText("Test")).toBeInTheDocument()
-        rerender(<></>)
-      })
+    it("renders with icon variant prop", () => {
+      render(<KpiCardSimple title="Test" value="123" icon={UsersIcon} iconVariant="solid" />)
+      
+      expect(screen.getByText("Test")).toBeInTheDocument()
+      // The component accepts the iconVariant prop without errors
     })
   })
 

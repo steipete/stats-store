@@ -52,6 +52,27 @@ interface TopModelsDataPoint {
   count: number
 }
 
+// RPC response types
+interface DailyCountRow {
+  report_day: string
+  report_count: number
+}
+
+interface OsVersionRow {
+  os_version_name: string
+  user_count: number
+}
+
+interface CpuArchRow {
+  cpu_arch_name: string
+  user_count: number
+}
+
+interface ModelRow {
+  model_name: string
+  report_count: number
+}
+
 interface DashboardData {
   apps: App[]
   appsError?: string
@@ -108,8 +129,8 @@ async function getDashboardData(
     if (reportCountsError) throw reportCountsError
     reportsThisPeriodCount = count ?? 0
     uniqueInstallsCount = new Set(reportCountsData?.map((r) => r.ip_hash)).size
-  } catch (e: any) {
-    console.error("Error fetching KPI report counts:", e.message)
+  } catch (e) {
+    console.error("Error fetching KPI report counts:", e instanceof Error ? e.message : e)
     kpiErrorMessage = "Could not load report counts."
     uniqueInstallsCount = "Error"
     reportsThisPeriodCount = "Error"
@@ -140,7 +161,7 @@ async function getDashboardData(
     installsTimeseriesErrorMessage = "Could not load installations data."
   } else if (dailyCountsData) {
     const countsByDay: { [key: string]: number } = {}
-    dailyCountsData.forEach((row: any) => {
+    dailyCountsData.forEach((row: DailyCountRow) => {
       countsByDay[row.report_day] = Number(row.report_count) || 0
     })
     const dateInterval = eachDayOfInterval({ start: queryFrom, end: queryTo })
@@ -157,7 +178,7 @@ async function getDashboardData(
     console.error("Error fetching OS breakdown (RPC):", osErrorRpc.message)
     osBreakdownErrorMessage = "Could not load OS distribution."
   } else if (osDataRpc) {
-    osBreakdown = osDataRpc.map((item: any) => ({
+    osBreakdown = osDataRpc.map((item: OsVersionRow) => ({
       name: `macOS ${item.os_version_name}`,
       Users: Number(item.user_count) || 0,
     }))
@@ -169,7 +190,7 @@ async function getDashboardData(
     console.error("Error fetching CPU breakdown (RPC):", cpuErrorRpc.message)
     cpuBreakdownErrorMessage = "Could not load CPU architecture data."
   } else if (cpuDataRpc) {
-    cpuBreakdown = cpuDataRpc.map((item: any) => ({
+    cpuBreakdown = cpuDataRpc.map((item: CpuArchRow) => ({
       name: item.cpu_arch_name,
       Users: Number(item.user_count) || 0,
     }))
@@ -184,7 +205,7 @@ async function getDashboardData(
     console.error("Error fetching top models (RPC):", modelErrorRpc.message)
     topModelsErrorMessage = "Could not load top models data."
   } else if (modelDataRpc) {
-    topModels = modelDataRpc.map((item: any) => ({
+    topModels = modelDataRpc.map((item: ModelRow) => ({
       model: item.model_name,
       count: Number(item.report_count) || 0,
     }))

@@ -1,14 +1,20 @@
 import { Card, Metric, Text, Flex, Icon } from "@tremor/react"
 import type { ComponentType } from "react"
 
+// Define props type for Heroicons
+interface IconProps {
+  className?: string
+  "aria-hidden"?: boolean
+}
+
 interface KpiCardSimpleProps {
   title: string
   value: string | number
-  icon: ComponentType<any>
+  icon: ComponentType<IconProps>
   iconColor?: string
   iconVariant?: "simple" | "light" | "shadow" | "solid" | "outline"
   error?: boolean
-  errorIcon?: ComponentType<any>
+  errorIcon?: ComponentType<IconProps>
   tooltip?: string
 }
 
