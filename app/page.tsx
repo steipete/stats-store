@@ -15,7 +15,6 @@ import {
   TableCell,
   type DateRangePickerValue,
 } from "@tremor/react"
-import { UsersIcon, CubeTransparentIcon, TagIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
 import type { Metadata } from "next"
@@ -290,10 +289,9 @@ export default async function DashboardPage({
           value={typeof data.kpis.unique_installs === "string"
             ? data.kpis.unique_installs
             : valueFormatter(data.kpis.unique_installs)}
-          icon={UsersIcon}
+          iconName="users"
           iconColor="blue"
           error={!!data.kpisError?.unique_installs}
-          errorIcon={ExclamationCircleIcon}
           tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
         />
         <KpiCard
@@ -301,19 +299,17 @@ export default async function DashboardPage({
           value={typeof data.kpis.reports_this_period === "string"
             ? data.kpis.reports_this_period
             : valueFormatter(data.kpis.reports_this_period)}
-          icon={CubeTransparentIcon}
+          iconName="cube"
           iconColor="green"
           error={!!data.kpisError?.reports_this_period}
-          errorIcon={ExclamationCircleIcon}
           tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
         />
         <KpiCard
           title="Latest Version Reported"
           value={data.kpis.latest_version}
-          icon={TagIcon}
+          iconName="tag"
           iconColor="amber"
           error={!!data.kpisError?.latest_version}
-          errorIcon={ExclamationCircleIcon}
           tooltip="Highest reported application version (semantically sorted)"
         />
       </div>

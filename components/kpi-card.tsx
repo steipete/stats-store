@@ -8,43 +8,48 @@ import {
   Icon,
 } from "@tremor/react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import type { ComponentType } from "react"
+import { UsersIcon, CubeTransparentIcon, TagIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
+
+type IconName = "users" | "cube" | "tag" | "exclamation"
 
 interface KpiCardProps {
   title: string
   value: string | number
-  icon: ComponentType<any>
+  iconName: IconName
   iconColor?: string
   iconVariant?: "simple" | "light" | "shadow" | "solid" | "outline"
   error?: boolean
-  errorIcon?: ComponentType<any>
   tooltip?: string
 }
 
 export function KpiCard({
   title,
   value,
-  icon,
+  iconName,
   iconColor = "blue",
   iconVariant = "light",
   error = false,
-  errorIcon,
   tooltip,
 }: KpiCardProps) {
+  const iconMap = {
+    users: UsersIcon,
+    cube: CubeTransparentIcon,
+    tag: TagIcon,
+    exclamation: ExclamationCircleIcon,
+  }
+  
+  const IconComponent = error ? ExclamationCircleIcon : iconMap[iconName]
+  
   const cardContent = (
     <Card>
       <Flex alignItems="start">
         <Text>{title}</Text>
-        {error && errorIcon ? (
-          <Icon icon={errorIcon} color="rose" size="sm" />
-        ) : (
-          <Icon
-            icon={icon}
-            variant={iconVariant}
-            color={iconColor}
-            size="sm"
-          />
-        )}
+        <Icon
+          icon={IconComponent}
+          variant={error ? "simple" : iconVariant}
+          color={error ? "rose" : iconColor}
+          size="sm"
+        />
       </Flex>
       <Metric className="mt-2">{value}</Metric>
     </Card>
