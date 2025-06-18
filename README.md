@@ -1,5 +1,7 @@
 # stats.store
 
+![stats.store banner](assets/banner.png)
+
 **Simple, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects.**
 
 [![CI](https://github.com/steipete/stats-store/actions/workflows/ci.yml/badge.svg)](https://github.com/steipete/stats-store/actions/workflows/ci.yml)
