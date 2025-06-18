@@ -77,7 +77,7 @@ interface DashboardData {
 
 async function getDashboardData(
   selectedAppIdParam: string | undefined,
-  dateRange: DateRangePickerValue | undefined,
+  dateRange: DateRangePickerValue | undefined
 ): Promise<DashboardData> {
   const supabase = createSupabaseServerClient()
   let appsList: App[] = []

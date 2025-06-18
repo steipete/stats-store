@@ -105,8 +105,9 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -165,41 +166,41 @@ body {
   .tremor-DateRangePicker-header button svg {
     stroke: hsl(var(--muted-foreground)) !important;
   }
-  
+
   /* Light mode specific styles for DateRangePicker */
   .tremor-DateRangePicker-calendar {
     background-color: hsl(var(--popover)) !important;
   }
-  
+
   /* Dark mode specific overrides */
   .dark .tremor-DateRangePicker-calendar {
     background-color: hsl(var(--popover)) !important;
   }
-  
+
   /* Ensure all Radix UI popovers have proper backgrounds */
   [data-radix-popper-content-wrapper] {
     --radix-popover-bg: hsl(var(--popover));
     --radix-popover-border: hsl(var(--border));
   }
-  
+
   /* Radix Select content */
   [data-radix-select-content] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
-  
+
   /* Radix Dropdown Menu content */
   [data-radix-dropdown-menu-content] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
-  
+
   /* Radix Context Menu content */
   [data-radix-context-menu-content] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
-  
+
   /* Radix Popover content */
   [data-radix-popover-content] {
     background-color: hsl(var(--popover)) !important;

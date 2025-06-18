@@ -7,14 +7,17 @@ To use the stats collection endpoint at `https://stats.store/api/v1/ingest`, you
 ## Quick Start
 
 1. **Access your Supabase dashboard**
+
    - Navigate to your Supabase project dashboard
    - Go to the Table Editor section
 
 2. **Navigate to the apps table**
+
    - Find and select the `apps` table in the table list
    - This table stores all registered applications
 
 3. **Add a new row with your app's details**
+
    - Click "Insert row" or the "+" button
    - Fill in the required fields:
      - `name`: Your application's display name (e.g., "My Awesome App")

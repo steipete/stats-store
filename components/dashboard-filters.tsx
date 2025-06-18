@@ -75,7 +75,7 @@ export function DashboardFilters({
         <div
           className={cn(
             commonErrorWarningClasses,
-            "border-destructive/50 bg-destructive/10 text-destructive rounded-lg",
+            "border-destructive/50 bg-destructive/10 text-destructive rounded-lg"
           )}
         >
           <ExclamationCircleIcon className="h-5 w-5 shrink-0" />
@@ -100,7 +100,7 @@ export function DashboardFilters({
       <div
         className={cn(
           "relative w-full overflow-hidden",
-          commonInputBaseClasses, // This already includes rounded-lg
+          commonInputBaseClasses // This already includes rounded-lg
         )}
       >
         <select
@@ -125,7 +125,7 @@ export function DashboardFilters({
       <div
         className={cn(
           commonInputBaseClasses, // This provides bg-input and rounded-lg
-          "p-0 flex items-center overflow-hidden", // overflow-hidden to clip internal button if needed
+          "p-0 flex items-center overflow-hidden" // overflow-hidden to clip internal button if needed
         )}
       >
         <DateRangePicker

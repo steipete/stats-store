@@ -16,11 +16,13 @@ This solution uses `@radix-ui/react-tooltip` which is already installed in the p
 ### Implementation:
 
 The KpiCard component is now used in `app/page.tsx` with the following tooltip texts:
+
 - **Unique Users**: "Unique users (based on IP hash) from [start date] to [end date]"
 - **Total Reports**: "Total reports received from [start date] to [end date]"
 - **Latest Version**: "Highest reported application version (semantically sorted)"
 
 ### Features:
+
 - Fully accessible with keyboard navigation
 - Smooth animations
 - Customizable positioning and styling
@@ -28,6 +30,7 @@ The KpiCard component is now used in `app/page.tsx` with the following tooltip t
 - Follows the project's dark mode theme
 
 ### Usage Example:
+
 \`\`\`tsx
 <KpiCard
   title="Unique Users"
@@ -47,18 +50,21 @@ For a simpler approach without client-side JavaScript, we also created `KpiCardS
 **`/components/kpi-card-simple.tsx`** - A server component that uses the `title` attribute
 
 ### Features:
+
 - No client-side JavaScript required
 - Works everywhere
 - Native browser behavior
 - Simple implementation
 
 ### Limitations:
+
 - Less control over styling
 - Delay before tooltip appears is browser-dependent
 - No animations
 - Basic appearance
 
 ### Usage Example:
+
 \`\`\`tsx
 <KpiCardSimple
   title="Unique Users"
@@ -72,6 +78,7 @@ For a simpler approach without client-side JavaScript, we also created `KpiCardS
 ## Current Implementation
 
 The dashboard currently uses Solution 1 (Radix UI) as it provides a better user experience with:
+
 - Immediate tooltip display on hover
 - Consistent styling with the application theme
 - Better accessibility features
@@ -92,6 +99,7 @@ import { KpiCardSimple as KpiCard } from "@/components/kpi-card-simple"
 ## Styling Customization
 
 The Radix UI tooltip can be customized by modifying the styles in `/components/ui/tooltip.tsx`. The current implementation uses:
+
 - Background: `bg-primary` (adapts to theme)
 - Text: `text-primary-foreground`
 - Padding: `px-3 py-1.5`

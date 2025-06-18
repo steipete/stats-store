@@ -1,10 +1,4 @@
-import {
-  Card,
-  Metric,
-  Text,
-  Flex,
-  Icon,
-} from "@tremor/react"
+import { Card, Metric, Text, Flex, Icon } from "@tremor/react"
 import type { ComponentType } from "react"
 
 interface KpiCardSimpleProps {
@@ -35,12 +29,7 @@ export function KpiCardSimple({
         {error && errorIcon ? (
           <Icon icon={errorIcon} color="rose" size="sm" />
         ) : (
-          <Icon
-            icon={icon}
-            variant={iconVariant}
-            color={iconColor}
-            size="sm"
-          />
+          <Icon icon={icon} variant={iconVariant} color={iconColor} size="sm" />
         )}
       </Flex>
       <Metric className="mt-2">{value}</Metric>

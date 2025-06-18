@@ -45,7 +45,7 @@ export function KpiCard({
       className={cn(
         "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border",
         error ? "border-destructive/50" : "",
-        className,
+        className
       )}
     >
       {(title || iconName) && (
