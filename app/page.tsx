@@ -398,6 +398,26 @@ export default async function DashboardPage({
         >
           MIT Licensed
         </a>
+        {" • "}
+        <a
+          href="https://steipete.me/posts/2025/stats-store-privacy-first-sparkle-analytics"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          Read the full story
+        </a>
+        <div className="mt-4">
+          Want your free Mac app listed here?{" "}
+          <a
+            href="https://steipete.me/posts/2025/stats-store-privacy-first-sparkle-analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground transition-colors"
+          >
+            Learn how
+          </a>
+        </div>
       </footer>
     </main>
   )

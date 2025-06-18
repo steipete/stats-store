@@ -108,6 +108,10 @@ Found a bug? Want to add a feature? Awesome!
 
 Check out [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
+## Want Your Free Mac App Listed Here?
+
+Read the [full story of stats.store here](https://steipete.me/posts/2025/stats-store-privacy-first-sparkle-analytics) and learn how it came to be!
+
 ## Questions?
 
 - 🐦 Twitter: [@steipete](https://twitter.com/steipete)

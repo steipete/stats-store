@@ -147,7 +147,10 @@ body {
   /* Calendar container styles - ensure proper background */
   [role="dialog"][aria-label*="calendar"],
   [data-state="open"][data-side],
-  .tremor-DateRangePicker-dropdownContainer {
+  .tremor-DateRangePicker-dropdownContainer,
+  .tremor-DateRangePicker-dropdown,
+  [data-radix-popper-content-wrapper] > div,
+  [data-radix-popper-content-wrapper] [role="dialog"] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius);
@@ -156,14 +159,25 @@ body {
       0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  .tremor-DateRangePicker-calendar {
+  /* Force popover backgrounds on all Radix popover elements */
+  [data-radix-popper-content-wrapper] {
+    z-index: 50;
+  }
+  
+  [data-radix-popper-content-wrapper] > * {
+    background-color: hsl(var(--popover)) !important;
+  }
+
+  .tremor-DateRangePicker-calendar,
+  .tremor-DateRangePicker-calendarContainer,
+  .tremor-DateRangePicker-calendarWrapper {
     /* Calendar popup */
     background-color: hsl(var(--popover)) !important;
     border-color: hsl(var(--border)) !important;
   }
 
-  /* Ensure calendar dropdown has background */
-  .tremor-DateRangePicker-calendarContainer {
+  /* Ensure Tremor date picker dialog has background */
+  div[data-state="open"][data-side] > div {
     background-color: hsl(var(--popover)) !important;
   }
 
@@ -196,8 +210,12 @@ body {
     background-color: hsl(var(--popover)) !important;
   }
 
-  /* Recharts/Tremor tooltip backgrounds */
-  .recharts-tooltip-wrapper .recharts-default-tooltip {
+  /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
+  .recharts-tooltip-wrapper,
+  .recharts-tooltip-wrapper .recharts-default-tooltip,
+  .recharts-tooltip-wrapper > div,
+  .recharts-tooltip-wrapper [role="tooltip"],
+  .recharts-tooltip-content-wrapper {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius);
@@ -206,19 +224,26 @@ body {
       0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
-  /* Tremor's custom tooltip styling */
+  /* Tremor's custom tooltip styling - comprehensive */
+  [class*="tremor-ChartTooltip"],
+  [class*="tremor-chart-tooltip"],
   [class*="tremor-ChartTooltip-frame"],
-  [class*="tremor-chart-tooltip"] {
+  [class*="tremor-ChartTooltip-content"],
+  .tremor-ChartTooltip-root {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
 
-  /* Ensure tooltip text is visible */
-  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label {
-    color: hsl(var(--foreground)) !important;
+  /* Force tooltip container backgrounds */
+  div[style*="pointer-events: none"] div[style*="position: absolute"] {
+    background-color: hsl(var(--popover)) !important;
   }
 
-  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item {
+  /* Ensure tooltip text is visible */
+  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label,
+  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item,
+  .recharts-tooltip-wrapper p,
+  .recharts-tooltip-wrapper span {
     color: hsl(var(--foreground)) !important;
   }
 
@@ -226,6 +251,20 @@ body {
   [data-radix-popper-content-wrapper] {
     --radix-popover-bg: hsl(var(--popover));
     --radix-popover-border: hsl(var(--border));
+  }
+  
+  /* Global fix for any floating/popup elements */
+  [data-floating-ui-portal] > div,
+  [data-radix-presence] > div,
+  div[style*="z-index: 2147483647"] {
+    background-color: hsl(var(--popover)) !important;
+  }
+  
+  /* Specific fix for Tremor date picker popover content */
+  div[data-state="open"][style*="--radix-popover"] {
+    background-color: hsl(var(--popover)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius);
   }
 
   /* Radix Select content */
