@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-/* Configure dark mode to work with class strategy for Tailwind v4 */
-@variant dark (&:is(.dark, .dark *));
+/* Configure dark mode to use class-based approach */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Theme configuration */
 @theme {

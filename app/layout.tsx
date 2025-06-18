@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { ThemeProvider } from "@/components/theme-provider"
-import { ThemeDebug } from "@/components/theme-debug"
 import { ThemeScript } from "./theme-script"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -85,7 +84,6 @@ export default function RootLayout({
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
-          <ThemeDebug />
         </ThemeProvider>
         <Analytics />
       </body>
