@@ -1,12 +1,7 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import {
-  Card,
-  Metric,
-  Text,
   Flex,
   Title,
-  Icon,
-  // LineChart, BarChart, DonutChart, // Removed direct Tremor imports
   Table,
   TableHead,
   TableRow,
@@ -18,15 +13,16 @@ import {
 import { subDays, format, startOfDay, eachDayOfInterval, parseISO } from "date-fns"
 import { DashboardFilters } from "@/components/dashboard-filters"
 import type { Metadata } from "next"
-import { valueFormatter } from "@/lib/formatters" // Still needed for KPIs and Table
+import { valueFormatter } from "@/lib/formatters"
 import { CardStatusDisplay } from "@/components/card-status-display"
 import { ClientLineChart } from "@/components/client-line-chart"
 import { ClientBarChart } from "@/components/client-bar-chart"
 import { ClientDonutChart } from "@/components/client-donut-chart"
 import { KpiCard } from "@/components/kpi-card"
+import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
-  title: "App Stats Dashboard | Track Your Application Performance",
+  title: "stats.store | App Analytics Dashboard",
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
 }
@@ -59,7 +55,6 @@ interface TopModelsDataPoint {
 interface DashboardData {
   apps: App[]
   appsError?: string
-
   kpis: {
     unique_installs: number | string
     reports_this_period: number | string
@@ -70,16 +65,12 @@ interface DashboardData {
     reports_this_period?: string
     latest_version?: string
   }
-
   installs_timeseries: TimeSeriesDataPoint[]
   installs_timeseries_error?: string
-
   os_breakdown: OsBreakdownDataPoint[]
   os_breakdown_error?: string
-
   cpu_breakdown: CpuBreakdownDataPoint[]
   cpu_breakdown_error?: string
-
   top_models: TopModelsDataPoint[]
   top_models_error?: string
 }
@@ -89,10 +80,8 @@ async function getDashboardData(
   dateRange: DateRangePickerValue | undefined,
 ): Promise<DashboardData> {
   const supabase = createSupabaseServerClient()
-
   let appsList: App[] = []
   let appsErrorMessage: string | undefined
-
   const { data: appsData, error: appsError } = await supabase.from("apps").select("id, name").order("name")
   if (appsError) {
     console.error("Error fetching apps:", appsError.message)
@@ -100,25 +89,19 @@ async function getDashboardData(
   } else {
     appsList = (appsData || []) as App[]
   }
-
   const queryFrom = dateRange?.from ? startOfDay(dateRange.from) : startOfDay(subDays(new Date(), 29))
   const queryTo = dateRange?.to ? startOfDay(dateRange.to) : startOfDay(new Date())
-
   const rpcParams = {
     p_app_id_filter: selectedAppIdParam && selectedAppIdParam !== "all" ? selectedAppIdParam : null,
     p_start_date_filter: queryFrom.toISOString(),
     p_end_date_filter: queryTo.toISOString(),
   }
-
   let uniqueInstallsCount: number | string = 0
   let reportsThisPeriodCount: number | string = 0
   let kpiErrorMessage: string | undefined
-
   try {
     let query = supabase.from("reports").select("ip_hash", { count: "exact" })
-    if (rpcParams.p_app_id_filter) {
-      query = query.eq("app_id", rpcParams.p_app_id_filter)
-    }
+    if (rpcParams.p_app_id_filter) query = query.eq("app_id", rpcParams.p_app_id_filter)
     query = query.gte("received_at", rpcParams.p_start_date_filter)
     query = query.lte("received_at", rpcParams.p_end_date_filter)
     const { data: reportCountsData, error: reportCountsError, count } = await query
@@ -131,7 +114,6 @@ async function getDashboardData(
     uniqueInstallsCount = "Error"
     reportsThisPeriodCount = "Error"
   }
-
   let latestVersionValue = "N/A"
   let latestVersionErrorMessage: string | undefined
   const { data: latestVersionDataRpc, error: latestVersionRpcError } = await supabase.rpc("get_latest_app_version", {
@@ -146,7 +128,6 @@ async function getDashboardData(
   } else if (latestVersionDataRpc) {
     latestVersionValue = latestVersionDataRpc
   }
-
   let installsTimeseries: TimeSeriesDataPoint[] = []
   let installsTimeseriesErrorMessage: string | undefined
   const { data: dailyCountsData, error: dailyCountsError } = await supabase.rpc("get_daily_report_counts", {
@@ -166,13 +147,9 @@ async function getDashboardData(
     installsTimeseries = dateInterval.map((dayInInterval) => {
       const formattedDayKey = format(dayInInterval, "yyyy-MM-dd")
       const formattedDateLabel = format(dayInInterval, "MMM dd")
-      return {
-        date: formattedDateLabel,
-        Installs: countsByDay[formattedDayKey] || 0,
-      }
+      return { date: formattedDateLabel, Installs: countsByDay[formattedDayKey] || 0 }
     })
   }
-
   let osBreakdown: OsBreakdownDataPoint[] = []
   let osBreakdownErrorMessage: string | undefined
   const { data: osDataRpc, error: osErrorRpc } = await supabase.rpc("get_os_version_distribution", rpcParams)
@@ -185,7 +162,6 @@ async function getDashboardData(
       Users: Number(item.user_count) || 0,
     }))
   }
-
   let cpuBreakdown: CpuBreakdownDataPoint[] = []
   let cpuBreakdownErrorMessage: string | undefined
   const { data: cpuDataRpc, error: cpuErrorRpc } = await supabase.rpc("get_cpu_architecture_distribution", rpcParams)
@@ -198,7 +174,6 @@ async function getDashboardData(
       Users: Number(item.user_count) || 0,
     }))
   }
-
   let topModels: TopModelsDataPoint[] = []
   let topModelsErrorMessage: string | undefined
   const { data: modelDataRpc, error: modelErrorRpc } = await supabase.rpc("get_top_models", {
@@ -214,7 +189,6 @@ async function getDashboardData(
       count: Number(item.report_count) || 0,
     }))
   }
-
   return {
     apps: appsList,
     appsError: appsErrorMessage,
@@ -248,7 +222,6 @@ export default async function DashboardPage({
   let dateRange: DateRangePickerValue | undefined = undefined
   const defaultFrom = startOfDay(subDays(new Date(), 29))
   const defaultTo = startOfDay(new Date())
-
   if (typeof searchParams?.from === "string") {
     const fromDate = parseISO(searchParams.from)
     dateRange = { from: startOfDay(fromDate) }
@@ -261,17 +234,17 @@ export default async function DashboardPage({
   } else {
     dateRange = { from: defaultFrom, to: defaultTo }
   }
-
   const data = await getDashboardData(selectedAppId, dateRange)
   const showInstallationsChart = !data.installs_timeseries_error && data.installs_timeseries.length > 0
   const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0
   const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0
   const showTopModelsTable = !data.top_models_error && data.top_models.length > 0
+  const chartCardClassName = "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border"
 
   return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
+    <main className="p-4 md:p-6 lg:p-8 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
       <Flex justifyContent="between" alignItems="center" className="mb-8">
-        <Title className="text-3xl font-semibold">stats.store</Title>
+        <Title className="text-3xl font-semibold text-foreground">stats.store</Title>
       </Flex>
       <DashboardFilters
         apps={data.apps}
@@ -279,25 +252,28 @@ export default async function DashboardPage({
         currentDateRange={dateRange}
         appsError={data.appsError}
       />
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <KpiCard
           title="Unique Users"
-          value={typeof data.kpis.unique_installs === "string"
-            ? data.kpis.unique_installs
-            : valueFormatter(data.kpis.unique_installs)}
+          value={
+            typeof data.kpis.unique_installs === "string"
+              ? data.kpis.unique_installs
+              : valueFormatter(data.kpis.unique_installs)
+          }
           iconName="users"
-          iconColor="blue"
+          iconColor="blue" // Corresponds to chart-1 in light, chart-1 in dark
           error={!!data.kpisError?.unique_installs}
           tooltip={`Unique users (based on IP hash) from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
         />
         <KpiCard
           title="Total Reports"
-          value={typeof data.kpis.reports_this_period === "string"
-            ? data.kpis.reports_this_period
-            : valueFormatter(data.kpis.reports_this_period)}
+          value={
+            typeof data.kpis.reports_this_period === "string"
+              ? data.kpis.reports_this_period
+              : valueFormatter(data.kpis.reports_this_period)
+          }
           iconName="cube"
-          iconColor="green"
+          iconColor="green" // Corresponds to chart-2 (teal)
           error={!!data.kpisError?.reports_this_period}
           tooltip={`Total reports received from ${format(dateRange.from!, "MMM dd, yyyy")} to ${format(dateRange.to!, "MMM dd, yyyy")}`}
         />
@@ -305,22 +281,21 @@ export default async function DashboardPage({
           title="Latest Version Reported"
           value={data.kpis.latest_version}
           iconName="tag"
-          iconColor="amber"
+          iconColor="amber" // Corresponds to chart-4 (orange)
           error={!!data.kpisError?.latest_version}
           tooltip="Highest reported application version (semantically sorted)"
         />
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <Card>
-          <Title>Installations Over Time</Title>
+        <KpiCard className={chartCardClassName}>
+          <Title className="text-card-foreground mb-1">Installations Over Time</Title>
           {showInstallationsChart ? (
             <ClientLineChart
-              className="mt-6 h-72"
+              className="mt-4 h-72" // Adjusted margin
               data={data.installs_timeseries}
               index="date"
               categories={["Installs"]}
-              colors={["blue"]}
+              colors={["blue"]} // Uses chart-1
               yAxisWidth={48}
               showAnimation
             />
@@ -331,16 +306,16 @@ export default async function DashboardPage({
               minHeightClassName="h-72"
             />
           )}
-        </Card>
-        <Card>
-          <Title>macOS Version Distribution</Title>
+        </KpiCard>
+        <KpiCard className={chartCardClassName}>
+          <Title className="text-card-foreground mb-1">macOS Version Distribution</Title>
           {showOsChart ? (
             <ClientBarChart
-              className="mt-6 h-72"
+              className="mt-4 h-72" // Adjusted margin
               data={data.os_breakdown}
               index="name"
               categories={["Users"]}
-              colors={["teal"]}
+              colors={["teal"]} // Uses chart-2
               layout="vertical"
               yAxisWidth={120}
               showAnimation
@@ -352,19 +327,18 @@ export default async function DashboardPage({
               minHeightClassName="h-72"
             />
           )}
-        </Card>
+        </KpiCard>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
-          <Title>CPU Architecture</Title>
+        <KpiCard className={cn(chartCardClassName, "lg:col-span-1")}>
+          <Title className="text-card-foreground mb-1">CPU Architecture</Title>
           {showCpuChart ? (
             <ClientDonutChart
-              className="mt-6 h-56"
+              className="mt-4 h-56" // Adjusted margin
               data={data.cpu_breakdown}
               category="Users"
               index="name"
-              colors={["cyan", "indigo", "rose"]}
+              colors={["cyan", "purple", "rose"]} // Example: chart-3, chart-5
               showAnimation
             />
           ) : (
@@ -374,20 +348,20 @@ export default async function DashboardPage({
               minHeightClassName="h-56"
             />
           )}
-        </Card>
-        <Card className="lg:col-span-2">
-          <Title>Top Models</Title>
+        </KpiCard>
+        <KpiCard className={cn(chartCardClassName, "lg:col-span-2")}>
+          <Title className="text-card-foreground mb-1">Top Models</Title>
           {showTopModelsTable ? (
-            <Table className="mt-5 h-0">
+            <Table className="mt-4 h-auto">
               <TableHead>
                 <TableRow>
-                  <TableHeaderCell>Model Identifier</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Count</TableHeaderCell>
+                  <TableHeaderCell className="text-muted-foreground">Model Identifier</TableHeaderCell>
+                  <TableHeaderCell className="text-right text-muted-foreground">Count</TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data.top_models.map((item) => (
-                  <TableRow key={item.model}>
+                  <TableRow key={item.model} className="text-card-foreground">
                     <TableCell>{item.model}</TableCell>
                     <TableCell className="text-right">{valueFormatter(item.count)}</TableCell>
                   </TableRow>
@@ -398,12 +372,12 @@ export default async function DashboardPage({
             <CardStatusDisplay
               error={data.top_models_error}
               noData={!data.top_models_error && data.top_models.length === 0}
-              minHeightClassName="h-0"
+              minHeightClassName="h-[calc(theme(height.56)_+_theme(spacing.4))]"
             />
           )}
-        </Card>
+        </KpiCard>
       </div>
-      <footer className="mt-12 text-center text-sm text-muted-foreground">
+      <footer className="mt-12 py-6 text-center text-sm text-muted-foreground border-t border-border">
         Sparkle Statistics by{" "}
         <a
           href="https://twitter.com/steipete"

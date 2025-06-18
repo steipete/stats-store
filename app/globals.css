@@ -14,82 +14,155 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    /* Light Mode - White and Light Greys */
+    --background: 0 0% 98%; /* Slightly off-white */
+    --foreground: 240 10% 3.9%; /* Dark Gray for text */
+
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 240 10% 3.9%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 221 83% 53%; /* Apple-like Blue */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 94%; /* Slightly darker light gray for secondary elements */
+    --secondary-foreground: 240 10% 3.9%;
+
+    --muted: 0 0% 90%; /* Lighter Gray for muted text/elements */
+    --muted-foreground: 240 5% 45%; /* Softer gray text */
+
     --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent-foreground: 240 10% 3.9%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --border: 0 0% 90%; /* Light Gray border */
+    --input-bg: 0 0% 100%; /* White input background */
+    --input-border: 0 0% 86%; /* Slightly darker gray for input border */
+    --ring: 221 83% 53%; /* Apple-like Blue for focus */
+
+    --tooltip-bg: 240 6% 10%; /* Dark tooltip for contrast in light mode */
+    --tooltip-foreground: 0 0% 98%;
+
+    /* Chart colors */
+    --chart-1: 221 83% 53%; /* Primary Blue */
+    --chart-2: 173 58% 39%; /* Teal */
+    --chart-3: 240 50% 60%; /* Muted Blue/Purple */
+    --chart-4: 30 90% 55%; /* Orange */
+    --chart-5: 340 80% 60%; /* Pink/Rose */
+    --radius: 0.75rem; /* Default border radius (lg from config) */
   }
+
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    /* Dark Mode - Dark Greys */
+    --background: 240 6% 10%; /* Very Dark Gray */
+    --foreground: 0 0% 98%; /* Light Gray text */
+
+    --card: 240 6% 12%; /* Slightly Lighter Dark Gray for cards */
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+
+    --popover: 240 6% 10%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+
+    --primary: 217 91% 60%; /* Brighter Blue for dark mode */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 4% 18%; /* Darker Gray */
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+
+    --muted: 240 4% 22%; /* Lighter Dark Gray for muted elements */
+    --muted-foreground: 240 5% 65%; /* Softer light gray text */
+
+    --accent: 240 4% 18%;
     --accent-foreground: 0 0% 98%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --border: 240 4% 22%; /* Dark Gray border */
+    --input-bg: 240 4% 15%; /* Darker input background */
+    --input-border: 240 4% 25%; /* Slightly lighter dark gray for input border */
+    --ring: 217 91% 60%;
+
+    --tooltip-bg: 0 0% 98%; /* Light tooltip for contrast in dark mode */
+    --tooltip-foreground: 240 10% 3.9%;
+
+    /* Chart colors for dark mode - can be same or adjusted for better contrast */
+    --chart-1: 217 91% 60%; /* Primary Blue (Dark) */
+    --chart-2: 173 65% 55%; /* Brighter Teal */
+    --chart-3: 240 50% 70%; /* Lighter Muted Blue/Purple */
+    --chart-4: 35 95% 65%; /* Brighter Orange */
+    --chart-5: 340 85% 70%; /* Lighter Pink/Rose */
   }
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    @apply border-border; /* Apply border color by default */
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Custom scrollbar for a more refined look */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-secondary;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  /* Tremor/Recharts Dark Mode Text Overrides */
+  .dark .recharts-cartesian-axis-tick-value,
+  .dark .recharts-legend-item-text,
+  .dark text.recharts-text /* For labels inside charts like Donut */,
+  .dark .tremor-chart-tooltip-label /* Tremor's tooltip label */,
+  .dark .tremor-chart-tooltip-value /* Tremor's tooltip value */ {
+    fill: hsl(var(--muted-foreground)) !important; /* Use muted-foreground for less emphasis */
+  }
+
+  .dark .recharts-label /* For axis labels if any */ {
+    fill: hsl(var(--foreground)) !important;
+  }
+
+  /* Ensure Tremor DateRangePicker text is themed */
+  .dark .tremor-DateRangePicker-input {
+    color: hsl(var(--foreground)) !important;
+  }
+  .dark .tremor-DateRangePicker-calendar {
+    /* Calendar popup */
+    background-color: hsl(var(--popover)) !important;
+    border-color: hsl(var(--border)) !important;
+  }
+  .dark .tremor-DateRangePicker-day {
+    color: hsl(var(--foreground)) !important;
+  }
+  .dark .tremor-DateRangePicker-day:hover:not(.selected) {
+    background-color: hsl(var(--accent)) !important;
+  }
+  .dark .tremor-DateRangePicker-day.selected {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  .dark .tremor-DateRangePicker-month,
+  .dark .tremor-DateRangePicker-year,
+  .dark .tremor-DateRangePicker-weekday {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  .dark .tremor-DateRangePicker-header button svg {
+    stroke: hsl(var(--muted-foreground)) !important;
   }
 }

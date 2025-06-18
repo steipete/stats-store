@@ -8,7 +8,7 @@ Stats Store is a Next.js 15 analytics dashboard for tracking Sparkle-enabled mac
 
 ## Development Commands
 
-```bash
+\`\`\`bash
 # Install dependencies (using pnpm)
 pnpm install
 
@@ -23,7 +23,7 @@ pnpm start
 
 # Run linting
 pnpm lint
-```
+\`\`\`
 
 ## Architecture Overview
 
@@ -53,11 +53,11 @@ pnpm lint
 ## Environment Variables
 
 Required in `.env.local`:
-```
+\`\`\`
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-```
+\`\`\`
 
 ## Database Setup
 
@@ -110,7 +110,7 @@ The project recently migrated to Tailwind CSS v4. Key changes:
 ## Testing Sparkle Integration
 
 To test the API endpoint locally:
-```bash
+\`\`\`bash
 curl -X POST http://localhost:3000/api/v1/ingest \
   -H "Content-Type: application/json" \
   -d '{
@@ -124,7 +124,7 @@ curl -X POST http://localhost:3000/api/v1/ingest \
     "lang": "en",
     "ramMB": "16384"
   }'
-```
+\`\`\`
 
 ## Common Tasks
 
@@ -136,10 +136,10 @@ curl -X POST http://localhost:3000/api/v1/ingest \
 
 ### Registering a New App
 Insert into the `apps` table:
-```sql
+\`\`\`sql
 INSERT INTO apps (name, bundle_identifier) 
 VALUES ('App Name', 'com.company.app');
-```
+\`\`\`
 
 ### Modifying Database Queries
 1. Update RPC functions in Supabase dashboard

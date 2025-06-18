@@ -4,15 +4,15 @@ This stats-store application provides an API endpoint to collect update statisti
 
 ## API Endpoint
 
-```
+\`\`\`
 POST https://stats.store/api/v1/ingest
-```
+\`\`\`
 
 ## Request Format
 
 The endpoint expects a JSON payload with the following structure:
 
-```json
+\`\`\`json
 {
   "bundleIdentifier": "com.company.appname",  // Required
   "appVersion": "2.1.0",                      // Optional
@@ -23,7 +23,7 @@ The endpoint expects a JSON payload with the following structure:
   "model": "MacBookPro18,3",                  // Optional
   "ramMB": "16384"                            // Optional
 }
-```
+\`\`\`
 
 ## Setting Up Your App
 
@@ -46,7 +46,7 @@ The endpoint expects a JSON payload with the following structure:
 
 For a custom Sparkle delegate implementation:
 
-```swift
+\`\`\`swift
 func updater(_ updater: SPUUpdater, willCheckForUpdates: SPUUpdateCheck) {
     // Send stats to stats.store
     let statsURL = URL(string: "https://stats.store/api/v1/ingest")!
@@ -65,13 +65,13 @@ func updater(_ updater: SPUUpdater, willCheckForUpdates: SPUUpdateCheck) {
     
     URLSession.shared.dataTask(with: request).resume()
 }
-```
+\`\`\`
 
 ## Testing
 
 You can test the endpoint with curl:
 
-```bash
+\`\`\`bash
 curl -X POST https://stats.store/api/v1/ingest \
   -H "Content-Type: application/json" \
   -d '{
@@ -79,7 +79,7 @@ curl -X POST https://stats.store/api/v1/ingest \
     "appVersion": "1.0.0",
     "osVersion": "14.2"
   }'
-```
+\`\`\`
 
 ## Data Collected
 

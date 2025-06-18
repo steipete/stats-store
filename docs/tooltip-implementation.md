@@ -28,7 +28,7 @@ The KpiCard component is now used in `app/page.tsx` with the following tooltip t
 - Follows the project's dark mode theme
 
 ### Usage Example:
-```tsx
+\`\`\`tsx
 <KpiCard
   title="Unique Users"
   value={valueFormatter(data.kpis.unique_installs)}
@@ -36,7 +36,7 @@ The KpiCard component is now used in `app/page.tsx` with the following tooltip t
   iconColor="blue"
   tooltip="Unique users (based on IP hash) from Jan 1 to Jan 31"
 />
-```
+\`\`\`
 
 ## Solution 2: Native HTML Title Attribute (Simple Alternative)
 
@@ -59,7 +59,7 @@ For a simpler approach without client-side JavaScript, we also created `KpiCardS
 - Basic appearance
 
 ### Usage Example:
-```tsx
+\`\`\`tsx
 <KpiCardSimple
   title="Unique Users"
   value={valueFormatter(data.kpis.unique_installs)}
@@ -67,7 +67,7 @@ For a simpler approach without client-side JavaScript, we also created `KpiCardS
   iconColor="blue"
   tooltip="Unique users (based on IP hash) from Jan 1 to Jan 31"
 />
-```
+\`\`\`
 
 ## Current Implementation
 
@@ -81,13 +81,13 @@ The dashboard currently uses Solution 1 (Radix UI) as it provides a better user 
 
 To switch to the simpler solution, replace the import in `app/page.tsx`:
 
-```tsx
+\`\`\`tsx
 // Replace this:
 import { KpiCard } from "@/components/kpi-card"
 
 // With this:
 import { KpiCardSimple as KpiCard } from "@/components/kpi-card-simple"
-```
+\`\`\`
 
 ## Styling Customization
 
