@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { Suspense } from "react"
 import {
   Flex,
   Title,
@@ -271,12 +272,20 @@ export default async function DashboardPage({
           stats.store - Fast, open, privacy-first analytics for Sparkle
         </Title>
       </Flex>
-      <DashboardFilters
-        apps={data.apps}
-        currentAppId={selectedAppId}
-        currentDateRange={dateRange}
-        appsError={data.appsError}
-      />
+      <Suspense fallback={
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 items-center">
+          <div className="h-10 bg-muted animate-pulse rounded-lg" />
+          <div className="h-10 bg-muted animate-pulse rounded-lg" />
+          <div className="h-10 bg-muted animate-pulse rounded-lg" />
+        </div>
+      }>
+        <DashboardFilters
+          apps={data.apps}
+          currentAppId={selectedAppId}
+          currentDateRange={dateRange}
+          appsError={data.appsError}
+        />
+      </Suspense>
       {/* Real-time KPI Dashboard */}
       <RealtimeDashboard
         selectedAppId={selectedAppId}
