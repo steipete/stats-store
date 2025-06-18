@@ -10,7 +10,7 @@ export default function Loading() {
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl min-h-screen">
       <Flex justifyContent="between" alignItems="center" className="mb-8">
-        <Title className="text-3xl font-semibold">App Stats Store</Title>
+        <Title className="text-3xl font-semibold">stats.store</Title>
       </Flex>
 
       {/* Filter Skeletons */}

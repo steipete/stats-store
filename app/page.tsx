@@ -404,7 +404,24 @@ export default async function DashboardPage({
         </Card>
       </div>
       <footer className="mt-12 text-center text-sm text-muted-foreground">
-        Powered by Sparkle, Next.js, Supabase, and Tremor.
+        Sparkle Statistics by{" "}
+        <a
+          href="https://twitter.com/steipete"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          @steipete
+        </a>
+        {" • "}
+        <a
+          href="https://github.com/steipete/stats-store"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          MIT Licensed
+        </a>
       </footer>
     </main>
   )
