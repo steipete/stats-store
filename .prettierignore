@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Environment
+.env*
+
+# Git
+.git
+
+# IDE
+.vscode
+.idea
+
+# Testing
+coverage
+
+# Misc
+*.log

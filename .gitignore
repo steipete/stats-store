@@ -31,3 +31,6 @@ next-env.d.ts
 
 # temp files
 temp_url.txt
+
+# OS files
+.DS_Store
