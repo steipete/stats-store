@@ -151,7 +151,6 @@ describe("DashboardFilters", () => {
     })
   })
 
-
   describe("styling and layout", () => {
     it("applies responsive grid layout", () => {
       const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
