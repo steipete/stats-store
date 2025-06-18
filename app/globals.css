@@ -838,4 +838,24 @@ body {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
+
+  /* Tremor DateRangePicker X button spacing fix */
+  .tremor-DateRangePicker-clearButton,
+  button[aria-label="Clear"],
+  button[aria-label="Clear date"],
+  button[aria-label="Clear dates"] {
+    padding: 0.5rem !important;
+    margin-right: 0.5rem !important;
+  }
+
+  /* Target X icon inside DateRangePicker more specifically */
+  .tremor-DateRangePicker-root button:has(svg.h-4.w-4),
+  .tremor-DateRangePicker-root button:has(svg[width="16"]),
+  [class*="DateRangePicker"] button:has(svg.h-4.w-4) {
+    padding: 0.5rem !important;
+    margin-right: 0.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
 }

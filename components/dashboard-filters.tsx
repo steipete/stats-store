@@ -125,7 +125,7 @@ export function DashboardFilters({
           // Removed [&>button]:bg-transparent to let Tremor handle its button background,
           // which should be themed or use the wrapper's bg-input.
           // Added explicit text color for the button content.
-          className="w-full h-full [&>button]:h-full [&>button]:w-full [&>button]:rounded-lg [&>button]:border-0 hover:[&>button]:bg-secondary/30 focus:[&>button]:ring-0 focus:outline-none [&>button]:text-foreground"
+          className="w-full h-full [&>button]:h-full [&>button]:w-full [&>button]:rounded-lg [&>button]:border-0 hover:[&>button]:bg-secondary/30 focus:[&>button]:ring-0 focus:outline-none [&>button]:text-foreground [&>button>span]:flex [&>button>span]:items-center [&>button>span]:justify-between [&>button>span]:w-full [&>button>span>button]:flex [&>button>span>button]:items-center [&>button>span>button]:justify-center [&>button>span>button]:p-2 [&>button>span>button]:mr-2"
           enableYearNavigation
         />
       </div>
