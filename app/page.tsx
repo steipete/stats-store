@@ -24,7 +24,6 @@ import { ClientLineChart } from "@/components/client-line-chart"
 import { ClientBarChart } from "@/components/client-bar-chart"
 import { ClientDonutChart } from "@/components/client-donut-chart"
 import { KpiCard } from "@/components/kpi-card"
-import { AppRegistrationNotice } from "@/components/app-registration-notice"
 
 export const metadata: Metadata = {
   title: "App Stats Dashboard | Track Your Application Performance",
@@ -272,7 +271,7 @@ export default async function DashboardPage({
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
       <Flex justifyContent="between" alignItems="center" className="mb-8">
-        <Title className="text-3xl font-semibold">App Stats Store</Title>
+        <Title className="text-3xl font-semibold">stats.store</Title>
       </Flex>
       <DashboardFilters
         apps={data.apps}
@@ -280,8 +279,6 @@ export default async function DashboardPage({
         currentDateRange={dateRange}
         appsError={data.appsError}
       />
-
-      <AppRegistrationNotice />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <KpiCard
