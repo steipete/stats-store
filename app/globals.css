@@ -839,10 +839,10 @@ body {
 
   /* Calendar container styles - ensure proper background */
   [role="dialog"][aria-label*="calendar"],
-  [data-state="open"][data-side],
+  [data-state="open"][data-side]:not([role="tooltip"]),
   .tremor-DateRangePicker-dropdownContainer,
   .tremor-DateRangePicker-dropdown,
-  [data-radix-popper-content-wrapper] > div,
+  [data-radix-popper-content-wrapper] > div:not([role="tooltip"]),
   [data-radix-popper-content-wrapper] [role="dialog"] {
     background-color: hsl(var(--popover)) !important;
     color: hsl(var(--popover-foreground)) !important;
@@ -855,10 +855,10 @@ body {
   
   /* Ensure all child elements inherit text color */
   [role="dialog"][aria-label*="calendar"] *,
-  [data-state="open"][data-side] *,
+  [data-state="open"][data-side]:not([role="tooltip"]) *,
   .tremor-DateRangePicker-dropdownContainer *,
   .tremor-DateRangePicker-dropdown *,
-  [data-radix-popper-content-wrapper] > div *,
+  [data-radix-popper-content-wrapper] > div:not([role="tooltip"]) *,
   [data-radix-popper-content-wrapper] [role="dialog"] * {
     color: inherit;
   }
@@ -917,25 +917,23 @@ body {
   
 
   /* All tooltip backgrounds - fix transparency issue */
-  [role="tooltip"],
-  [data-state="open"][data-side][style*="--radix-tooltip"],
-  [data-radix-popper-content-wrapper],
-  .bg-tooltip {
+  [role="tooltip"] {
     background-color: var(--tooltip-bg) !important;
     color: var(--tooltip-foreground) !important;
     backdrop-filter: blur(12px) !important;
     box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
     padding: 6px 10px !important;
     border-radius: 6px !important;
+    border: none !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    max-width: 250px !important;
   }
   
-  .dark [role="tooltip"],
-  .dark [data-state="open"][data-side][style*="--radix-tooltip"],
-  .dark [data-radix-popper-content-wrapper],
-  .dark .bg-tooltip {
-    background-color: hsl(240 6% 10%) !important;
+  .dark [role="tooltip"] {
+    background-color: hsl(240 10% 8%) !important;
     color: hsl(0 0% 98%) !important;
-    border: 1px solid hsl(240 3.7% 25%) !important;
+    border: none !important;
   }
   
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
@@ -988,18 +986,7 @@ body {
     --radix-popover-border: hsl(var(--border));
   }
   
-  /* KPI Card specific tooltip styling */
-  .bg-tooltip.rounded-md {
-    font-size: 12px !important;
-    font-weight: 400 !important;
-    max-width: 250px !important;
-  }
   
-  /* Force dark tooltips in dark mode */
-  .dark [role="tooltip"] {
-    background-color: hsl(240 10% 3.9%) !important;
-    color: hsl(0 0% 98%) !important;
-  }
 
   /* Global fix for any floating/popup elements */
   [data-floating-ui-portal] > div,
