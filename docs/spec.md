@@ -51,18 +51,18 @@ Stores information about each tracked application. An application must be regist
 \`\`\`sql
 -- Stores metadata for each application being tracked.
 CREATE TABLE public.apps (
-  -- A unique identifier for the app.
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+-- A unique identifier for the app.
+id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-  -- The user-facing name of the application, e.g., "My Awesome App".
-  name TEXT NOT NULL UNIQUE,
+-- The user-facing name of the application, e.g., "My Awesome App".
+name TEXT NOT NULL UNIQUE,
 
-  -- The app's bundle identifier, e.g., "com.mycompany.myawesomeapp".
-  -- This is the key used to validate incoming reports.
-  bundle_identifier TEXT NOT NULL UNIQUE,
+-- The app's bundle identifier, e.g., "com.mycompany.myawesomeapp".
+-- This is the key used to validate incoming reports.
+bundle_identifier TEXT NOT NULL UNIQUE,
 
-  -- Timestamp of when the app was added.
-  created_at TIMESTAMPTZ DEFAULT now()
+-- Timestamp of when the app was added.
+created_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Enable Row Level Security to control data access.
@@ -76,39 +76,39 @@ Stores sanitized data from each individual Sparkle profile report.
 \`\`\`sql
 -- Stores every individual, sanitized profile report received.
 CREATE TABLE public.reports (
-  -- A unique, auto-incrementing identifier for each report.
-  id BIGSERIAL PRIMARY KEY,
+-- A unique, auto-incrementing identifier for each report.
+id BIGSERIAL PRIMARY KEY,
 
-  -- A foreign key linking this report to an app in the 'apps' table.
-  app_id UUID NOT NULL REFERENCES public.apps(id) ON DELETE CASCADE,
+-- A foreign key linking this report to an app in the 'apps' table.
+app_id UUID NOT NULL REFERENCES public.apps(id) ON DELETE CASCADE,
 
-  -- Timestamp of when the report was received by the server.
-  received_at TIMESTAMPTZ DEFAULT now(),
+-- Timestamp of when the report was received by the server.
+received_at TIMESTAMPTZ DEFAULT now(),
 
-  -- A SHA-256 hash of the user's IP address salted with the current date.
-  -- This allows for counting daily unique users without storing PII.
-  ip_hash TEXT NOT NULL,
+-- A SHA-256 hash of the user's IP address salted with the current date.
+-- This allows for counting daily unique users without storing PII.
+ip_hash TEXT NOT NULL,
 
-  -- Application version, e.g., "1.2.3".
-  app_version TEXT,
+-- Application version, e.g., "1.2.3".
+app_version TEXT,
 
-  -- macOS version, e.g., "14.5".
-  os_version TEXT,
+-- macOS version, e.g., "14.5".
+os_version TEXT,
 
-  -- CPU architecture: 'arm64' or 'x86_64'.
-  cpu_arch TEXT,
+-- CPU architecture: 'arm64' or 'x86_64'.
+cpu_arch TEXT,
 
-  -- Number of CPU cores.
-  core_count INT,
+-- Number of CPU cores.
+core_count INT,
 
-  -- The user's primary system language code, e.g., "en".
-  language TEXT,
+-- The user's primary system language code, e.g., "en".
+language TEXT,
 
-  -- The Mac model identifier, e.g., "MacBookPro17,1".
-  model_identifier TEXT,
+-- The Mac model identifier, e.g., "MacBookPro17,1".
+model_identifier TEXT,
 
-  -- System RAM in megabytes.
-  ram_mb INT
+-- System RAM in megabytes.
+ram_mb INT
 );
 
 -- Indexes to optimize common query patterns.
@@ -131,15 +131,15 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
 - **Request Body:**
   \`\`\`json
   {
-    "bundleIdentifier": "com.mycompany.myawesomeapp",
-    "ip": "123.45.67.89",
-    "appVersion": "1.2.3",
-    "osVersion": "14.5",
-    "cputype": "16777228",
-    "ncpu": "8",
-    "lang": "en",
-    "model": "MacBookPro17,1",
-    "ramMB": "16384"
+  "bundleIdentifier": "com.mycompany.myawesomeapp",
+  "ip": "123.45.67.89",
+  "appVersion": "1.2.3",
+  "osVersion": "14.5",
+  "cputype": "16777228",
+  "ncpu": "8",
+  "lang": "en",
+  "model": "MacBookPro17,1",
+  "ramMB": "16384"
   }
   \`\`\`
 - **Action:**
@@ -160,23 +160,23 @@ The API is implemented as **Next.js API Routes**, keeping all code within a sing
 - **Response Payload (Passed as props to the dashboard component):**
   \`\`\`json
   {
-    "kpis": {
-      "unique_installs": 12543,
-      "reports_this_period": 876,
-      "latest_version": "1.2.3"
-    },
-    "installs_timeseries": [
-      { "date": "2025-06-10", "count": 150 },
-      { "date": "2025-06-11", "count": 165 }
-    ],
-    "os_breakdown": [
-      { "name": "macOS 14 Sonoma", "value": 6012 },
-      { "name": "macOS 13 Ventura", "value": 4531 }
-    ],
-    "cpu_breakdown": [
-      { "name": "Apple Silicon", "value": 9876 },
-      { "name": "Intel", "value": 2667 }
-    ]
+  "kpis": {
+  "unique_installs": 12543,
+  "reports_this_period": 876,
+  "latest_version": "1.2.3"
+  },
+  "installs_timeseries": [
+  { "date": "2025-06-10", "count": 150 },
+  { "date": "2025-06-11", "count": 165 }
+  ],
+  "os_breakdown": [
+  { "name": "macOS 14 Sonoma", "value": 6012 },
+  { "name": "macOS 13 Ventura", "value": 4531 }
+  ],
+  "cpu_breakdown": [
+  { "name": "Apple Silicon", "value": 9876 },
+  { "name": "Intel", "value": 2667 }
+  ]
   }
   \`\`\`
 
@@ -188,37 +188,37 @@ The dashboard will be clean, modern, and data-focused, using a dark theme with v
 
 \`\`\`
 /-------------------------------------------------------------------------------------\
-| [App Stats Store]                                               [User: dev@email] |
+| [App Stats Store] [User: dev@email] |
 |-------------------------------------------------------------------------------------|
-|                                                                                     |
-|  Filters: [All Apps ▼]   Date Range: [Last 30 Days ▼]   [Refresh]                   |
-|                                                                                     |
+| |
+| Filters: [All Apps ▼] Date Range: [Last 30 Days ▼] [Refresh] |
+| |
 |-------------------------------------------------------------------------------------|
-|                                                                                     |
-|  /-----------------------\   /-----------------------\   /-----------------------\   |
-|  | TOTAL INSTALLS        |   | ACTIVE LAST 30D       |   | LATEST VERSION        |   |
-|  | 45,102                |   | 8,675                 |   | 2.1.0                 |   |
-|  \-----------------------/   \-----------------------/   \-----------------------/   |
-|                                                                                     |
+| |
+| /-----------------------\ /-----------------------\ /-----------------------\ |
+| | TOTAL INSTALLS | | ACTIVE LAST 30D | | LATEST VERSION | |
+| | 45,102 | | 8,675 | | 2.1.0 | |
+| \-----------------------/ \-----------------------/ \-----------------------/ |
+| |
 |-------------------------------------------------------------------------------------|
-|                                                                                     |
-|  /---------------------------------------|  /-----------------------------------\  |
-|  |▼ Installations Over Time              |  |▼ macOS Version Distribution       |  |
-|  |                                       |  |                                   |  |
-|  | (Line Chart showing daily installs)   |  | (Bar chart showing OS versions)    |  |
-|  |                                       |  |                                   |  |
-|  \---------------------------------------|  \-----------------------------------/  |
-|                                                                                     |
+| |
+| /---------------------------------------| /-----------------------------------\ |
+| |▼ Installations Over Time | |▼ macOS Version Distribution | |
+| | | | | |
+| | (Line Chart showing daily installs) | | (Bar chart showing OS versions) | |
+| | | | | |
+| \---------------------------------------| \-----------------------------------/ |
+| |
 |-------------------------------------------------------------------------------------|
-|                                                                                     |
-|  /---------------------------\  /-----------------------------------------------\  |
-|  |▼ CPU Architecture         |  |▼ Top Models                                   |  |
-|  |                           |  |-----------------------------------------------|  |
-|  | (Doughnut chart for CPU)  |  | MacBook Pro (16-inch, 2023) ....... 2,450     |  |
-|  |                           |  | Mac mini (M2, 2023) ............... 1,832     |  |
-|  |                           |  | MacBook Air (13-inch, M1, 2020) ... 1,567     |  |
-|  \---------------------------/  \-----------------------------------------------/  |
-|                                                                                     |
+| |
+| /---------------------------\ /-----------------------------------------------\ |
+| |▼ CPU Architecture | |▼ Top Models | |
+| | | |-----------------------------------------------| |
+| | (Doughnut chart for CPU) | | MacBook Pro (16-inch, 2023) ....... 2,450 | |
+| | | | Mac mini (M2, 2023) ............... 1,832 | |
+| | | | MacBook Air (13-inch, M1, 2020) ... 1,567 | |
+| \---------------------------/ \-----------------------------------------------/ |
+| |
 \-------------------------------------------------------------------------------------/
 \`\`\`
 

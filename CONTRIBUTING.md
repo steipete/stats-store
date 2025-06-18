@@ -25,7 +25,9 @@ Awesome! Here's how:
 
 1. **Fork & Clone**
    \`\`\`bash
+
    # Fork on GitHub first, then:
+
    git clone https://github.com/YOUR_USERNAME/stats-store.git
    cd stats-store
    pnpm install
@@ -34,32 +36,38 @@ Awesome! Here's how:
 2. **Create a Branch**
    \`\`\`bash
    git checkout -b fix/awesome-bug-fix
+
    # or
+
    git checkout -b feature/cool-new-thing
    \`\`\`
 
 3. **Make Your Changes**
+
    - Write clean, readable code
    - Follow the existing style (Prettier will help!)
    - Add tests if needed
 
 4. **Test Everything**
    \`\`\`bash
-   pnpm test        # Run tests
-   pnpm lint        # Check linting
-   pnpm typecheck   # TypeScript checks
-   pnpm build       # Make sure it builds
+   pnpm test # Run tests
+   pnpm lint # Check linting
+   pnpm typecheck # TypeScript checks
+   pnpm build # Make sure it builds
    \`\`\`
 
 5. **Commit Your Changes**
    \`\`\`bash
    git add .
    git commit -m "fix: solve the awesome bug"
+
    # or
+
    git commit -m "feat: add cool new thing"
    \`\`\`
 
    We use [conventional commits](https://www.conventionalcommits.org/):
+
    - `fix:` for bug fixes
    - `feat:` for new features
    - `docs:` for documentation
@@ -76,7 +84,7 @@ Awesome! Here's how:
 
 ### Prerequisites
 
-- Node.js 20+ 
+- Node.js 20+
 - pnpm (`npm install -g pnpm`)
 - Supabase account (for database)
 
@@ -89,12 +97,12 @@ Awesome! Here's how:
 ### Useful Commands
 
 \`\`\`bash
-pnpm dev         # Start dev server
-pnpm test        # Run tests
-pnpm test:watch  # Run tests in watch mode
-pnpm lint        # Run linter
-pnpm format      # Format code
-pnpm build       # Build for production
+pnpm dev # Start dev server
+pnpm test # Run tests
+pnpm test:watch # Run tests in watch mode
+pnpm lint # Run linter
+pnpm format # Format code
+pnpm build # Build for production
 \`\`\`
 
 ## Code Style

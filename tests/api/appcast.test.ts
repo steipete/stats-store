@@ -45,7 +45,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    const response = await GET(request, { params: { path: ["appcast.xml"] } })
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
     const content = await response.text()
 
     expect(response.status).toBe(200)
@@ -66,7 +66,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    await GET(request, { params: { path: ["appcast-prerelease.xml"] } })
+    await GET(request, { params: Promise.resolve({ path: ["appcast-prerelease.xml"] }) })
 
     expect(global.fetch).toHaveBeenCalledWith(
       "https://raw.githubusercontent.com/owner/repo/refs/heads/main/appcast-prerelease.xml",
@@ -106,7 +106,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    await GET(request, { params: { path: ["sparkle.xml"] } })
+    await GET(request, { params: Promise.resolve({ path: ["sparkle.xml"] }) })
 
     expect(global.fetch).toHaveBeenCalledWith("https://example.com/updates/sparkle.xml", expect.any(Object))
   })
@@ -143,7 +143,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    await GET(request, { params: { path: ["appcast.xml"] } })
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
 
     // Should not duplicate .xml
     expect(global.fetch).toHaveBeenCalledWith("https://example.com/updates/appcast.xml", expect.any(Object))
@@ -181,7 +181,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    await GET(request, { params: { path: ["appcast-beta.xml"] } })
+    await GET(request, { params: Promise.resolve({ path: ["appcast-beta.xml"] }) })
 
     // Should replace the filename
     expect(global.fetch).toHaveBeenCalledWith("https://example.com/updates/appcast-beta.xml", expect.any(Object))
@@ -190,7 +190,7 @@ describe("/api/v1/appcast/[...path]", () => {
   it("should reject requests without bundleIdentifier", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", { method: "GET" })
 
-    const response = await GET(request, { params: { path: ["appcast.xml"] } })
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
     const json = await response.json()
 
     expect(response.status).toBe(400)
@@ -219,7 +219,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    const response = await GET(request, { params: { path: ["appcast.xml"] } })
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
     const json = await response.json()
 
     expect(response.status).toBe(404)
@@ -237,7 +237,7 @@ describe("/api/v1/appcast/[...path]", () => {
       { method: "GET" }
     )
 
-    const response = await GET(request, { params: { path: ["appcast.xml"] } })
+    const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
     const json = await response.json()
 
     expect(response.status).toBe(502)

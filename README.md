@@ -16,12 +16,14 @@ If you have a Mac app that uses [Sparkle](https://sparkle-project.org/) for upda
 - Are people actually updating when I release new versions?
 
 **What we collect:**
+
 - macOS version and CPU type (Intel vs Apple Silicon)
 - App version numbers
 - Daily unique users (anonymized)
 - Basic hardware info (RAM, Mac model)
 
 **What we DON'T collect:**
+
 - No IP addresses or personal data
 - No usage tracking or behavior analytics
 - No creepy fingerprinting
@@ -29,7 +31,7 @@ If you have a Mac app that uses [Sparkle](https://sparkle-project.org/) for upda
 
 ## Free for Open Source
 
-Building an open source Mac app? It's completely free! Just [email Peter](mailto:peter@steipete.me) and he'll add your app. 
+Building an open source Mac app? It's completely free! Just [email Peter](mailto:peter@steipete.me) and he'll add your app.
 
 ## How It Works (The Magic Part! ✨)
 
@@ -73,25 +75,32 @@ Want to run your own instance? Cool! Check out the [deployment guide](docs/deplo
 ### Quick Start for Developers
 
 \`\`\`bash
+
 # Clone and install
+
 git clone https://github.com/steipete/stats-store.git
 cd stats-store
 pnpm install
 
 # Set up environment (you'll need a Supabase account)
+
 cp .env.example .env.local
+
 # Edit .env.local with your Supabase credentials
 
 # Run database migrations (in Supabase SQL editor)
+
 # See scripts/ directory
 
 # Start development server
+
 pnpm dev
 \`\`\`
 
 ## Technical Stuff
 
 Built with modern tools that make development fun:
+
 - [Next.js](https://nextjs.org/) - React framework
 - [Supabase](https://supabase.com/) - Database and real-time updates
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
@@ -101,7 +110,7 @@ For architecture details and API documentation, see [docs/architecture.md](docs/
 
 ## Contributing
 
-Found a bug? Want to add a feature? Awesome! 
+Found a bug? Want to add a feature? Awesome!
 
 1. Fork the repo
 2. Make your changes
@@ -126,4 +135,4 @@ MIT - see [LICENSE](LICENSE) file. Use it, fork it, make it your own!
 
 ---
 
-*Built with ❤️ for the Mac developer community by [@steipete](https://github.com/steipete)*
+_Built with ❤️ for the Mac developer community by [@steipete](https://github.com/steipete)_

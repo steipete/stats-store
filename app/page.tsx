@@ -272,13 +272,15 @@ export default async function DashboardPage({
           stats.store - Fast, open, privacy-first analytics for Sparkle
         </Title>
       </Flex>
-      <Suspense fallback={
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 items-center">
-          <div className="h-10 bg-muted animate-pulse rounded-lg" />
-          <div className="h-10 bg-muted animate-pulse rounded-lg" />
-          <div className="h-10 bg-muted animate-pulse rounded-lg" />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 items-center">
+            <div className="h-10 bg-muted animate-pulse rounded-lg" />
+            <div className="h-10 bg-muted animate-pulse rounded-lg" />
+            <div className="h-10 bg-muted animate-pulse rounded-lg" />
+          </div>
+        }
+      >
         <DashboardFilters
           apps={data.apps}
           currentAppId={selectedAppId}
