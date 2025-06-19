@@ -37,7 +37,7 @@ function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgent | nul
 
   // Match pattern: AppName/Version optionally followed by Sparkle/Version
   const match = userAgent.match(/^([^\/]+)\/([^\s]+)(?:\s+Sparkle\/([^\s]+))?/)
-  
+
   if (!match) return null
 
   return {
@@ -143,7 +143,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Check for app identifier - try query params first, then User-Agent
     // Priority: bundleIdentifier > appName (from params) > appName (from User-Agent)
     const appIdentifier = sparkleParams.bundleIdentifier || sparkleParams.appName || parsedUA?.appName
-    const appVersion = sparkleParams.appVersion || sparkleParams.bundleShortVersionString || sparkleParams.bundleVersion || parsedUA?.appVersion
+    const appVersion =
+      sparkleParams.appVersion ||
+      sparkleParams.bundleShortVersionString ||
+      sparkleParams.bundleVersion ||
+      parsedUA?.appVersion
 
     if (!appIdentifier) {
       console.error("Missing app identifier. Received params:", sparkleParams, "User-Agent:", userAgent)
@@ -153,7 +157,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     console.log("App identification:", {
       identifier: appIdentifier,
       version: appVersion,
-      source: sparkleParams.bundleIdentifier ? "bundleIdentifier" : sparkleParams.appName ? "appName param" : "User-Agent",
+      source: sparkleParams.bundleIdentifier
+        ? "bundleIdentifier"
+        : sparkleParams.appName
+          ? "appName param"
+          : "User-Agent",
     })
 
     const supabase = createSupabaseServerClient()
@@ -229,8 +237,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       app_id_source: sparkleParams.bundleIdentifier
         ? "bundleIdentifier"
         : sparkleParams.appName
-        ? "appName"
-        : "userAgent",
+          ? "appName"
+          : "userAgent",
     }
 
     // Insert telemetry data (don't wait for it to complete)

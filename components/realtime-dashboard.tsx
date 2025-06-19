@@ -28,14 +28,20 @@ interface RealtimeDashboardProps {
   onStatusChange?: (status: { isConnected: boolean; lastUpdate?: Date; realtimeEventsCount: number }) => void
 }
 
-export function RealtimeDashboard({ selectedAppId, dateRange, initialData, hideStatusIndicator = false, onStatusChange }: RealtimeDashboardProps) {
+export function RealtimeDashboard({
+  selectedAppId,
+  dateRange: _dateRange,
+  initialData,
+  hideStatusIndicator = false,
+  onStatusChange,
+}: RealtimeDashboardProps) {
   const [showActivityFeed, setShowActivityFeed] = useState(false)
   const [previousKpis, setPreviousKpis] = useState(initialData.kpis)
 
   const { isConnected, lastUpdate, realtimeEvents, statsCache } = useRealtimeStats({
     appId: selectedAppId,
   })
-  
+
   // Notify parent of status changes
   useEffect(() => {
     if (onStatusChange) {

@@ -238,11 +238,11 @@ describe("/api/v1/appcast/[...path]", () => {
       })),
     } as any)
 
-    const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", { 
+    const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", {
       method: "GET",
       headers: {
-        "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0"
-      }
+        "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0",
+      },
     })
 
     const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
@@ -252,7 +252,7 @@ describe("/api/v1/appcast/[...path]", () => {
   })
 
   it("should reject requests without any app identification", async () => {
-    const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", { 
+    const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", {
       method: "GET",
       // No User-Agent header
     })
@@ -473,7 +473,7 @@ describe("/api/v1/appcast/[...path]", () => {
         },
         {
           userAgent: "SimpleApp/1.0",
-          expectedApp: "SimpleApp", 
+          expectedApp: "SimpleApp",
           expectedVersion: "1.0",
         },
       ]
@@ -513,7 +513,7 @@ describe("/api/v1/appcast/[...path]", () => {
         })
 
         const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
-        
+
         expect(response.status).toBe(200)
       }
     })
@@ -559,9 +559,9 @@ describe("/api/v1/appcast/[...path]", () => {
           "appName=MyApp&appVersion=123&osVersion=14.0&cpu64bit=1&" +
           "cputype=16777228&cpusubtype=2&model=MacBookPro17,1&ncpu=8&" +
           "cpuFreqMHz=2400&lang=en&ramMB=16384",
-        { 
+        {
           method: "GET",
-          headers: { "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0" }
+          headers: { "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0" },
         }
       )
 
@@ -581,7 +581,7 @@ describe("/api/v1/appcast/[...path]", () => {
 
       const { createSupabaseServerClient } = await import("@/lib/supabase/server")
       const fromMock = vi.fn()
-      
+
       // Mock will be called with bundleIdentifier first (priority)
       fromMock
         .mockReturnValueOnce({
@@ -609,11 +609,10 @@ describe("/api/v1/appcast/[...path]", () => {
       } as any)
 
       const request = new NextRequest(
-        "http://localhost:3000/api/v1/appcast/appcast.xml?" +
-          "bundleIdentifier=com.priority.app&appName=DifferentName",
-        { 
+        "http://localhost:3000/api/v1/appcast/appcast.xml?" + "bundleIdentifier=com.priority.app&appName=DifferentName",
+        {
           method: "GET",
-          headers: { "User-Agent": "YetAnotherName/1.0 Sparkle/2.0.0" }
+          headers: { "User-Agent": "YetAnotherName/1.0 Sparkle/2.0.0" },
         }
       )
 
@@ -674,7 +673,7 @@ describe("/api/v1/appcast/[...path]", () => {
       await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
 
       // Wait for async telemetry insert
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
 
       expect(capturedInsertData).toMatchObject({
         app_version: "123",

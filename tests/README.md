@@ -30,7 +30,7 @@ pnpm test:ui
 
 - **API Tests** (`tests/api/`): Test API route handlers in isolation
 - **Component Tests** (`tests/components/`): Test React components
-- **Setup Files**: 
+- **Setup Files**:
   - `setup.node.ts`: Node environment setup for API tests
   - `setup.ts`: Browser environment setup for component tests
 
@@ -64,6 +64,7 @@ This tests the actual HTTP endpoint with real requests.
 ```
 
 Useful for:
+
 - Quick manual testing during development
 - Debugging with curl output
 - Testing against different environments
@@ -73,11 +74,13 @@ Useful for:
 The appcast proxy is the most complex endpoint, handling:
 
 1. **Multiple identification methods**:
+
    - `bundleIdentifier` parameter (legacy)
    - `appName` parameter (Sparkle standard)
    - User-Agent parsing (fallback for most requests)
 
 2. **Sparkle's "once per week" behavior**:
+
    - Most requests come without query parameters
    - User-Agent is the only reliable identifier
    - Test both scenarios
@@ -104,6 +107,7 @@ User-Agent: MyApp/2.1.3 Sparkle/2.0.0
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - Pull requests
 - Commits to main branch
 - Before deployment

@@ -77,6 +77,7 @@ Use the provided test script:
 ## Example Sparkle Requests
 
 ### With System Profiling (sent once per week)
+
 When Sparkle sends system profile data, the request includes query parameters:
 
 \`\`\`
@@ -85,6 +86,7 @@ User-Agent: MyApp/2.1.3 Sparkle/2.0.0
 \`\`\`
 
 ### Without System Profiling (most requests)
+
 Most requests come without query parameters due to privacy throttling:
 
 \`\`\`
@@ -93,6 +95,7 @@ User-Agent: MyApp/2.1.3 Sparkle/2.0.0
 \`\`\`
 
 **Important:** The proxy now intelligently handles both cases:
+
 1. **With parameters**: Uses `bundleIdentifier` or `appName` from query params
 2. **Without parameters**: Extracts app name and version from the User-Agent header
 3. **Fallback chain**: bundleIdentifier → appName (params) → appName (User-Agent)
@@ -102,13 +105,17 @@ This ensures that even "naked" requests (which are the majority) can be properly
 ## Troubleshooting
 
 ### 400 Bad Request Error
+
 This now only occurs when the app cannot be identified at all. Check that:
+
 1. The User-Agent header is being sent by Sparkle (it should always be present)
 2. The app name in the User-Agent matches a registered app's display_name or name
 3. If using custom networking, ensure the User-Agent header is preserved
 
 ### 404 Not Found Error
+
 This occurs when:
+
 1. The app identifier doesn't match any registered app in the database
 2. The app doesn't have an `appcast_base_url` configured
 3. Check that the app's `display_name` column matches what Sparkle sends

@@ -301,98 +301,98 @@ export default async function DashboardPage({
         }}
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <KpiCard className={chartCardClassName}>
-          <Title className="text-card-foreground mb-1">Installations Over Time</Title>
-          {showInstallationsChart ? (
-            <ClientLineChart
-              className="mt-4 h-72" // Adjusted margin
-              data={data.installs_timeseries}
-              index="date"
-              categories={["Installs"]}
-              colors={["blue"]} // Uses chart-1
-              yAxisWidth={48}
-              showAnimation
-            />
-          ) : (
-            <CardStatusDisplay
-              error={data.installs_timeseries_error}
-              noData={!data.installs_timeseries_error && data.installs_timeseries.length === 0}
-              minHeightClassName="h-72"
-            />
-          )}
-        </KpiCard>
-        <KpiCard className={chartCardClassName}>
-          <Title className="text-card-foreground mb-1">macOS Version Distribution</Title>
-          {showOsChart ? (
-            <ClientBarChart
-              className="mt-4 h-72" // Adjusted margin
-              data={data.os_breakdown}
-              index="name"
-              categories={["Users"]}
-              colors={["teal"]} // Uses chart-2
-              layout="vertical"
-              yAxisWidth={120}
-              showAnimation
-            />
-          ) : (
-            <CardStatusDisplay
-              error={data.os_breakdown_error}
-              noData={!data.os_breakdown_error && data.os_breakdown.length === 0}
-              minHeightClassName="h-72"
-            />
-          )}
-        </KpiCard>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <KpiCard className={cn(chartCardClassName, "lg:col-span-1")}>
-          <Title className="text-card-foreground mb-1">CPU Architecture</Title>
-          {showCpuChart ? (
-            <ClientDonutChart
-              className="mt-4 h-56" // Adjusted margin
-              data={data.cpu_breakdown}
-              category="Users"
-              index="name"
-              colors={["cyan", "purple", "rose"]} // Example: chart-3, chart-5
-              showAnimation
-            />
-          ) : (
-            <CardStatusDisplay
-              error={data.cpu_breakdown_error}
-              noData={!data.cpu_breakdown_error && data.cpu_breakdown.length === 0}
-              minHeightClassName="h-56"
-            />
-          )}
-        </KpiCard>
-        <KpiCard className={cn(chartCardClassName, "lg:col-span-2")}>
-          <Title className="text-card-foreground mb-1">Top Models</Title>
-          {showTopModelsTable ? (
-            <Table className="mt-4 h-auto">
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell className="text-muted-foreground">Model Identifier</TableHeaderCell>
-                  <TableHeaderCell className="text-right text-muted-foreground">Count</TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data.top_models.map((item) => (
-                  <TableRow key={item.model} className="text-card-foreground">
-                    <TableCell>{item.model}</TableCell>
-                    <TableCell className="text-right">{valueFormatter(item.count)}</TableCell>
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">Installations Over Time</Title>
+            {showInstallationsChart ? (
+              <ClientLineChart
+                className="mt-4 h-72" // Adjusted margin
+                data={data.installs_timeseries}
+                index="date"
+                categories={["Installs"]}
+                colors={["blue"]} // Uses chart-1
+                yAxisWidth={48}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.installs_timeseries_error}
+                noData={!data.installs_timeseries_error && data.installs_timeseries.length === 0}
+                minHeightClassName="h-72"
+              />
+            )}
+          </KpiCard>
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">macOS Version Distribution</Title>
+            {showOsChart ? (
+              <ClientBarChart
+                className="mt-4 h-72" // Adjusted margin
+                data={data.os_breakdown}
+                index="name"
+                categories={["Users"]}
+                colors={["teal"]} // Uses chart-2
+                layout="vertical"
+                yAxisWidth={120}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.os_breakdown_error}
+                noData={!data.os_breakdown_error && data.os_breakdown.length === 0}
+                minHeightClassName="h-72"
+              />
+            )}
+          </KpiCard>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <KpiCard className={cn(chartCardClassName, "lg:col-span-1")}>
+            <Title className="text-card-foreground mb-1">CPU Architecture</Title>
+            {showCpuChart ? (
+              <ClientDonutChart
+                className="mt-4 h-56" // Adjusted margin
+                data={data.cpu_breakdown}
+                category="Users"
+                index="name"
+                colors={["cyan", "purple", "rose"]} // Example: chart-3, chart-5
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.cpu_breakdown_error}
+                noData={!data.cpu_breakdown_error && data.cpu_breakdown.length === 0}
+                minHeightClassName="h-56"
+              />
+            )}
+          </KpiCard>
+          <KpiCard className={cn(chartCardClassName, "lg:col-span-2")}>
+            <Title className="text-card-foreground mb-1">Top Models</Title>
+            {showTopModelsTable ? (
+              <Table className="mt-4 h-auto">
+                <TableHead>
+                  <TableRow>
+                    <TableHeaderCell className="text-muted-foreground">Model Identifier</TableHeaderCell>
+                    <TableHeaderCell className="text-right text-muted-foreground">Count</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <CardStatusDisplay
-              error={data.top_models_error}
-              noData={!data.top_models_error && data.top_models.length === 0}
-              minHeightClassName="h-[calc(theme(height.56)_+_theme(spacing.4))]"
-            />
-          )}
-        </KpiCard>
-      </div>
+                </TableHead>
+                <TableBody>
+                  {data.top_models.map((item) => (
+                    <TableRow key={item.model} className="text-card-foreground">
+                      <TableCell>{item.model}</TableCell>
+                      <TableCell className="text-right">{valueFormatter(item.count)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <CardStatusDisplay
+                error={data.top_models_error}
+                noData={!data.top_models_error && data.top_models.length === 0}
+                minHeightClassName="h-[calc(theme(height.56)_+_theme(spacing.4))]"
+              />
+            )}
+          </KpiCard>
+        </div>
       </RealtimeWrapper>
-      
+
       <footer className="mt-12 py-6 text-center text-sm text-muted-foreground border-t border-border">
         Sparkle Statistics by{" "}
         <a

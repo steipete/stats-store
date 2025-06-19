@@ -76,9 +76,7 @@ export function KpiCard({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
-        <TooltipContent>
-          {tooltip}
-        </TooltipContent>
+        <TooltipContent>{tooltip}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   )

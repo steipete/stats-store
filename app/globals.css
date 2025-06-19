@@ -637,39 +637,87 @@ body {
 
 /* Define custom utilities that use our CSS variables */
 @layer utilities {
-  .bg-background { background-color: var(--background); }
-  .bg-card { background-color: var(--card); }
-  .bg-popover { background-color: var(--popover); }
-  .bg-primary { background-color: var(--primary); }
-  .bg-secondary { background-color: var(--secondary); }
-  .bg-muted { background-color: var(--muted); }
-  .bg-accent { background-color: var(--accent); }
-  .bg-destructive { background-color: var(--destructive); }
-  .bg-input { background-color: var(--input-bg); }
-  
-  .text-foreground { color: var(--foreground); }
-  .text-card-foreground { color: var(--card-foreground); }
-  .text-popover-foreground { color: var(--popover-foreground); }
-  .text-primary-foreground { color: var(--primary-foreground); }
-  .text-secondary-foreground { color: var(--secondary-foreground); }
-  .text-muted-foreground { color: var(--muted-foreground); }
-  .text-accent-foreground { color: var(--accent-foreground); }
-  .text-destructive-foreground { color: var(--destructive-foreground); }
-  
-  .border-border { border-color: var(--border); }
-  .border-input-border { border-color: var(--input-border); }
-  
-  .ring-ring { --tw-ring-color: var(--ring); }
-  
-  .shadow-subtle { box-shadow: var(--shadow-subtle); }
-  
+  .bg-background {
+    background-color: var(--background);
+  }
+  .bg-card {
+    background-color: var(--card);
+  }
+  .bg-popover {
+    background-color: var(--popover);
+  }
+  .bg-primary {
+    background-color: var(--primary);
+  }
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+  .bg-muted {
+    background-color: var(--muted);
+  }
+  .bg-accent {
+    background-color: var(--accent);
+  }
+  .bg-destructive {
+    background-color: var(--destructive);
+  }
+  .bg-input {
+    background-color: var(--input-bg);
+  }
+
+  .text-foreground {
+    color: var(--foreground);
+  }
+  .text-card-foreground {
+    color: var(--card-foreground);
+  }
+  .text-popover-foreground {
+    color: var(--popover-foreground);
+  }
+  .text-primary-foreground {
+    color: var(--primary-foreground);
+  }
+  .text-secondary-foreground {
+    color: var(--secondary-foreground);
+  }
+  .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+  .text-accent-foreground {
+    color: var(--accent-foreground);
+  }
+  .text-destructive-foreground {
+    color: var(--destructive-foreground);
+  }
+
+  .border-border {
+    border-color: var(--border);
+  }
+  .border-input-border {
+    border-color: var(--input-border);
+  }
+
+  .ring-ring {
+    --tw-ring-color: var(--ring);
+  }
+
+  .shadow-subtle {
+    box-shadow: var(--shadow-subtle);
+  }
+
   /* Tooltip backgrounds */
-  .bg-tooltip { background-color: var(--tooltip-bg); }
-  .text-tooltip-foreground { color: var(--tooltip-foreground); }
-  
+  .bg-tooltip {
+    background-color: var(--tooltip-bg);
+  }
+  .text-tooltip-foreground {
+    color: var(--tooltip-foreground);
+  }
+
   /* Dark mode shadow for cards */
   .dark .shadow-subtle {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.1),
+      0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
 }
 
@@ -685,7 +733,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   /* Custom scrollbar for a more refined look */
   ::-webkit-scrollbar {
     width: 6px;
@@ -713,74 +761,78 @@ body {
   .dark .recharts-label /* For axis labels if any */ {
     fill: hsl(0 0% 98%) !important;
   }
-  
+
   /* Dark mode chart grid and axis lines */
   .dark .recharts-cartesian-grid-horizontal line,
   .dark .recharts-cartesian-grid-vertical line {
     stroke: hsl(240 4% 22%) !important;
   }
-  
+
   .dark .recharts-cartesian-axis-line {
     stroke: hsl(240 4% 22%) !important;
   }
-  
+
   /* Dark mode chart text colors */
   .dark .recharts-text {
     fill: hsl(240 5% 65%) !important;
   }
-  
+
   /* Dark mode donut chart center text */
   .dark .recharts-pie-label-text {
     fill: hsl(0 0% 98%) !important;
   }
-  
+
   /* Fix any text elements inside SVGs */
   .dark svg text {
     fill: hsl(240 5% 65%) !important;
   }
-  
+
   .dark svg .recharts-text {
     fill: hsl(0 0% 98%) !important;
   }
-  
+
   /* Dark mode table text */
   .dark [class*="tremor-TableCell"] {
     color: hsl(0 0% 98%) !important;
   }
-  
+
   .dark [class*="tremor-TableHeaderCell"] {
     color: hsl(240 5% 65%) !important;
   }
-  
+
   /* Fix Tremor Icon colors in dark mode */
   .dark [class*="tremor-Icon"] {
     /* Adjust opacity for icon backgrounds in dark mode */
     opacity: 0.9;
   }
-  
+
   /* Override specific icon background colors for better visibility */
   .dark [class*="bg-blue-50"] {
     background-color: hsl(217 91% 20%) !important;
   }
-  
-  .dark [class*="bg-emerald-50"], .dark [class*="bg-green-50"] {
+
+  .dark [class*="bg-emerald-50"],
+  .dark [class*="bg-green-50"] {
     background-color: hsl(173 65% 20%) !important;
   }
-  
-  .dark [class*="bg-amber-50"], .dark [class*="bg-yellow-50"] {
+
+  .dark [class*="bg-amber-50"],
+  .dark [class*="bg-yellow-50"] {
     background-color: hsl(35 95% 25%) !important;
   }
-  
+
   /* Make icon colors brighter in dark mode */
   .dark [class*="text-blue-500"] {
     color: hsl(217 91% 70%) !important;
   }
-  
-  .dark [class*="text-emerald-500"], .dark [class*="text-green-500"] {
+
+  .dark [class*="text-emerald-500"],
+  .dark [class*="text-green-500"] {
     color: hsl(173 65% 65%) !important;
   }
-  
-  .dark [class*="text-amber-500"], .dark [class*="text-yellow-500"] {
+
+  .dark [class*="text-amber-500"],
+  .dark [class*="text-yellow-500"] {
     color: hsl(35 95% 70%) !important;
   }
 
@@ -788,20 +840,20 @@ body {
   .tremor-DateRangePicker-input {
     color: hsl(var(--foreground)) !important;
   }
-  
+
   /* Fix DateRangePicker dark mode styling */
   .dark .tremor-DateRangePicker-root {
     background-color: transparent !important;
     border: none !important;
   }
-  
+
   /* Remove double borders from DateRangePicker wrapper */
   [class*="tremor-DateRangePicker"] {
     background-color: transparent !important;
     border: none !important;
     padding: 0 !important;
   }
-  
+
   /* Style the actual button inside */
   [class*="tremor-DateRangePicker"] > button:first-child {
     background-color: hsl(var(--card)) !important;
@@ -809,30 +861,30 @@ body {
     border-radius: var(--radius) !important;
     width: 100% !important;
   }
-  
+
   .dark [class*="tremor-DateRangePicker"] > button:first-child {
     background-color: hsl(240 10% 3.9%) !important;
     border-color: hsl(240 3.7% 15.9%) !important;
   }
-  
+
   .dark [class*="tremor-DateRangePicker"] input {
     background-color: transparent !important;
     color: hsl(0 0% 98%) !important;
     border: none !important;
   }
-  
+
   .dark [class*="tremor-DateRangePicker"] button {
     color: hsl(0 0% 98%) !important;
     background-color: transparent !important;
     border: none !important;
   }
-  
+
   /* Fix the internal flex container */
   [class*="tremor-DateRangePicker"] > div {
     background-color: transparent !important;
     border: none !important;
   }
-  
+
   .dark [class*="tremor-DateRangePicker"] svg {
     color: hsl(240 5% 65%) !important;
   }
@@ -852,7 +904,7 @@ body {
       0 10px 15px -3px rgb(0 0 0 / 0.1),
       0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
-  
+
   /* Ensure all child elements inherit text color */
   [role="dialog"][aria-label*="calendar"] *,
   [data-state="open"][data-side]:not([role="tooltip"]) *,
@@ -914,14 +966,15 @@ body {
   .dark .tremor-DateRangePicker-calendar {
     background-color: hsl(var(--popover)) !important;
   }
-  
 
   /* All tooltip backgrounds - fix transparency issue */
   [role="tooltip"] {
     background-color: var(--tooltip-bg) !important;
     color: var(--tooltip-foreground) !important;
     backdrop-filter: blur(12px) !important;
-    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0 10px 38px -10px rgba(0, 0, 0, 0.35),
+      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
     padding: 6px 10px !important;
     border-radius: 6px !important;
     border: none !important;
@@ -929,13 +982,13 @@ body {
     font-weight: 400 !important;
     max-width: 250px !important;
   }
-  
+
   .dark [role="tooltip"] {
     background-color: hsl(240 10% 8%) !important;
     color: hsl(0 0% 98%) !important;
     border: none !important;
   }
-  
+
   /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
   .recharts-tooltip-wrapper,
   .recharts-tooltip-wrapper .recharts-default-tooltip,
@@ -947,7 +1000,9 @@ body {
     color: var(--tooltip-foreground) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: 6px !important;
-    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0 10px 38px -10px rgba(0, 0, 0, 0.35),
+      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
     backdrop-filter: blur(12px) !important;
     padding: 8px 12px !important;
   }
@@ -961,7 +1016,9 @@ body {
     background-color: var(--tooltip-bg) !important;
     color: var(--tooltip-foreground) !important;
     border: 1px solid hsl(var(--border)) !important;
-    box-shadow: 0 10px 38px -10px rgba(0, 0, 0, 0.35), 0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
+    box-shadow:
+      0 10px 38px -10px rgba(0, 0, 0, 0.35),
+      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
     backdrop-filter: blur(12px) !important;
     padding: 8px 12px !important;
     border-radius: 6px !important;
@@ -985,8 +1042,6 @@ body {
     --radix-popover-bg: var(--tooltip-bg);
     --radix-popover-border: hsl(var(--border));
   }
-  
-  
 
   /* Global fix for any floating/popup elements */
   [data-floating-ui-portal] > div,
@@ -1030,7 +1085,7 @@ body {
     color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
   }
-  
+
   /* Specific fix for Tremor DateRangePicker calendar */
   [class*="tremor-DateRangePicker"] [role="dialog"],
   [class*="tremor-DateRangePicker"] [data-radix-popper-content-wrapper],
@@ -1045,11 +1100,11 @@ body {
     border-radius: 4px !important;
     transition: background-color 0.2s !important;
   }
-  
+
   [class*="DateRangePicker"] button[type="button"]:hover {
     background-color: hsl(var(--muted)) !important;
   }
-  
+
   .dark [class*="DateRangePicker"] button[type="button"]:hover {
     background-color: hsl(240 3.7% 20%) !important;
   }
