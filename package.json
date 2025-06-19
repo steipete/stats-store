@@ -87,6 +87,7 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.29.0",
     "@next/eslint-plugin-next": "^15.3.4",
     "@tailwindcss/postcss": "^4.1.10",
@@ -103,6 +104,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.29.0",
+    "eslint-config-next": "^15.3.4",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.0",
     "jsdom": "^26.1.0",

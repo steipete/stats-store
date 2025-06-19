@@ -54,6 +54,31 @@ interface TopModelsDataPoint {
   count: number
 }
 
+interface LanguageDataPoint {
+  name: string
+  Users: number
+}
+
+interface RamDataPoint {
+  name: string
+  Users: number
+}
+
+interface CpuCoresDataPoint {
+  name: string
+  Users: number
+}
+
+interface VersionAdoptionDataPoint {
+  date: string
+  [key: string]: string | number
+}
+
+interface HourlyActivityDataPoint {
+  hour: string
+  Activity: number
+}
+
 // RPC response types
 interface DailyCountRow {
   report_day: string
@@ -73,6 +98,32 @@ interface CpuArchRow {
 interface ModelRow {
   model_name: string
   report_count: number
+}
+
+interface LanguageRow {
+  language_name: string
+  user_count: number
+}
+
+interface RamRow {
+  ram_gb: string
+  user_count: number
+}
+
+interface CpuCoresRow {
+  core_count: string
+  user_count: number
+}
+
+interface VersionAdoptionRow {
+  report_date: string
+  app_version: string
+  user_count: number
+}
+
+interface HourlyActivityRow {
+  hour_of_day: number
+  avg_reports: number
 }
 
 interface DashboardData {
@@ -96,6 +147,16 @@ interface DashboardData {
   cpu_breakdown_error?: string
   top_models: TopModelsDataPoint[]
   top_models_error?: string
+  language_breakdown: LanguageDataPoint[]
+  language_breakdown_error?: string
+  ram_breakdown: RamDataPoint[]
+  ram_breakdown_error?: string
+  cpu_cores_breakdown: CpuCoresDataPoint[]
+  cpu_cores_breakdown_error?: string
+  version_adoption: VersionAdoptionDataPoint[]
+  version_adoption_error?: string
+  hourly_activity: HourlyActivityDataPoint[]
+  hourly_activity_error?: string
 }
 
 async function getDashboardData(
@@ -201,7 +262,7 @@ async function getDashboardData(
   let topModelsErrorMessage: string | undefined
   const { data: modelDataRpc, error: modelErrorRpc } = await supabase.rpc("get_top_models", {
     ...rpcParams,
-    p_limit_count: 5,
+    p_limit_count: 10,
   })
   if (modelErrorRpc) {
     console.error("Error fetching top models (RPC):", modelErrorRpc.message)
@@ -212,6 +273,102 @@ async function getDashboardData(
       count: Number(item.report_count) || 0,
     }))
   }
+  // Language breakdown
+  let languageBreakdown: LanguageDataPoint[] = []
+  let languageBreakdownErrorMessage: string | undefined
+  const { data: languageDataRpc, error: languageErrorRpc } = await supabase.rpc("get_language_distribution", {
+    ...rpcParams,
+    p_limit_count: 10,
+  })
+  if (languageErrorRpc) {
+    console.error("Error fetching language breakdown (RPC):", languageErrorRpc.message)
+    languageBreakdownErrorMessage = "Could not load language distribution."
+  } else if (languageDataRpc) {
+    languageBreakdown = languageDataRpc.map((item: LanguageRow) => ({
+      name: item.language_name,
+      Users: Number(item.user_count) || 0,
+    }))
+  }
+
+  // RAM breakdown
+  let ramBreakdown: RamDataPoint[] = []
+  let ramBreakdownErrorMessage: string | undefined
+  const { data: ramDataRpc, error: ramErrorRpc } = await supabase.rpc("get_ram_distribution", rpcParams)
+  if (ramErrorRpc) {
+    console.error("Error fetching RAM breakdown (RPC):", ramErrorRpc.message)
+    ramBreakdownErrorMessage = "Could not load RAM distribution."
+  } else if (ramDataRpc) {
+    ramBreakdown = ramDataRpc.map((item: RamRow) => ({
+      name: item.ram_gb,
+      Users: Number(item.user_count) || 0,
+    }))
+  }
+
+  // CPU cores breakdown
+  let cpuCoresBreakdown: CpuCoresDataPoint[] = []
+  let cpuCoresBreakdownErrorMessage: string | undefined
+  const { data: cpuCoresDataRpc, error: cpuCoresErrorRpc } = await supabase.rpc("get_cpu_cores_distribution", rpcParams)
+  if (cpuCoresErrorRpc) {
+    console.error("Error fetching CPU cores breakdown (RPC):", cpuCoresErrorRpc.message)
+    cpuCoresBreakdownErrorMessage = "Could not load CPU cores distribution."
+  } else if (cpuCoresDataRpc) {
+    cpuCoresBreakdown = cpuCoresDataRpc.map((item: CpuCoresRow) => ({
+      name: item.core_count,
+      Users: Number(item.user_count) || 0,
+    }))
+  }
+
+  // Version adoption timeline
+  let versionAdoption: VersionAdoptionDataPoint[] = []
+  let versionAdoptionErrorMessage: string | undefined
+  const { data: versionDataRpc, error: versionErrorRpc } = await supabase.rpc("get_version_adoption_timeline", {
+    ...rpcParams,
+    p_top_versions: 5,
+  })
+  if (versionErrorRpc) {
+    console.error("Error fetching version adoption (RPC):", versionErrorRpc.message)
+    versionAdoptionErrorMessage = "Could not load version adoption data."
+  } else if (versionDataRpc) {
+    // Transform data for multi-line chart
+    const versionsByDate: { [date: string]: { [version: string]: number } } = {}
+    const allVersions = new Set<string>()
+
+    versionDataRpc.forEach((row: VersionAdoptionRow) => {
+      const date = format(parseISO(row.report_date), "MMM dd")
+      if (!versionsByDate[date]) {
+        versionsByDate[date] = {}
+      }
+      versionsByDate[date][row.app_version] = Number(row.user_count) || 0
+      allVersions.add(row.app_version)
+    })
+
+    versionAdoption = Object.entries(versionsByDate).map(([date, versions]) => {
+      const dataPoint: VersionAdoptionDataPoint = { date }
+      allVersions.forEach((version) => {
+        dataPoint[version] = versions[version] || 0
+      })
+      return dataPoint
+    })
+  }
+
+  // Hourly activity pattern (last 7 days)
+  let hourlyActivity: HourlyActivityDataPoint[] = []
+  let hourlyActivityErrorMessage: string | undefined
+  const { data: hourlyDataRpc, error: hourlyErrorRpc } = await supabase.rpc("get_hourly_activity_pattern", {
+    p_app_id_filter: rpcParams.p_app_id_filter,
+    p_start_date_filter: startOfDay(subDays(new Date(), 6)).toISOString(),
+    p_end_date_filter: queryTo.toISOString(),
+  })
+  if (hourlyErrorRpc) {
+    console.error("Error fetching hourly activity (RPC):", hourlyErrorRpc.message)
+    hourlyActivityErrorMessage = "Could not load activity pattern."
+  } else if (hourlyDataRpc) {
+    hourlyActivity = hourlyDataRpc.map((item: HourlyActivityRow) => ({
+      hour: `${item.hour_of_day}:00`,
+      Activity: Number(item.avg_reports) || 0,
+    }))
+  }
+
   return {
     apps: appsList,
     appsError: appsErrorMessage,
@@ -233,6 +390,16 @@ async function getDashboardData(
     cpu_breakdown_error: cpuBreakdownErrorMessage,
     top_models: topModels,
     top_models_error: topModelsErrorMessage,
+    language_breakdown: languageBreakdown,
+    language_breakdown_error: languageBreakdownErrorMessage,
+    ram_breakdown: ramBreakdown,
+    ram_breakdown_error: ramBreakdownErrorMessage,
+    cpu_cores_breakdown: cpuCoresBreakdown,
+    cpu_cores_breakdown_error: cpuCoresBreakdownErrorMessage,
+    version_adoption: versionAdoption,
+    version_adoption_error: versionAdoptionErrorMessage,
+    hourly_activity: hourlyActivity,
+    hourly_activity_error: hourlyActivityErrorMessage,
   }
 }
 
@@ -263,6 +430,11 @@ export default async function DashboardPage({
   const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0
   const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0
   const showTopModelsTable = !data.top_models_error && data.top_models.length > 0
+  const showLanguageChart = !data.language_breakdown_error && data.language_breakdown.length > 0
+  const showRamChart = !data.ram_breakdown_error && data.ram_breakdown.length > 0
+  const showCpuCoresChart = !data.cpu_cores_breakdown_error && data.cpu_cores_breakdown.length > 0
+  const showVersionAdoptionChart = !data.version_adoption_error && data.version_adoption.length > 0
+  const showHourlyActivityChart = !data.hourly_activity_error && data.hourly_activity.length > 0
   const chartCardClassName = "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border"
 
   return (
@@ -387,6 +559,115 @@ export default async function DashboardPage({
                 error={data.top_models_error}
                 noData={!data.top_models_error && data.top_models.length === 0}
                 minHeightClassName="h-[calc(theme(height.56)_+_theme(spacing.4))]"
+              />
+            )}
+          </KpiCard>
+        </div>
+
+        {/* New charts row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">Version Adoption Timeline</Title>
+            {showVersionAdoptionChart ? (
+              <ClientLineChart
+                className="mt-4 h-72"
+                data={data.version_adoption}
+                index="date"
+                categories={Array.from(
+                  new Set(data.version_adoption.flatMap((d) => Object.keys(d).filter((k) => k !== "date")))
+                )}
+                colors={["blue", "teal", "cyan", "purple", "rose"]}
+                yAxisWidth={48}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.version_adoption_error}
+                noData={!data.version_adoption_error && data.version_adoption.length === 0}
+                minHeightClassName="h-72"
+              />
+            )}
+          </KpiCard>
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">RAM Distribution</Title>
+            {showRamChart ? (
+              <ClientBarChart
+                className="mt-4 h-72"
+                data={data.ram_breakdown}
+                index="name"
+                categories={["Users"]}
+                colors={["purple"]}
+                layout="vertical"
+                yAxisWidth={80}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.ram_breakdown_error}
+                noData={!data.ram_breakdown_error && data.ram_breakdown.length === 0}
+                minHeightClassName="h-72"
+              />
+            )}
+          </KpiCard>
+        </div>
+
+        {/* New charts row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">Language Distribution</Title>
+            {showLanguageChart ? (
+              <ClientDonutChart
+                className="mt-4 h-56"
+                data={data.language_breakdown}
+                category="Users"
+                index="name"
+                colors={["blue", "teal", "cyan", "purple", "rose", "orange"]}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.language_breakdown_error}
+                noData={!data.language_breakdown_error && data.language_breakdown.length === 0}
+                minHeightClassName="h-56"
+              />
+            )}
+          </KpiCard>
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">CPU Core Count</Title>
+            {showCpuCoresChart ? (
+              <ClientBarChart
+                className="mt-4 h-56"
+                data={data.cpu_cores_breakdown}
+                index="name"
+                categories={["Users"]}
+                colors={["teal"]}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.cpu_cores_breakdown_error}
+                noData={!data.cpu_cores_breakdown_error && data.cpu_cores_breakdown.length === 0}
+                minHeightClassName="h-56"
+              />
+            )}
+          </KpiCard>
+          <KpiCard className={chartCardClassName}>
+            <Title className="text-card-foreground mb-1">Activity Pattern (UTC, Last 7 Days)</Title>
+            {showHourlyActivityChart ? (
+              <ClientLineChart
+                className="mt-4 h-56"
+                data={data.hourly_activity}
+                index="hour"
+                categories={["Activity"]}
+                colors={["rose"]}
+                yAxisWidth={40}
+                showAnimation
+              />
+            ) : (
+              <CardStatusDisplay
+                error={data.hourly_activity_error}
+                noData={!data.hourly_activity_error && data.hourly_activity.length === 0}
+                minHeightClassName="h-56"
               />
             )}
           </KpiCard>
