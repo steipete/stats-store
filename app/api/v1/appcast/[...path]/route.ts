@@ -3,16 +3,48 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { createHash } from "crypto"
 
 interface SparkleQueryParams {
-  bundleIdentifier?: string
-  bundleShortVersionString?: string
-  bundleVersion?: string
+  // Sparkle standard parameters
+  appName?: string
+  appVersion?: string
   osVersion?: string
+  cpu64bit?: string
+  ncpu?: string
+  cpuFreqMHz?: string
   cputype?: string
   cpusubtype?: string
   model?: string
-  ncpu?: string
-  lang?: string
   ramMB?: string
+  lang?: string
+  // Legacy/custom parameters we might still support
+  bundleIdentifier?: string
+  bundleShortVersionString?: string
+  bundleVersion?: string
+}
+
+interface SparkleUserAgent {
+  appName: string
+  appVersion: string
+  sparkleVersion?: string
+}
+
+/**
+ * Parse Sparkle User-Agent header
+ * Format: "AppName/DisplayVersion Sparkle/SparkleVersion"
+ * Example: "MyApp/2.1.3 Sparkle/2.0.0"
+ */
+function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgent | null {
+  if (!userAgent) return null
+
+  // Match pattern: AppName/Version optionally followed by Sparkle/Version
+  const match = userAgent.match(/^([^\/]+)\/([^\s]+)(?:\s+Sparkle\/([^\s]+))?/)
+  
+  if (!match) return null
+
+  return {
+    appName: match[1],
+    appVersion: match[2],
+    sparkleVersion: match[3] || undefined,
+  }
 }
 
 function mapCpuTypeToArch(cputype?: string): string | undefined {
@@ -74,36 +106,98 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const resolvedParams = await params
     const appcastPath = resolvedParams.path.join("/")
 
+    // Parse User-Agent for app identification
+    const userAgent = request.headers.get("user-agent")
+    const parsedUA = parseSparkleUserAgent(userAgent)
+
+    // Log request details
+    console.log("Appcast request received:", {
+      path: appcastPath,
+      url: request.url,
+      userAgent: userAgent,
+      parsedUserAgent: parsedUA,
+      queryParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
+    })
+
     // Parse query parameters sent by Sparkle
     const searchParams = request.nextUrl.searchParams
     const sparkleParams: SparkleQueryParams = {
-      bundleIdentifier: searchParams.get("bundleIdentifier") || undefined,
-      bundleShortVersionString: searchParams.get("bundleShortVersionString") || undefined,
-      bundleVersion: searchParams.get("bundleVersion") || undefined,
+      // Standard Sparkle parameters
+      appName: searchParams.get("appName") || undefined,
+      appVersion: searchParams.get("appVersion") || undefined,
       osVersion: searchParams.get("osVersion") || undefined,
+      cpu64bit: searchParams.get("cpu64bit") || undefined,
+      ncpu: searchParams.get("ncpu") || undefined,
+      cpuFreqMHz: searchParams.get("cpuFreqMHz") || undefined,
       cputype: searchParams.get("cputype") || undefined,
       cpusubtype: searchParams.get("cpusubtype") || undefined,
       model: searchParams.get("model") || undefined,
-      ncpu: searchParams.get("ncpu") || undefined,
-      lang: searchParams.get("lang") || undefined,
       ramMB: searchParams.get("ramMB") || undefined,
+      lang: searchParams.get("lang") || undefined,
+      // Legacy/custom parameters
+      bundleIdentifier: searchParams.get("bundleIdentifier") || undefined,
+      bundleShortVersionString: searchParams.get("bundleShortVersionString") || undefined,
+      bundleVersion: searchParams.get("bundleVersion") || undefined,
     }
 
-    if (!sparkleParams.bundleIdentifier) {
-      return NextResponse.json({ error: "Missing bundleIdentifier parameter" }, { status: 400 })
+    // Check for app identifier - try query params first, then User-Agent
+    // Priority: bundleIdentifier > appName (from params) > appName (from User-Agent)
+    const appIdentifier = sparkleParams.bundleIdentifier || sparkleParams.appName || parsedUA?.appName
+    const appVersion = sparkleParams.appVersion || sparkleParams.bundleShortVersionString || sparkleParams.bundleVersion || parsedUA?.appVersion
+
+    if (!appIdentifier) {
+      console.error("Missing app identifier. Received params:", sparkleParams, "User-Agent:", userAgent)
+      return NextResponse.json({ error: "Missing app identifier in parameters or User-Agent" }, { status: 400 })
     }
+
+    console.log("App identification:", {
+      identifier: appIdentifier,
+      version: appVersion,
+      source: sparkleParams.bundleIdentifier ? "bundleIdentifier" : sparkleParams.appName ? "appName param" : "User-Agent",
+    })
 
     const supabase = createSupabaseServerClient()
 
     // Look up app and get appcast URL
-    const { data: app, error: appError } = await supabase
-      .from("apps")
-      .select("id, appcast_base_url")
-      .eq("bundle_identifier", sparkleParams.bundleIdentifier)
-      .single()
+    // First try to find by bundle identifier, then by app name
+    let app = null
+    let appError = null
+
+    // If we have a bundle identifier, try that first (more precise)
+    if (sparkleParams.bundleIdentifier) {
+      const result = await supabase
+        .from("apps")
+        .select("id, appcast_base_url, bundle_identifier")
+        .eq("bundle_identifier", sparkleParams.bundleIdentifier)
+        .single()
+      app = result.data
+      appError = result.error
+    }
+
+    // If not found and we have an appName from params, try matching by display_name or name
+    if ((!app || appError) && sparkleParams.appName) {
+      const result = await supabase
+        .from("apps")
+        .select("id, appcast_base_url, bundle_identifier")
+        .or(`display_name.eq.${sparkleParams.appName},name.eq.${sparkleParams.appName}`)
+        .single()
+      app = result.data
+      appError = result.error
+    }
+
+    // If still not found and we have an appName from User-Agent, try that
+    if ((!app || appError) && parsedUA?.appName && parsedUA.appName !== sparkleParams.appName) {
+      const result = await supabase
+        .from("apps")
+        .select("id, appcast_base_url, bundle_identifier")
+        .or(`display_name.eq.${parsedUA.appName},name.eq.${parsedUA.appName}`)
+        .single()
+      app = result.data
+      appError = result.error
+    }
 
     if (appError || !app) {
-      console.error("App not found:", sparkleParams.bundleIdentifier)
+      console.error("App not found for identifier:", appIdentifier)
       return NextResponse.json({ error: "Application not found" }, { status: 404 })
     }
 
@@ -121,13 +215,22 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const reportData = {
       app_id: app.id,
       ip_hash: ipHash,
-      app_version: sparkleParams.bundleShortVersionString || sparkleParams.bundleVersion || null,
+      app_version: appVersion || null,
       os_version: sparkleParams.osVersion || null,
       cpu_arch: mapCpuTypeToArch(sparkleParams.cputype),
       core_count: sparkleParams.ncpu ? Number.parseInt(sparkleParams.ncpu, 10) : null,
       language: sparkleParams.lang || null,
       model_identifier: sparkleParams.model || null,
       ram_mb: sparkleParams.ramMB ? Number.parseInt(sparkleParams.ramMB, 10) : null,
+      cpu_64bit: sparkleParams.cpu64bit ? sparkleParams.cpu64bit === "1" : null,
+      cpu_freq_mhz: sparkleParams.cpuFreqMHz ? Number.parseInt(sparkleParams.cpuFreqMHz, 10) : null,
+      cpu_type_raw: sparkleParams.cputype || null,
+      cpu_subtype: sparkleParams.cpusubtype || null,
+      app_id_source: sparkleParams.bundleIdentifier
+        ? "bundleIdentifier"
+        : sparkleParams.appName
+        ? "appName"
+        : "userAgent",
     }
 
     // Insert telemetry data (don't wait for it to complete)

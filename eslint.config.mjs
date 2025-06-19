@@ -3,6 +3,7 @@ import typescript from "@typescript-eslint/eslint-plugin"
 import typescriptParser from "@typescript-eslint/parser"
 import prettier from "eslint-plugin-prettier"
 import prettierConfig from "eslint-config-prettier"
+import nextPlugin from "@next/eslint-plugin-next"
 
 export default [
   js.configs.recommended,
@@ -26,10 +27,13 @@ export default [
     },
     plugins: {
       "@typescript-eslint": typescript,
+      "@next/next": nextPlugin,
       prettier,
     },
     rules: {
       ...typescript.configs["recommended"].rules,
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs["core-web-vitals"].rules,
       "prettier/prettier": "error",
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
