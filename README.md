@@ -1,4 +1,4 @@
-# stats.store
+# stats.store 📊
 
 ![stats.store banner](assets/banner.png)
 
