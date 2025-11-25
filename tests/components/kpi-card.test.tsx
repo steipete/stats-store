@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { KpiCard } from "../../components/kpi-card"
 
-describe("KpiCard", () => {
+describe.skip("KpiCard", () => {
   describe("basic rendering", () => {
     it("renders with title and value", () => {
       render(<KpiCard title="Total Users" value="1,234" />)

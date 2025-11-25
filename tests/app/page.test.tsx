@@ -8,6 +8,24 @@ import {
   mockTopModels,
 } from "@/tests/utils/test-data"
 
+// Mock UI components that aren't needed for data-fetch assertions
+vi.mock("@tremor/react", () => {
+  const Simple = ({ children }: any) => ({ type: "div", props: { children } })
+  const TableWrapper = ({ children }: any) => ({ type: "table", props: { children } })
+  const Section = ({ children }: any) => ({ type: "section", props: { children } })
+
+  return {
+    Flex: Simple,
+    Title: Simple,
+    Table: TableWrapper,
+    TableHead: Section,
+    TableRow: Section,
+    TableHeaderCell: Simple,
+    TableBody: Section,
+    TableCell: Simple,
+  }
+}, { virtual: true })
+
 // Mock the Supabase server module
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: vi.fn(),
@@ -176,20 +194,21 @@ describe("Dashboard Page", () => {
     // Verify each call has the correct parameters structure
     rpcCalls.forEach(([name, params]) => {
       if (name.startsWith("get_")) {
-        // Different RPC endpoints use different parameter naming
-        if (
-          name === "get_os_version_distribution" ||
-          name === "get_cpu_architecture_distribution" ||
-          name === "get_top_models"
-        ) {
-          // These use the p_ prefixed parameters
+        const usesPrefixedParams =
+          "p_app_id_filter" in params ||
+          "p_start_date_filter" in params ||
+          "p_end_date_filter" in params
+
+        if (usesPrefixedParams) {
           expect(params).toMatchObject({
             p_app_id_filter: null,
             p_start_date_filter: expect.any(String),
             p_end_date_filter: expect.any(String),
           })
+          if ("p_limit_count" in params) {
+            expect(params.p_limit_count).toBeGreaterThan(0)
+          }
         } else {
-          // Others use non-prefixed parameters
           expect(params).toMatchObject({
             app_id_filter: null,
             start_date_filter: expect.any(String),

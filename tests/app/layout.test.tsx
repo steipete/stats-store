@@ -57,12 +57,13 @@ describe("Root Layout", () => {
     expect(layout.props.lang).toBe("en")
     expect(layout.props.suppressHydrationWarning).toBe(true)
 
-    // Check body exists - body is the only child of html
-    const body = layout.props.children
-    expect(body.type).toBe("body")
+    const htmlChildren = Array.isArray(layout.props.children) ? layout.props.children : [layout.props.children]
+    const body = htmlChildren.find((child: any) => child?.type === "body")
+    expect(body).toBeDefined()
+    expect(body!.type).toBe("body")
 
     // Check that body has children (the exact structure depends on React internals)
-    expect(body.props.children).toBeDefined()
+    expect(body!.props.children).toBeDefined()
 
     // The mocked components should have been created
     // We can verify this by checking that our mocks were called/imported
@@ -74,8 +75,10 @@ describe("Root Layout", () => {
     const TestContent = () => <main>Main Content</main>
 
     const layout = RootLayout({ children: <TestContent /> })
-    const body = layout.props.children
-    const themeProvider = body.props.children[0]
+    const htmlChildren = Array.isArray(layout.props.children) ? layout.props.children : [layout.props.children]
+    const body = htmlChildren.find((child: any) => child?.type === "body")!
+    const bodyChildren = Array.isArray(body.props.children) ? body.props.children : [body.props.children]
+    const themeProvider = bodyChildren[0]
 
     // Verify children are passed through
     expect(themeProvider.props.children.type).toBe(TestContent)
@@ -91,8 +94,10 @@ describe("Root Layout", () => {
     )
 
     const layout = RootLayout({ children: <MultipleChildren /> })
-    const body = layout.props.children
-    const themeProvider = body.props.children[0]
+    const htmlChildren = Array.isArray(layout.props.children) ? layout.props.children : [layout.props.children]
+    const body = htmlChildren.find((child: any) => child?.type === "body")!
+    const bodyChildren = Array.isArray(body.props.children) ? body.props.children : [body.props.children]
+    const themeProvider = bodyChildren[0]
 
     expect(themeProvider.props.children.type).toBe(MultipleChildren)
   })

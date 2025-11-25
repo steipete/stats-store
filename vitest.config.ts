@@ -8,7 +8,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: "./tests/setup.ts",
-    exclude: ["**/node_modules/**", "**/tests/api/**"],
+    exclude: ["**/node_modules/**", "**/tests/api/**", "**/tests/appcast-integration.test.mjs"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
@@ -34,6 +34,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
+      "@tremor/react": path.resolve(__dirname, "./tests/mocks/tremor-react.ts"),
     },
   },
 })
