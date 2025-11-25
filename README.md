@@ -1,4 +1,4 @@
-# stats.store 📊
+# stats.store 📊 - Fast, privacy-first analytics for Sparkle (stats.store)
 
 ![stats.store banner](assets/banner.png)
 
