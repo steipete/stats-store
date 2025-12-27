@@ -2,7 +2,7 @@
 
 ## Overview
 
-Since Tremor's Icon component doesn't support tooltips directly, we've implemented two solutions for adding hover information to the KPI cards in the dashboard.
+The dashboard uses KPI cards with optional hover info; we support two tooltip approaches depending on whether you want a client component or pure HTML.
 
 ## Solution 1: Radix UI Tooltip (Recommended)
 
@@ -108,6 +108,5 @@ The Radix UI tooltip can be customized by modifying the styles in `/components/u
 
 ## Future Considerations
 
-1. **Tremor Updates**: Keep an eye on Tremor's roadmap as they may add native tooltip support in future versions
-2. **Mobile Support**: Consider adding touch-friendly alternatives for mobile devices
-3. **Extended Information**: The tooltip component can be extended to show more complex content like charts or tables if needed
+1. **Mobile Support**: Consider adding touch-friendly alternatives for mobile devices
+2. **Extended Information**: The tooltip component can be extended to show more complex content like charts or tables if needed

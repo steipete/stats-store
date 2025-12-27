@@ -99,7 +99,7 @@ Built with modern tools that make development fun:
 - [Next.js](https://nextjs.org/) - React framework
 - [Supabase](https://supabase.com/) - Database and real-time updates
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [Tremor](https://tremor.so/) - Beautiful charts
+- [Recharts](https://recharts.org/) - Charts
 
 For architecture details and API documentation, see [docs/architecture.md](docs/architecture.md).
 

@@ -225,8 +225,8 @@ The dashboard will be clean, modern, and data-focused, using a dark theme with v
 #### 5.2. Key UI Components and Technology Choices
 
 - **Filter Bar:** Allows selection of one or more apps and a predefined (Last 7 days, 30 days, 90 days) or custom date range.
-- **KPI Cards, Charts, and Tables:** The UI components will be built using **Tremor**, a React library specifically designed for creating beautiful, modern dashboards with minimal effort. It provides components for charts, cards, and tables that are perfectly suited for this project.
-- **Charting Library:** Tremor internally uses **Recharts**, which will power the line, bar, and doughnut charts.
+- **KPI Cards, Charts, and Tables:** Built with **shadcn/ui** (Radix primitives) + Tailwind, using simple bespoke components where needed.
+- **Charting Library:** **Recharts** directly (line, bar, doughnut/pie).
 
 ### 6. Implementation & Deployment
 
@@ -234,6 +234,6 @@ The dashboard will be clean, modern, and data-focused, using a dark theme with v
 2.  **Develop Ingest API Route:** Create the `pages/api/ingest.ts` file in your Next.js project. Implement the validation and data insertion logic using the Supabase client library.
 3.  **Bootstrap Next.js App:** Use `create-next-app` to initialize the project.
 4.  **Implement Authentication:** Use `Supabase.js` to create login pages and protect the dashboard route.
-5.  **Build UI Components:** Use Tremor to build the dashboard layout, KPI cards, charts, and tables.
+5.  **Build UI Components:** Use shadcn/ui + Tailwind + Recharts to build the dashboard layout, KPI cards, charts, and tables.
 6.  **Implement Data Fetching:** On the main dashboard page, use server-side data fetching to query Supabase securely for statistical data and pass it as props to the page component.
 7.  **Deploy:** Connect the project's GitHub repository to **Vercel** for continuous, automatic deployments. Configure environment variables in Vercel for your Supabase URL and keys.

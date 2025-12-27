@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Stats Store is a Next.js 15 analytics dashboard for tracking Sparkle-enabled macOS applications. It collects anonymous telemetry data from apps and displays metrics like unique users, update checks, OS distribution, and CPU architecture. The project uses Supabase for data storage and Tremor React for visualizations.
+Stats Store is a Next.js analytics dashboard for tracking Sparkle-enabled macOS applications. It collects anonymous telemetry data from apps and displays metrics like unique users, update checks, OS distribution, and CPU architecture. The project uses Supabase for data storage and Recharts for visualizations.
 
 ## Development Commands
 
@@ -42,8 +42,9 @@ pnpm lint
 
 ### Key Technologies
 
-- **Frontend**: Next.js 15.3.3 with App Router, React 19.1.0, TypeScript
-- **UI Components**: Tremor React (charts), Radix UI, shadcn/ui
+- **Frontend**: Next.js 16.x with App Router, React 19, TypeScript
+- **UI Components**: shadcn/ui (Radix primitives) + bespoke components
+- **Charts**: Recharts (via `components/client-*-chart.tsx`)
 - **Styling**: Tailwind CSS v4 (recently migrated from v3)
 - **Database**: Supabase (PostgreSQL with RPC functions)
 - **Deployment**: Vercel (auto-deployed from v0.dev)
@@ -96,7 +97,7 @@ Run SQL scripts in order from `scripts/` directory:
 
 ### Chart Components
 
-- Use Tremor React for consistent styling
+- Use the `components/client-*-chart.tsx` Recharts wrappers
 - Client-side only for interactivity
 - Responsive design with Tailwind CSS
 
@@ -149,7 +150,7 @@ curl -X POST http://localhost:3000/api/v1/ingest \
 
 1. Create server data fetching in `app/page.tsx`
 2. Create client component in `components/client-[name]-chart.tsx`
-3. Use Tremor React components for consistency
+3. Use Recharts (or extend existing wrappers)
 4. Handle loading and error states
 
 ### Registering a New App
