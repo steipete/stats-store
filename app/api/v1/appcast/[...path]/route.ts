@@ -1,6 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server"
+import { createHash } from "node:crypto"
+import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { createHash } from "crypto"
 
 interface SparkleQueryParams {
   // Sparkle standard parameters
@@ -33,12 +33,16 @@ interface SparkleUserAgent {
  * Example: "MyApp/2.1.3 Sparkle/2.0.0"
  */
 function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgent | null {
-  if (!userAgent) return null
+  if (!userAgent) {
+    return null
+  }
 
   // Match pattern: AppName/Version optionally followed by Sparkle/Version
-  const match = userAgent.match(/^([^\/]+)\/([^\s]+)(?:\s+Sparkle\/([^\s]+))?/)
+  const match = userAgent.match(/^([^/]+)\/([^\s]+)(?:\s+Sparkle\/([^\s]+))?/)
 
-  if (!match) return null
+  if (!match) {
+    return null
+  }
 
   return {
     appName: match[1],
@@ -48,18 +52,28 @@ function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgent | nul
 }
 
 function mapCpuTypeToArch(cputype?: string): string | undefined {
-  if (!cputype) return undefined
-  if (cputype === "16777228") return "arm64"
-  if (cputype === "16777223") return "x86_64"
+  if (!cputype) {
+    return undefined
+  }
+  if (cputype === "16777228") {
+    return "arm64"
+  }
+  if (cputype === "16777223") {
+    return "x86_64"
+  }
   return "unknown"
 }
 
 function getIpFromRequest(request: NextRequest): string {
   const forwardedFor = request.headers.get("x-forwarded-for")
-  if (forwardedFor) return forwardedFor.split(",")[0].trim()
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim()
+  }
 
   const realIp = request.headers.get("x-real-ip")
-  if (realIp) return realIp
+  if (realIp) {
+    return realIp
+  }
 
   return "unknown_ip"
 }
@@ -72,19 +86,19 @@ function constructAppcastUrl(baseUrl: string, appcastPath: string): string {
   // This handles cases where the full appcast URL is stored in the database
   if (cleanBaseUrl.endsWith(".xml")) {
     // If the base URL already includes the XML file, use it as-is
-    // unless the appcast path is different from the default
+    // Unless the appcast path is different from the default
     if (appcastPath === "appcast.xml" || cleanBaseUrl.endsWith(`/${appcastPath}`)) {
       return cleanBaseUrl.startsWith("http://") || cleanBaseUrl.startsWith("https://")
         ? cleanBaseUrl
         : `https://${cleanBaseUrl}`
     }
     // If requesting a different appcast file, replace the filename
-    const baseWithoutFile = cleanBaseUrl.substring(0, cleanBaseUrl.lastIndexOf("/"))
+    const baseWithoutFile = cleanBaseUrl.slice(0, cleanBaseUrl.lastIndexOf("/"))
     return `${baseWithoutFile}/${appcastPath}`
   }
 
   // Handle GitHub URLs - convert to raw.githubusercontent.com
-  const githubMatch = cleanBaseUrl.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/?$/)
+  const githubMatch = cleanBaseUrl.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/?$/)
   if (githubMatch) {
     const [, owner, repo] = githubMatch
     return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${appcastPath}`
@@ -112,11 +126,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Log request details
     console.log("Appcast request received:", {
+      parsedUserAgent: parsedUA,
       path: appcastPath,
+      queryParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
       url: request.url,
       userAgent: userAgent,
-      parsedUserAgent: parsedUA,
-      queryParams: Object.fromEntries(request.nextUrl.searchParams.entries()),
     })
 
     // Parse query parameters sent by Sparkle
@@ -156,20 +170,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     console.log("App identification:", {
       identifier: appIdentifier,
-      version: appVersion,
       source: sparkleParams.bundleIdentifier
         ? "bundleIdentifier"
         : sparkleParams.appName
           ? "appName param"
           : "User-Agent",
+      version: appVersion,
     })
 
     const supabase = createSupabaseServerClient()
 
     // Look up app and get appcast URL
     // First try to find by bundle identifier, then by app name
-    let app = null
-    let appError = null
+    let app: { id: string; appcast_base_url: string | null; bundle_identifier: string | null } | null = null
+    let appError: { message: string } | null = null
 
     // If we have a bundle identifier, try that first (more precise)
     if (sparkleParams.bundleIdentifier) {
@@ -222,23 +236,23 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const reportData = {
       app_id: app.id,
-      ip_hash: ipHash,
-      app_version: appVersion || null,
-      os_version: sparkleParams.osVersion || null,
-      cpu_arch: mapCpuTypeToArch(sparkleParams.cputype),
-      core_count: sparkleParams.ncpu ? Number.parseInt(sparkleParams.ncpu, 10) : null,
-      language: sparkleParams.lang || null,
-      model_identifier: sparkleParams.model || null,
-      ram_mb: sparkleParams.ramMB ? Number.parseInt(sparkleParams.ramMB, 10) : null,
-      cpu_64bit: sparkleParams.cpu64bit ? sparkleParams.cpu64bit === "1" : null,
-      cpu_freq_mhz: sparkleParams.cpuFreqMHz ? Number.parseInt(sparkleParams.cpuFreqMHz, 10) : null,
-      cpu_type_raw: sparkleParams.cputype || null,
-      cpu_subtype: sparkleParams.cpusubtype || null,
       app_id_source: sparkleParams.bundleIdentifier
         ? "bundleIdentifier"
         : sparkleParams.appName
           ? "appName"
           : "userAgent",
+      app_version: appVersion || null,
+      core_count: sparkleParams.ncpu ? Number.parseInt(sparkleParams.ncpu, 10) : null,
+      cpu_64bit: sparkleParams.cpu64bit ? sparkleParams.cpu64bit === "1" : null,
+      cpu_arch: mapCpuTypeToArch(sparkleParams.cputype),
+      cpu_freq_mhz: sparkleParams.cpuFreqMHz ? Number.parseInt(sparkleParams.cpuFreqMHz, 10) : null,
+      cpu_subtype: sparkleParams.cpusubtype || null,
+      cpu_type_raw: sparkleParams.cputype || null,
+      ip_hash: ipHash,
+      language: sparkleParams.lang || null,
+      model_identifier: sparkleParams.model || null,
+      os_version: sparkleParams.osVersion || null,
+      ram_mb: sparkleParams.ramMB ? Number.parseInt(sparkleParams.ramMB, 10) : null,
     }
 
     // Insert telemetry data (don't wait for it to complete)
@@ -270,8 +284,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Prepare headers, passing through relevant ones from upstream
     const responseHeaders = new Headers({
-      "Content-Type": appcastResponse.headers.get("Content-Type") || "application/xml",
       "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Content-Type": appcastResponse.headers.get("Content-Type") || "application/xml",
       "X-Stats-Store-Proxied": "true",
     })
 
@@ -286,8 +300,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Return the appcast with appropriate headers
     return new NextResponse(appcastContent, {
-      status: 200,
       headers: responseHeaders,
+      status: 200,
     })
   } catch (error) {
     console.error("Appcast proxy error:", error)

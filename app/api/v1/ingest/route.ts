@@ -1,6 +1,6 @@
-import { NextResponse, type NextRequest } from "next/server"
+import { createHash } from "node:crypto"
+import { type NextRequest, NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { createHash } from "crypto"
 
 interface SparkleReportPayload {
   bundleIdentifier: string
@@ -15,17 +15,27 @@ interface SparkleReportPayload {
 }
 
 function mapCpuTypeToArch(cputype?: string): string | undefined {
-  if (!cputype) return undefined
-  if (cputype === "16777228") return "arm64"
-  if (cputype === "16777223") return "x86_64"
+  if (!cputype) {
+    return undefined
+  }
+  if (cputype === "16777228") {
+    return "arm64"
+  }
+  if (cputype === "16777223") {
+    return "x86_64"
+  }
   return "unknown"
 }
 
 async function getIp(request: NextRequest): Promise<string> {
-  let ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim()
-  if (ip) return ip
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim()
+  if (ip) {
+    return ip
+  }
   const realIp = request.headers.get("x-real-ip")
-  if (realIp) return realIp
+  if (realIp) {
+    return realIp
+  }
   return "unknown_ip"
 }
 
@@ -63,13 +73,13 @@ export async function POST(request: NextRequest) {
 
     const reportData = {
       app_id: app.id,
-      ip_hash: ipHash,
       app_version: payload.appVersion || null,
-      os_version: payload.osVersion || null,
-      cpu_arch: mapCpuTypeToArch(payload.cputype),
       core_count: payload.ncpu ? Number.parseInt(payload.ncpu, 10) : null,
+      cpu_arch: mapCpuTypeToArch(payload.cputype),
+      ip_hash: ipHash,
       language: payload.lang || null,
       model_identifier: payload.model || null,
+      os_version: payload.osVersion || null,
       ram_mb: payload.ramMB ? Number.parseInt(payload.ramMB, 10) : null,
     }
 

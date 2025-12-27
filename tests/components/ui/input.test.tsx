@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest"
-import { render, screen, fireEvent } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
+import { describe, expect, it, vi } from "vitest"
 import { Input } from "@/components/ui/input"
 
 describe("Input", () => {
@@ -109,6 +109,6 @@ describe("Input", () => {
     expect(input).toHaveAttribute("pattern", "[A-Za-z]+")
     expect(input).toHaveAttribute("required")
     expect(input).toHaveAttribute("autoComplete", "off")
-    // autoFocus is processed by React and doesn't appear as an HTML attribute
+    // AutoFocus is processed by React and doesn't appear as an HTML attribute
   })
 })

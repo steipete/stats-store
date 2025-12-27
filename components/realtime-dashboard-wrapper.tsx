@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
-import { useRealtimeStats } from "@/hooks/use-realtime-stats"
-import { motion, AnimatePresence } from "framer-motion"
 import { BellIcon, SparklesIcon } from "@heroicons/react/24/outline"
+import { AnimatePresence, motion } from "framer-motion"
+import { useState } from "react"
 import { toast } from "sonner"
+import { useRealtimeStats } from "@/hooks/use-realtime-stats"
 
 interface RealtimeDashboardWrapperProps {
   children: React.ReactNode
@@ -22,6 +22,13 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
 
   const { isConnected, lastUpdate, realtimeEvents } = useRealtimeStats({
     appId: selectedAppId,
+    onMilestone: (event) => {
+      // Celebrate milestones
+      toast.success(`Milestone reached! 🎉`, {
+        description: event.event_data.message,
+        duration: 5000,
+      })
+    },
     onNewUser: (event) => {
       // Show toast notification for new users
       toast.success(`New user detected!`, {
@@ -34,13 +41,6 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
       setShowRealtimeIndicator(true)
       setTimeout(() => setShowRealtimeIndicator(false), 3000)
     },
-    onMilestone: (event) => {
-      // Celebrate milestones
-      toast.success(`Milestone reached! 🎉`, {
-        description: event.event_data.message,
-        duration: 5000,
-      })
-    },
     onVersionUpdate: (event) => {
       // Notify about version updates
       toast.info(`New version detected: ${event.event_data.new_version}`)
@@ -48,11 +48,11 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
   })
 
   // Merge real-time KPIs with initial data
-  // const realtimeKpis = statsCache.kpis
+  // Const realtimeKpis = statsCache.kpis
   //   ? {
-  //       unique_installs: statsCache.kpis.unique_users_today,
-  //       reports_this_period: statsCache.kpis.total_reports_today,
-  //       latest_version: statsCache.latest_version?.version || initialKpis?.latest_version || "N/A",
+  //       Unique_installs: statsCache.kpis.unique_users_today,
+  //       Reports_this_period: statsCache.kpis.total_reports_today,
+  //       Latest_version: statsCache.latest_version?.version || initialKpis?.latest_version || "N/A",
   //     }
   //   : initialKpis
 
@@ -72,7 +72,7 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
               {showRealtimeIndicator && (
                 <motion.div
                   className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
-                  animate={{ scale: [1, 2, 1], opacity: [1, 0, 1] }}
+                  animate={{ opacity: [1, 0, 1], scale: [1, 2, 1] }}
                   transition={{ duration: 1, repeat: Infinity }}
                 />
               )}

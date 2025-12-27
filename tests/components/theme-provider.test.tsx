@@ -1,11 +1,12 @@
-import { describe, it, expect, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
+import type { ComponentProps, ReactNode } from "react"
+import { describe, expect, it, vi } from "vitest"
 import { ThemeProvider } from "../../components/theme-provider"
 
 // Mock next-themes
 vi.mock("next-themes", () => ({
-  ThemeProvider: ({ children, ...props }: any) => (
-    <div data-testid="next-themes-provider" {...props}>
+  ThemeProvider: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => (
+    <div data-testid="next-themes-provider" {...(props as ComponentProps<"div">)}>
       {children}
     </div>
   ),
@@ -63,9 +64,9 @@ describe("ThemeProvider", () => {
 
   it("handles theme values prop", () => {
     const themes = {
-      light: "light",
-      dark: "dark",
       custom: "custom-theme",
+      dark: "dark",
+      light: "light",
     }
 
     render(

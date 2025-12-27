@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { GET } from "@/app/api/v1/appcast/[...path]/route"
+import type { SupabaseClient } from "@supabase/supabase-js"
 import { NextRequest } from "next/server"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { GET } from "@/app/api/v1/appcast/[...path]/route"
 
 // Mock fetch
 global.fetch = vi.fn()
@@ -9,6 +10,7 @@ global.fetch = vi.fn()
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: vi.fn(() => ({
     from: vi.fn(() => ({
+      insert: vi.fn(() => Promise.resolve({ error: null })),
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           single: vi.fn(() =>
@@ -22,7 +24,6 @@ vi.mock("@/lib/supabase/server", () => ({
           ),
         })),
       })),
-      insert: vi.fn(() => Promise.resolve({ error: null })),
     })),
   })),
 }))
@@ -36,11 +37,11 @@ describe("/api/v1/appcast/[...path]", () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss><channel><item></item></channel></rss>'
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => mockAppcastXML,
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => mockAppcastXML,
     } as Response)
 
     const request = new NextRequest(
@@ -60,11 +61,11 @@ describe("/api/v1/appcast/[...path]", () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => mockAppcastXML,
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => mockAppcastXML,
     } as Response)
 
     const request = new NextRequest(
@@ -82,17 +83,18 @@ describe("/api/v1/appcast/[...path]", () => {
 
   it("should handle direct domain URLs", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => "<xml></xml>",
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => "<xml></xml>",
     } as Response)
 
     // Mock Supabase to return a direct domain URL
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(() =>
@@ -106,9 +108,8 @@ describe("/api/v1/appcast/[...path]", () => {
             ),
           })),
         })),
-        insert: vi.fn(() => Promise.resolve({ error: null })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/sparkle.xml?bundleIdentifier=com.example.app",
@@ -122,17 +123,18 @@ describe("/api/v1/appcast/[...path]", () => {
 
   it("should handle URLs that already include .xml filename", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => "<xml></xml>",
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => "<xml></xml>",
     } as Response)
 
     // Mock Supabase to return a URL with .xml already included
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(() =>
@@ -146,9 +148,8 @@ describe("/api/v1/appcast/[...path]", () => {
             ),
           })),
         })),
-        insert: vi.fn(() => Promise.resolve({ error: null })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
@@ -163,17 +164,18 @@ describe("/api/v1/appcast/[...path]", () => {
 
   it("should replace XML filename when requesting different appcast file", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => "<xml></xml>",
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => "<xml></xml>",
     } as Response)
 
     // Mock Supabase to return a URL with .xml already included
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(() =>
@@ -187,9 +189,8 @@ describe("/api/v1/appcast/[...path]", () => {
             ),
           })),
         })),
-        insert: vi.fn(() => Promise.resolve({ error: null })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/appcast-beta.xml?bundleIdentifier=com.example.app",
@@ -206,17 +207,18 @@ describe("/api/v1/appcast/[...path]", () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => mockAppcastXML,
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => mockAppcastXML,
     } as Response)
 
     // Mock Supabase to find app by name
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(() => Promise.resolve({ data: null, error: { message: "Not found" } })),
@@ -234,15 +236,14 @@ describe("/api/v1/appcast/[...path]", () => {
             ),
           })),
         })),
-        insert: vi.fn(() => Promise.resolve({ error: null })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", {
-      method: "GET",
       headers: {
         "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0",
       },
+      method: "GET",
     })
 
     const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
@@ -272,14 +273,14 @@ describe("/api/v1/appcast/[...path]", () => {
           eq: vi.fn(() => ({
             single: vi.fn(() =>
               Promise.resolve({
-                data: null,
+                data: undefined,
                 error: { message: "Not found" },
               })
             ),
           })),
         })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.unknown.app",
@@ -335,16 +336,16 @@ describe("/api/v1/appcast/[...path]", () => {
             single: vi.fn(() =>
               Promise.resolve({
                 data: {
-                  id: "test-app-id",
-                  appcast_base_url: null, // No URL configured
+                  appcast_base_url: null,
+                  id: "test-app-id", // No URL configured
                 },
-                error: null,
+                error: undefined,
               })
             ),
           })),
         })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
@@ -362,11 +363,11 @@ describe("/api/v1/appcast/[...path]", () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => mockAppcastXML,
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => mockAppcastXML,
     } as Response)
 
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
@@ -380,10 +381,10 @@ describe("/api/v1/appcast/[...path]", () => {
               single: vi.fn(() =>
                 Promise.resolve({
                   data: {
-                    id: "test-app-id",
                     appcast_base_url: "https://example.com/appcast.xml",
+                    id: "test-app-id",
                   },
-                  error: null,
+                  error: undefined,
                 })
               ),
             })),
@@ -397,7 +398,7 @@ describe("/api/v1/appcast/[...path]", () => {
             })
           ),
         }),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest(
       "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app&bundleShortVersionString=1.0.0",
@@ -413,11 +414,11 @@ describe("/api/v1/appcast/[...path]", () => {
 
   it("should handle multiple path segments correctly", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
-      text: async () => "<xml></xml>",
       headers: new Headers({
         "Content-Type": "application/xml",
       }),
+      ok: true,
+      text: async () => "<xml></xml>",
     } as Response)
 
     const request = new NextRequest(
@@ -436,13 +437,13 @@ describe("/api/v1/appcast/[...path]", () => {
   it("should pass through HTTP headers from upstream", async () => {
     const mockHeaders = new Headers({
       "Content-Type": "application/xml",
-      "Last-Modified": "Wed, 01 Jan 2024 00:00:00 GMT",
       ETag: '"123456"',
+      "Last-Modified": "Wed, 01 Jan 2024 00:00:00 GMT",
     })
 
     vi.mocked(global.fetch).mockResolvedValueOnce({
-      ok: true,
       headers: mockHeaders,
+      ok: true,
       text: async () => "<xml></xml>",
     } as Response)
 
@@ -462,32 +463,33 @@ describe("/api/v1/appcast/[...path]", () => {
     it("should handle various User-Agent formats", async () => {
       const testCases = [
         {
-          userAgent: "MyApp/2.1.3 Sparkle/2.0.0",
           expectedApp: "MyApp",
           expectedVersion: "2.1.3",
+          userAgent: "MyApp/2.1.3 Sparkle/2.0.0",
         },
         {
-          userAgent: "Another App/1.0.0-beta Sparkle/2.1.0",
           expectedApp: "Another App",
           expectedVersion: "1.0.0-beta",
+          userAgent: "Another App/1.0.0-beta Sparkle/2.1.0",
         },
         {
-          userAgent: "SimpleApp/1.0",
           expectedApp: "SimpleApp",
           expectedVersion: "1.0",
+          userAgent: "SimpleApp/1.0",
         },
       ]
 
       for (const testCase of testCases) {
         vi.mocked(global.fetch).mockResolvedValueOnce({
+          headers: new Headers({ "Content-Type": "application/xml" }),
           ok: true,
           text: async () => "<xml></xml>",
-          headers: new Headers({ "Content-Type": "application/xml" }),
         } as Response)
 
         const { createSupabaseServerClient } = await import("@/lib/supabase/server")
         vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
           from: vi.fn(() => ({
+            insert: vi.fn(() => Promise.resolve({ error: null })),
             select: vi.fn(() => ({
               or: vi.fn(() => ({
                 single: vi.fn(() =>
@@ -501,15 +503,14 @@ describe("/api/v1/appcast/[...path]", () => {
                 ),
               })),
             })),
-            insert: vi.fn(() => Promise.resolve({ error: null })),
           })),
-        } as any)
+        } as unknown as SupabaseClient)
 
         const request = new NextRequest("http://localhost:3000/api/v1/appcast/appcast.xml", {
-          method: "GET",
           headers: {
             "User-Agent": testCase.userAgent,
           },
+          method: "GET",
         })
 
         const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) })
@@ -524,15 +525,16 @@ describe("/api/v1/appcast/[...path]", () => {
       const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
       vi.mocked(global.fetch).mockResolvedValueOnce({
+        headers: new Headers({ "Content-Type": "application/xml" }),
         ok: true,
         text: async () => mockAppcastXML,
-        headers: new Headers({ "Content-Type": "application/xml" }),
       } as Response)
 
       // Mock Supabase with proper or() support
       const { createSupabaseServerClient } = await import("@/lib/supabase/server")
       vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
         from: vi.fn(() => ({
+          insert: vi.fn(() => Promise.resolve({ error: null })),
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
               single: vi.fn(() => Promise.resolve({ data: null, error: { message: "Not found" } })),
@@ -550,9 +552,8 @@ describe("/api/v1/appcast/[...path]", () => {
               ),
             })),
           })),
-          insert: vi.fn(() => Promise.resolve({ error: null })),
         })),
-      } as any)
+      } as unknown as SupabaseClient)
 
       const request = new NextRequest(
         "http://localhost:3000/api/v1/appcast/appcast.xml?" +
@@ -560,8 +561,8 @@ describe("/api/v1/appcast/[...path]", () => {
           "cputype=16777228&cpusubtype=2&model=MacBookPro17,1&ncpu=8&" +
           "cpuFreqMHz=2400&lang=en&ramMB=16384",
         {
-          method: "GET",
           headers: { "User-Agent": "MyApp/2.1.3 Sparkle/2.0.0" },
+          method: "GET",
         }
       )
 
@@ -574,9 +575,9 @@ describe("/api/v1/appcast/[...path]", () => {
       const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
       vi.mocked(global.fetch).mockResolvedValueOnce({
+        headers: new Headers({ "Content-Type": "application/xml" }),
         ok: true,
         text: async () => mockAppcastXML,
-        headers: new Headers({ "Content-Type": "application/xml" }),
       } as Response)
 
       const { createSupabaseServerClient } = await import("@/lib/supabase/server")
@@ -590,29 +591,29 @@ describe("/api/v1/appcast/[...path]", () => {
               single: vi.fn(() =>
                 Promise.resolve({
                   data: {
-                    id: "test-app-id",
                     appcast_base_url: "https://example.com/appcast.xml",
                     bundle_identifier: "com.priority.app",
+                    id: "test-app-id",
                   },
-                  error: null,
+                  error: undefined,
                 })
               ),
             })),
           })),
         })
         .mockReturnValueOnce({
-          insert: vi.fn(() => Promise.resolve({ error: null })),
+          insert: vi.fn(() => Promise.resolve({ error: undefined })),
         })
 
       vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
         from: fromMock,
-      } as any)
+      } as unknown as SupabaseClient)
 
       const request = new NextRequest(
-        "http://localhost:3000/api/v1/appcast/appcast.xml?" + "bundleIdentifier=com.priority.app&appName=DifferentName",
+        "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.priority.app&appName=DifferentName",
         {
-          method: "GET",
           headers: { "User-Agent": "YetAnotherName/1.0 Sparkle/2.0.0" },
+          method: "GET",
         }
       )
 
@@ -629,12 +630,12 @@ describe("/api/v1/appcast/[...path]", () => {
       const mockAppcastXML = '<?xml version="1.0"?><rss></rss>'
 
       vi.mocked(global.fetch).mockResolvedValueOnce({
+        headers: new Headers({ "Content-Type": "application/xml" }),
         ok: true,
         text: async () => mockAppcastXML,
-        headers: new Headers({ "Content-Type": "application/xml" }),
       } as Response)
 
-      let capturedInsertData: any = null
+      let capturedInsertData: unknown
 
       const { createSupabaseServerClient } = await import("@/lib/supabase/server")
       vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
@@ -646,22 +647,22 @@ describe("/api/v1/appcast/[...path]", () => {
                 single: vi.fn(() =>
                   Promise.resolve({
                     data: {
-                      id: "test-app-id",
                       appcast_base_url: "https://example.com/appcast.xml",
+                      id: "test-app-id",
                     },
-                    error: null,
+                    error: undefined,
                   })
                 ),
               })),
             })),
           })
           .mockReturnValueOnce({
-            insert: vi.fn((data) => {
+            insert: vi.fn((data: unknown) => {
               capturedInsertData = data
-              return Promise.resolve({ error: null })
+              return Promise.resolve({ error: undefined })
             }),
           }),
-      } as any)
+      } as unknown as SupabaseClient)
 
       const request = new NextRequest(
         "http://localhost:3000/api/v1/appcast/appcast.xml?" +
@@ -676,13 +677,13 @@ describe("/api/v1/appcast/[...path]", () => {
       await new Promise((resolve) => setTimeout(resolve, 100))
 
       expect(capturedInsertData).toMatchObject({
+        app_id_source: "bundleIdentifier",
         app_version: "123",
-        os_version: "14.0",
         cpu_64bit: true,
         cpu_freq_mhz: 2400,
-        cpu_type_raw: "16777228",
         cpu_subtype: "2",
-        app_id_source: "bundleIdentifier",
+        cpu_type_raw: "16777228",
+        os_version: "14.0",
       })
     })
   })

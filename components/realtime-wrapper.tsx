@@ -23,11 +23,11 @@ interface RealtimeWrapperProps {
 }
 
 export function RealtimeWrapper({ selectedAppId, dateRange, initialData, children }: RealtimeWrapperProps) {
-  const [realtimeStatus, setRealtimeStatus] = useState({
-    isConnected: false,
-    lastUpdate: undefined as Date | undefined,
-    realtimeEventsCount: 0,
-  })
+  const [realtimeStatus, setRealtimeStatus] = useState<{
+    isConnected: boolean
+    lastUpdate?: Date
+    realtimeEventsCount: number
+  }>({ isConnected: false, realtimeEventsCount: 0 })
 
   return (
     <>

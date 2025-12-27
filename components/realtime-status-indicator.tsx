@@ -1,8 +1,8 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
 import { BellAlertIcon } from "@heroicons/react/24/outline"
 import { format } from "date-fns"
+import { AnimatePresence, motion } from "framer-motion"
 
 interface RealtimeStatusIndicatorProps {
   isConnected: boolean
@@ -33,7 +33,7 @@ export function RealtimeStatusIndicator({
               <div className="h-2 w-2 bg-green-500 rounded-full" />
               <motion.div
                 className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
-                animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                animate={{ opacity: [1, 0.5, 1], scale: [1, 1.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
@@ -44,6 +44,7 @@ export function RealtimeStatusIndicator({
           </div>
 
           <button
+            type="button"
             onClick={() => setShowActivityFeed(!showActivityFeed)}
             className="flex items-center gap-1 px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 rounded-md transition-colors"
           >

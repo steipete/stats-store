@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest"
+import { ExclamationCircleIcon, UsersIcon } from "@heroicons/react/24/outline"
 import { render, screen } from "@testing-library/react"
+import { describe, expect, it } from "vitest"
 import { KpiCardSimple } from "../../components/kpi-card-simple"
-import { UsersIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
 
-describe.skip("KpiCardSimple", () => {
+describe("KpiCardSimple", () => {
   describe("basic rendering", () => {
     it("renders with required props", () => {
       render(<KpiCardSimple title="Total Users" value="1,234" icon={UsersIcon} />)
@@ -95,9 +95,10 @@ describe.skip("KpiCardSimple", () => {
     it("renders without tooltip when not provided", () => {
       const { container } = render(<KpiCardSimple title="Test" value="123" icon={UsersIcon} />)
 
-      const card = container.querySelector(".cursor-help")
+      const card = container.firstElementChild
       expect(card).toBeInTheDocument()
       expect(card).not.toHaveAttribute("title")
+      expect(card).not.toHaveClass("cursor-help")
     })
   })
 
@@ -110,7 +111,7 @@ describe.skip("KpiCardSimple", () => {
     })
 
     it("maintains flex layout for title and icon", () => {
-      const { container } = render(<KpiCardSimple title="Title" value="Value" icon={UsersIcon} />)
+      render(<KpiCardSimple title="Title" value="Value" icon={UsersIcon} />)
 
       // Check that Flex component is used for layout
       const title = screen.getByText("Title")

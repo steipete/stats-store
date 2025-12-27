@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, beforeAll } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 
 // Set environment variables before any imports
 process.env.SUPABASE_URL = "https://test.supabase.co"
@@ -6,23 +6,20 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key"
 
 // Mock modules before imports
 vi.mock("@supabase/supabase-js", () => ({
-  createClient: vi.fn((url, key, options) => {
-    // Return a mock client that captures the options
-    return {
-      url,
-      key,
-      options,
-      auth: {
-        getUser: vi.fn(),
-        getSession: vi.fn(),
-      },
+  createClient: vi.fn((url, key, options) => ({
+    url,
+    key,
+    options,
+    auth: {
+      getUser: vi.fn(),
+      getSession: vi.fn(),
+    },
+    from: vi.fn(),
+    rpc: vi.fn(),
+    storage: {
       from: vi.fn(),
-      rpc: vi.fn(),
-      storage: {
-        from: vi.fn(),
-      },
-    }
-  }),
+    },
+  })),
 }))
 
 describe("createSupabaseServerClient", () => {
@@ -78,8 +75,17 @@ describe("createSupabaseServerClient", () => {
 
     createSupabaseServerClient()
 
-    const mockCall = vi.mocked(createClient).mock.calls[0]
-    const authConfig = mockCall[2].auth
+    expect(vi.mocked(createClient).mock.calls.length).toBeGreaterThan(0)
+
+    const [mockCall] = vi.mocked(createClient).mock.calls
+    if (!mockCall) {
+      throw new Error("Expected createClient to be called")
+    }
+
+    const authConfig = mockCall[2]?.auth
+    if (!authConfig) {
+      throw new Error("Expected auth config to be present")
+    }
 
     expect(authConfig.autoRefreshToken).toBe(false)
     expect(authConfig.persistSession).toBe(false)
@@ -88,7 +94,7 @@ describe("createSupabaseServerClient", () => {
   it("requires environment variables to be set", async () => {
     // The module requires these environment variables at import time
     // Since they're already set at the top of this test file,
-    // we'll just verify they're being used correctly
+    // We'll just verify they're being used correctly
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
     const { createClient } = await import("@supabase/supabase-js")
 
@@ -96,7 +102,12 @@ describe("createSupabaseServerClient", () => {
     createSupabaseServerClient()
 
     // Verify it was called with the environment variables
-    const mockCall = vi.mocked(createClient).mock.calls[0]
+    expect(vi.mocked(createClient).mock.calls.length).toBeGreaterThan(0)
+
+    const [mockCall] = vi.mocked(createClient).mock.calls
+    if (!mockCall) {
+      throw new Error("Expected createClient to be called")
+    }
     expect(mockCall[0]).toBe(process.env.SUPABASE_URL)
     expect(mockCall[1]).toBe(process.env.SUPABASE_SERVICE_ROLE_KEY)
   })

@@ -1,13 +1,13 @@
 "use client"
 
-import { useRealtimeStats } from "@/hooks/use-realtime-stats"
-import { RealtimeKpiCard } from "./realtime-kpi-card"
-import { motion, AnimatePresence } from "framer-motion"
-import { Toaster } from "sonner"
-import { valueFormatter } from "@/lib/formatters"
-import { useEffect, useState } from "react"
-import { SparklesIcon, BellAlertIcon } from "@heroicons/react/24/outline"
+import { BellAlertIcon, SparklesIcon } from "@heroicons/react/24/outline"
 import { format } from "date-fns"
+import { AnimatePresence, motion } from "framer-motion"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Toaster } from "sonner"
+import { useRealtimeStats } from "@/hooks/use-realtime-stats"
+import { valueFormatter } from "@/lib/formatters"
+import { RealtimeKpiCard } from "./realtime-kpi-card"
 
 interface RealtimeDashboardProps {
   selectedAppId: string
@@ -45,23 +45,26 @@ export function RealtimeDashboard({
   // Notify parent of status changes
   useEffect(() => {
     if (onStatusChange) {
-      onStatusChange({ isConnected, lastUpdate, realtimeEventsCount: realtimeEvents.length })
+      onStatusChange({ isConnected, lastUpdate: lastUpdate ?? undefined, realtimeEventsCount: realtimeEvents.length })
     }
   }, [isConnected, lastUpdate, realtimeEvents.length, onStatusChange])
 
-  // Merge real-time data with initial data
-  const currentKpis = {
-    unique_installs: statsCache.kpis?.unique_users_today ?? initialData.kpis.unique_installs,
-    reports_this_period: statsCache.kpis?.total_reports_today ?? initialData.kpis.reports_this_period,
-    latest_version: statsCache.latest_version?.version ?? initialData.kpis.latest_version,
-  }
+  const currentKpis = useMemo(
+    () => ({
+      latest_version: statsCache.latest_version?.version ?? initialData.kpis.latest_version,
+      reports_this_period: statsCache.kpis?.total_reports_today ?? initialData.kpis.reports_this_period,
+      unique_installs: statsCache.kpis?.unique_users_today ?? initialData.kpis.unique_installs,
+    }),
+    [statsCache.kpis, statsCache.latest_version, initialData.kpis]
+  )
 
-  // Track previous values for animation
+  const currentKpisRef = useRef(currentKpis)
   useEffect(() => {
-    if (statsCache.kpis) {
-      setPreviousKpis(currentKpis)
+    if (currentKpisRef.current !== currentKpis) {
+      setPreviousKpis(currentKpisRef.current)
+      currentKpisRef.current = currentKpis
     }
-  }, [statsCache.kpis])
+  }, [currentKpis])
 
   return (
     <>
@@ -82,7 +85,7 @@ export function RealtimeDashboard({
                   <div className="h-2 w-2 bg-green-500 rounded-full" />
                   <motion.div
                     className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
-                    animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                    animate={{ opacity: [1, 0.5, 1], scale: [1, 1.5, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
                 </div>
@@ -93,6 +96,7 @@ export function RealtimeDashboard({
               </div>
 
               <button
+                type="button"
                 onClick={() => setShowActivityFeed(!showActivityFeed)}
                 className="flex items-center gap-1 px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 rounded-md transition-colors"
               >
@@ -125,7 +129,7 @@ export function RealtimeDashboard({
           }
           iconName="users"
           iconColor="blue"
-          error={!!initialData.kpisError?.unique_installs}
+          error={Boolean(initialData.kpisError?.unique_installs)}
           tooltip="Distinct users identified by daily IP hash"
           isRealtime={isConnected}
           lastUpdate={lastUpdate || undefined}
@@ -145,7 +149,7 @@ export function RealtimeDashboard({
           }
           iconName="cube"
           iconColor="green"
-          error={!!initialData.kpisError?.reports_this_period}
+          error={Boolean(initialData.kpisError?.reports_this_period)}
           tooltip="All telemetry reports received"
           isRealtime={isConnected}
           lastUpdate={lastUpdate || undefined}
@@ -157,7 +161,7 @@ export function RealtimeDashboard({
           previousValue={previousKpis.latest_version}
           iconName="tag"
           iconColor="amber"
-          error={!!initialData.kpisError?.latest_version}
+          error={Boolean(initialData.kpisError?.latest_version)}
           tooltip="Most recent app version seen in reports"
           isRealtime={isConnected}
           lastUpdate={lastUpdate || undefined}
@@ -168,9 +172,9 @@ export function RealtimeDashboard({
       <AnimatePresence>
         {showActivityFeed && realtimeEvents.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
             className="mb-6 p-4 bg-card border border-border rounded-lg overflow-hidden"
           >
             <h3 className="text-sm font-medium mb-3 flex items-center gap-2">

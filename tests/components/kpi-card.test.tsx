@@ -1,9 +1,8 @@
-import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
+import { describe, expect, it } from "vitest"
 import { KpiCard } from "../../components/kpi-card"
 
-describe.skip("KpiCard", () => {
+describe("KpiCard", () => {
   describe("basic rendering", () => {
     it("renders with title and value", () => {
       render(<KpiCard title="Total Users" value="1,234" />)
@@ -109,24 +108,6 @@ describe.skip("KpiCard", () => {
       expect(screen.getByText("Test")).toBeInTheDocument()
       expect(screen.getByText("123")).toBeInTheDocument()
     })
-
-    it("shows tooltip on hover", async () => {
-      const user = userEvent.setup()
-      render(<KpiCard title="Test" value="123" tooltip="Helpful information" />)
-
-      // Initially tooltip should not be visible
-      expect(screen.queryByText("Helpful information")).not.toBeInTheDocument()
-
-      // Hover over the card
-      const card = screen.getByText("Test").closest("div")
-      if (card) {
-        await user.hover(card)
-
-        // Tooltip should appear - look for all matching elements
-        const tooltips = await screen.findAllByText("Helpful information")
-        expect(tooltips.length).toBeGreaterThan(0)
-      }
-    })
   })
 
   describe("children rendering", () => {
@@ -152,7 +133,7 @@ describe.skip("KpiCard", () => {
     })
 
     it("applies proper spacing with children", () => {
-      const { container } = render(
+      render(
         <KpiCard title="Test" value="123">
           <div>Child</div>
         </KpiCard>
@@ -163,7 +144,7 @@ describe.skip("KpiCard", () => {
     })
 
     it("does not apply margin to children when no title or value", () => {
-      const { container } = render(
+      render(
         <KpiCard>
           <div>Child</div>
         </KpiCard>

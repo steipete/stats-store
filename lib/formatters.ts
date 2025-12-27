@@ -3,7 +3,7 @@
 
 export const valueFormatter = (number: number): string => {
   // Return "0" for non-numeric or NaN inputs to prevent runtime errors in charts.
-  if (typeof number !== "number" || isNaN(number)) {
+  if (typeof number !== "number" || Number.isNaN(number)) {
     return "0"
   }
   // Use Intl.NumberFormat for robust, locale-aware number formatting.

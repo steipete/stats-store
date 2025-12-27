@@ -1,9 +1,10 @@
 "use client"
 
-import { DateRangePicker, type DateRangePickerValue } from "@tremor/react"
-import { ExclamationCircleIcon, InformationCircleIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
+import { ChevronDownIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/24/outline"
+import { format, parseISO, startOfDay } from "date-fns"
 import { useRouter, useSearchParams } from "next/navigation"
-import { format, startOfDay } from "date-fns"
+import { useEffect, useState } from "react"
+import type { DateRangeValue } from "@/lib/date-range"
 import { cn } from "@/lib/utils"
 
 interface App {
@@ -14,7 +15,7 @@ interface App {
 interface DashboardFiltersProps {
   apps: App[] | null
   currentAppId: string
-  currentDateRange?: DateRangePickerValue
+  currentDateRange?: DateRangeValue
   appsError?: string
 }
 
@@ -29,6 +30,17 @@ export function DashboardFilters({
 
   const apps = initialApps || []
 
+  const derivedFrom = currentDateRange?.from ? format(currentDateRange.from, "yyyy-MM-dd") : ""
+  const derivedTo = currentDateRange?.to ? format(currentDateRange.to, "yyyy-MM-dd") : derivedFrom
+
+  const [fromValue, setFromValue] = useState(() => derivedFrom)
+  const [toValue, setToValue] = useState(() => derivedTo)
+
+  useEffect(() => {
+    setFromValue(derivedFrom)
+    setToValue(derivedTo)
+  }, [derivedFrom, derivedTo])
+
   const handleAppChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams.toString())
     if (value === "all") {
@@ -39,7 +51,13 @@ export function DashboardFilters({
     router.push(`/?${newParams.toString()}`)
   }
 
-  const handleDateChange = (value: DateRangePickerValue | undefined) => {
+  const pushDateRange = (nextFrom: string, nextTo: string) => {
+    const from = startOfDay(parseISO(nextFrom))
+    const to = startOfDay(parseISO(nextTo))
+    handleDateChange({ from, to })
+  }
+
+  const handleDateChange = (value: DateRangeValue | undefined) => {
     const newParams = new URLSearchParams(searchParams.toString())
     if (value?.from) {
       newParams.set("from", format(startOfDay(value.from), "yyyy-MM-dd"))
@@ -113,21 +131,62 @@ export function DashboardFilters({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 items-center">
       {renderAppFilter()}
-      <div
-        className={cn(
-          commonInputBaseClasses, // This provides bg-input and rounded-lg
-          "p-0 flex items-center overflow-hidden" // overflow-hidden to clip internal button if needed
-        )}
-      >
-        <DateRangePicker
-          value={currentDateRange}
-          onValueChange={handleDateChange}
-          // Removed [&>button]:bg-transparent to let Tremor handle its button background,
-          // which should be themed or use the wrapper's bg-input.
-          // Added explicit text color for the button content.
-          className="w-full h-full [&>button]:h-full [&>button]:w-full [&>button]:rounded-lg [&>button]:border-0 hover:[&>button]:bg-secondary/30 focus:[&>button]:ring-0 focus:outline-none [&>button]:text-foreground [&>button]:pr-10"
-          enableYearNavigation
-        />
+      <div className="grid grid-cols-2 gap-2">
+        <div className={cn(commonInputBaseClasses, "px-2 flex items-center")}>
+          <label className="sr-only" htmlFor="date-from">
+            From
+          </label>
+          <input
+            id="date-from"
+            type="date"
+            className="w-full bg-transparent text-foreground focus:outline-none"
+            value={fromValue}
+            onChange={(e) => {
+              const nextFrom = e.target.value
+              if (!nextFrom) {
+                setFromValue("")
+                setToValue("")
+                handleDateChange(undefined)
+                return
+              }
+
+              const nextTo = toValue || nextFrom
+              setFromValue(nextFrom)
+              setToValue(nextTo)
+              pushDateRange(nextFrom, nextTo)
+            }}
+          />
+        </div>
+        <div className={cn(commonInputBaseClasses, "px-2 flex items-center")}>
+          <label className="sr-only" htmlFor="date-to">
+            To
+          </label>
+          <input
+            id="date-to"
+            type="date"
+            className="w-full bg-transparent text-foreground focus:outline-none"
+            value={toValue}
+            onChange={(e) => {
+              const nextTo = e.target.value
+              if (!nextTo) {
+                if (!fromValue) {
+                  setFromValue("")
+                  setToValue("")
+                  handleDateChange(undefined)
+                  return
+                }
+                setToValue(fromValue)
+                pushDateRange(fromValue, fromValue)
+                return
+              }
+
+              const nextFrom = fromValue || nextTo
+              setFromValue(nextFrom)
+              setToValue(nextTo)
+              pushDateRange(nextFrom, nextTo)
+            }}
+          />
+        </div>
       </div>
     </div>
   )

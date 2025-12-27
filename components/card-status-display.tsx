@@ -1,7 +1,6 @@
 "use client"
 
-import { Flex, Icon, Text } from "@tremor/react"
-import { ExclamationCircleIcon, ChartBarIcon } from "@heroicons/react/24/outline"
+import { ChartBarIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
 
 interface CardStatusDisplayProps {
   error?: string
@@ -18,20 +17,18 @@ export const CardStatusDisplay = ({
 }: CardStatusDisplayProps) => {
   if (error) {
     return (
-      <Flex className={`${minHeightClassName} items-center justify-center p-4`} flexDirection="col">
-        <Icon icon={ExclamationCircleIcon} color="rose" variant="light" size="lg" />
-        <Text className="mt-2 text-center" color="rose">
-          {error}
-        </Text>
-      </Flex>
+      <div className={`${minHeightClassName} flex flex-col items-center justify-center p-4`}>
+        <ExclamationCircleIcon className="h-8 w-8 text-destructive" />
+        <p className="mt-2 text-center text-sm text-destructive">{error}</p>
+      </div>
     )
   }
   if (noData) {
     return (
-      <Flex className={`${minHeightClassName} items-center justify-center p-4`} flexDirection="col">
-        <Icon icon={ChartBarIcon} color="gray" variant="light" size="lg" />
-        <Text className="mt-2 text-center text-gray-500">{noDataMessage}</Text>
-      </Flex>
+      <div className={`${minHeightClassName} flex flex-col items-center justify-center p-4`}>
+        <ChartBarIcon className="h-8 w-8 text-muted-foreground" />
+        <p className="mt-2 text-center text-sm text-muted-foreground">{noDataMessage}</p>
+      </div>
     )
   }
   return null

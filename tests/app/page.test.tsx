@@ -1,30 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { createMockSupabaseClient, createMockSupabaseWithError } from "@/tests/utils/supabase-mock"
 import {
-  mockApps,
   generateDailyCountsData,
-  mockOsDistribution,
+  mockApps,
   mockCpuDistribution,
+  mockOsDistribution,
   mockTopModels,
 } from "@/tests/utils/test-data"
-
-// Mock UI components that aren't needed for data-fetch assertions
-vi.mock("@tremor/react", () => {
-  const Simple = ({ children }: any) => ({ type: "div", props: { children } })
-  const TableWrapper = ({ children }: any) => ({ type: "table", props: { children } })
-  const Section = ({ children }: any) => ({ type: "section", props: { children } })
-
-  return {
-    Flex: Simple,
-    Title: Simple,
-    Table: TableWrapper,
-    TableHead: Section,
-    TableRow: Section,
-    TableHeaderCell: Simple,
-    TableBody: Section,
-    TableCell: Simple,
-  }
-}, { virtual: true })
 
 // Mock the Supabase server module
 vi.mock("@/lib/supabase/server", () => ({
@@ -39,17 +21,17 @@ describe("Dashboard Page", () => {
   it("fetches all required data successfully", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
+      cpu_distribution: mockCpuDistribution,
+      daily_counts: generateDailyCountsData(30),
+      latest_version: "2.0.0",
+      os_distribution: mockOsDistribution,
       reports: Array(50)
         .fill(null)
         .map((_, i) => ({
           ip_hash: `hash${i}`,
           received_at: new Date().toISOString(),
         })),
-      daily_counts: generateDailyCountsData(30),
-      os_distribution: mockOsDistribution,
-      cpu_distribution: mockCpuDistribution,
       top_models: mockTopModels,
-      latest_version: "2.0.0",
     })
 
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
@@ -72,10 +54,10 @@ describe("Dashboard Page", () => {
   it("handles app filtering correctly", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
-      reports: [],
+      cpu_distribution: [],
       daily_counts: [],
       os_distribution: [],
-      cpu_distribution: [],
+      reports: [],
       top_models: [],
     })
 
@@ -83,17 +65,17 @@ describe("Dashboard Page", () => {
     vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
 
     // Test that the eq method is called with correct app_id
-    const reportsQuery = mockClient.from("reports")
+    const reportsQuery = mockClient.from("reports").select("*")
     expect(reportsQuery.eq).toBeDefined()
   })
 
   it("handles date range filtering correctly", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
-      reports: [],
+      cpu_distribution: [],
       daily_counts: [],
       os_distribution: [],
-      cpu_distribution: [],
+      reports: [],
       top_models: [],
     })
 
@@ -101,7 +83,7 @@ describe("Dashboard Page", () => {
     vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
 
     // Test that date filters are applied
-    const reportsQuery = mockClient.from("reports")
+    const reportsQuery = mockClient.from("reports").select("*")
     expect(reportsQuery.gte).toBeDefined()
     expect(reportsQuery.lte).toBeDefined()
   })
@@ -122,10 +104,10 @@ describe("Dashboard Page", () => {
   it("handles empty data gracefully", async () => {
     const mockClient = createMockSupabaseClient({
       apps: [],
-      reports: [],
+      cpu_distribution: [],
       daily_counts: [],
       os_distribution: [],
-      cpu_distribution: [],
+      reports: [],
       top_models: [],
     })
 
@@ -141,7 +123,7 @@ describe("Dashboard Page", () => {
   it("calculates unique installs correctly", async () => {
     const mockReports = [
       { ip_hash: "hash1", received_at: new Date().toISOString() },
-      { ip_hash: "hash1", received_at: new Date().toISOString() }, // duplicate
+      { ip_hash: "hash1", received_at: new Date().toISOString() }, // Duplicate
       { ip_hash: "hash2", received_at: new Date().toISOString() },
       { ip_hash: "hash3", received_at: new Date().toISOString() },
     ]
@@ -157,21 +139,21 @@ describe("Dashboard Page", () => {
     // Get reports and calculate unique IPs
     const query = mockClient.from("reports").select("ip_hash")
     const result = await query
-    const uniqueIps = new Set(result.data?.map((r: any) => r.ip_hash))
+    const uniqueIps = new Set(result.data?.map((r: { ip_hash: string }) => r.ip_hash))
 
-    expect(uniqueIps.size).toBe(3) // hash1, hash2, hash3
-    expect(result.data?.length).toBe(4) // total reports
+    expect(uniqueIps.size).toBe(3) // Hash1, hash2, hash3
+    expect(result.data?.length).toBe(4) // Total reports
   })
 
   it("fetches all RPC endpoints with correct parameters", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
-      reports: [],
-      daily_counts: generateDailyCountsData(30),
-      os_distribution: mockOsDistribution,
       cpu_distribution: mockCpuDistribution,
-      top_models: mockTopModels,
+      daily_counts: generateDailyCountsData(30),
       latest_version: "1.2.3",
+      os_distribution: mockOsDistribution,
+      reports: [],
+      top_models: mockTopModels,
     })
 
     const { createSupabaseServerClient } = await import("@/lib/supabase/server")
@@ -182,8 +164,8 @@ describe("Dashboard Page", () => {
     await Page({ searchParams: Promise.resolve({}) })
 
     // Verify RPC calls were made (order may vary)
-    const rpcCalls = mockClient.rpc.mock.calls
-    const rpcNames = rpcCalls.map((call) => call[0])
+    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls
+    const rpcNames = rpcCalls.map((call) => call[0] as string)
 
     expect(rpcNames).toContain("get_daily_report_counts")
     expect(rpcNames).toContain("get_os_version_distribution")
@@ -192,27 +174,26 @@ describe("Dashboard Page", () => {
     expect(rpcNames).toContain("get_latest_app_version")
 
     // Verify each call has the correct parameters structure
-    rpcCalls.forEach(([name, params]) => {
+    rpcCalls.forEach((call) => {
+      const [name, params] = call as [string, Record<string, unknown>]
       if (name.startsWith("get_")) {
         const usesPrefixedParams =
-          "p_app_id_filter" in params ||
-          "p_start_date_filter" in params ||
-          "p_end_date_filter" in params
+          "p_app_id_filter" in params || "p_start_date_filter" in params || "p_end_date_filter" in params
 
         if (usesPrefixedParams) {
           expect(params).toMatchObject({
             p_app_id_filter: null,
-            p_start_date_filter: expect.any(String),
             p_end_date_filter: expect.any(String),
+            p_start_date_filter: expect.any(String),
           })
-          if ("p_limit_count" in params) {
+          if ("p_limit_count" in params && typeof params.p_limit_count === "number") {
             expect(params.p_limit_count).toBeGreaterThan(0)
           }
         } else {
           expect(params).toMatchObject({
             app_id_filter: null,
-            start_date_filter: expect.any(String),
             end_date_filter: expect.any(String),
+            start_date_filter: expect.any(String),
           })
         }
       }

@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest"
 import { render, screen } from "@testing-library/react"
-import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { describe, expect, it } from "vitest"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 describe("Card Components", () => {
   it("renders Card with proper styling", () => {
@@ -74,7 +74,7 @@ describe("Card Components", () => {
           <p>Card content goes here</p>
         </CardContent>
         <CardFooter>
-          <button>Action</button>
+          <button type="button">Action</button>
         </CardFooter>
       </Card>
     )

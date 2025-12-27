@@ -1,108 +1,110 @@
-import { vi } from "vitest"
 import type { SupabaseClient } from "@supabase/supabase-js"
+import { vi } from "vitest"
 
 interface MockData {
-  apps?: any[]
-  reports?: any[]
-  daily_counts?: any[]
-  os_distribution?: any[]
-  cpu_distribution?: any[]
-  top_models?: any[]
+  apps?: unknown[]
+  reports?: unknown[]
+  daily_counts?: unknown[]
+  os_distribution?: unknown[]
+  cpu_distribution?: unknown[]
+  top_models?: unknown[]
   latest_version?: string
 }
 
 export function createMockSupabaseClient(mockData: MockData = {}) {
   const mockFrom = (table: string) => {
-    const chainableMethods = {
-      select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      neq: vi.fn().mockReturnThis(),
-      gt: vi.fn().mockReturnThis(),
-      gte: vi.fn().mockReturnThis(),
-      lt: vi.fn().mockReturnThis(),
-      lte: vi.fn().mockReturnThis(),
-      like: vi.fn().mockReturnThis(),
-      ilike: vi.fn().mockReturnThis(),
-      is: vi.fn().mockReturnThis(),
-      in: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockReturnThis(),
-      maybeSingle: vi.fn().mockReturnThis(),
-      then: vi.fn((resolve) => {
-        const data = mockData[table as keyof MockData] || []
-        const count = Array.isArray(data) ? data.length : 0
-        resolve({ data, error: null, count })
-      }),
+    const buildResult = () => {
+      const data = mockData[table as keyof MockData] ?? []
+      const count = Array.isArray(data) ? data.length : 0
+      return { count, data, error: null }
     }
 
-    // Override the promise-like behavior
-    return {
-      ...chainableMethods,
-      then: (resolve: any) => {
-        const data = mockData[table as keyof MockData] || []
-        const count = Array.isArray(data) ? data.length : 0
-        resolve({ data, error: null, count })
-        return Promise.resolve({ data, error: null, count })
-      },
+    const query = Promise.resolve(buildResult()) as unknown as Record<string, unknown>
+
+    const chainableMethods = {
+      delete: vi.fn(() => query),
+      eq: vi.fn(() => query),
+      gt: vi.fn(() => query),
+      gte: vi.fn(() => query),
+      ilike: vi.fn(() => query),
+      in: vi.fn(() => query),
+      insert: vi.fn(() => query),
+      is: vi.fn(() => query),
+      like: vi.fn(() => query),
+      limit: vi.fn(() => query),
+      lt: vi.fn(() => query),
+      lte: vi.fn(() => query),
+      maybeSingle: vi.fn(() => query),
+      neq: vi.fn(() => query),
+      order: vi.fn(() => query),
+      select: vi.fn(() => query),
+      single: vi.fn(() => query),
+      update: vi.fn(() => query),
     }
+
+    return Object.assign(query, chainableMethods)
   }
 
-  const mockRpc = (functionName: string, params?: any) => ({
-    then: (resolve: any) => {
-      let data = null
+  const mockRpc = (functionName: string, _params?: unknown) => {
+    let data: unknown
 
-      switch (functionName) {
-        case "get_daily_report_counts":
-          data = mockData.daily_counts || []
-          break
-        case "get_os_version_distribution":
-          data = mockData.os_distribution || []
-          break
-        case "get_cpu_architecture_distribution":
-          data = mockData.cpu_distribution || []
-          break
-        case "get_top_models":
-          data = mockData.top_models || []
-          break
-        case "get_latest_app_version":
-          data = mockData.latest_version || "N/A"
-          break
-        default:
-          data = null
+    switch (functionName) {
+      case "get_daily_report_counts": {
+        data = mockData.daily_counts ?? []
+        break
       }
+      case "get_os_version_distribution": {
+        data = mockData.os_distribution ?? []
+        break
+      }
+      case "get_cpu_architecture_distribution": {
+        data = mockData.cpu_distribution ?? []
+        break
+      }
+      case "get_top_models": {
+        data = mockData.top_models ?? []
+        break
+      }
+      case "get_latest_app_version": {
+        data = mockData.latest_version ?? "N/A"
+        break
+      }
+      default: {
+        data = null
+      }
+    }
 
-      resolve({ data, error: null })
-      return Promise.resolve({ data, error: null })
-    },
-  })
+    return Promise.resolve({ data, error: undefined }) as unknown as Record<string, unknown>
+  }
 
   const mockClient: Partial<SupabaseClient> = {
-    from: vi.fn().mockImplementation(mockFrom),
-    rpc: vi.fn().mockImplementation(mockRpc),
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
       getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
-    } as any,
+    } as unknown as SupabaseClient["auth"],
+    from: vi.fn().mockImplementation(mockFrom),
+    rpc: vi.fn().mockImplementation(mockRpc),
   }
 
   return mockClient as SupabaseClient
 }
 
-export function createMockSupabaseWithError(error: any) {
+export function createMockSupabaseWithError(error: unknown) {
+  const buildErrorQuery = () => {
+    const query = Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>
+    const chainableMethods = {
+      eq: vi.fn(() => query),
+      order: vi.fn(() => query),
+      select: vi.fn(() => query),
+    }
+    return Object.assign(query, chainableMethods)
+  }
+
   const mockClient: Partial<SupabaseClient> = {
-    from: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      then: vi.fn((resolve) => resolve({ data: null, error })),
-    }),
-    rpc: vi.fn().mockReturnValue({
-      then: vi.fn((resolve) => resolve({ data: null, error })),
-    }),
+    from: vi.fn().mockImplementation(buildErrorQuery),
+    rpc: vi
+      .fn()
+      .mockImplementation(() => Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>),
   }
 
   return mockClient as SupabaseClient

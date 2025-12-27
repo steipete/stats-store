@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { DashboardFilters } from "../../components/dashboard-filters"
-import { useRouter, useSearchParams } from "next/navigation"
 import { format, startOfDay, subDays } from "date-fns"
+import { useRouter, useSearchParams } from "next/navigation"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { DashboardFilters } from "../../components/dashboard-filters"
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -11,9 +11,28 @@ vi.mock("next/navigation", () => ({
   useSearchParams: vi.fn(),
 }))
 
-describe.skip("DashboardFilters", () => {
+function expectLastPushParams(mockPush: ReturnType<typeof vi.fn>, expected: Record<string, string | undefined>) {
+  const lastCall = mockPush.mock.calls.at(-1)
+  expect(lastCall).toBeTruthy()
+  const pushedUrl = String(lastCall?.[0] ?? "")
+
+  expect(pushedUrl.startsWith("/?")).toBe(true)
+
+  const query = pushedUrl.split("?")[1] ?? ""
+  const params = new URLSearchParams(query)
+
+  for (const [key, value] of Object.entries(expected)) {
+    if (value === undefined) {
+      expect(params.has(key)).toBe(false)
+    } else {
+      expect(params.get(key)).toBe(value)
+    }
+  }
+}
+
+describe("DashboardFilters", () => {
   const mockPush = vi.fn()
-  const mockSearchParams = new URLSearchParams()
+  let mockSearchParams = new URLSearchParams()
 
   const mockApps = [
     { id: "1", name: "App One" },
@@ -23,10 +42,9 @@ describe.skip("DashboardFilters", () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    ;(useRouter as any).mockReturnValue({
-      push: mockPush,
-    })
-    ;(useSearchParams as any).mockReturnValue(mockSearchParams)
+    mockSearchParams = new URLSearchParams()
+    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<typeof useRouter>)
+    vi.mocked(useSearchParams).mockReturnValue(mockSearchParams as unknown as ReturnType<typeof useSearchParams>)
   })
 
   describe("app filter rendering", () => {
@@ -90,7 +108,7 @@ describe.skip("DashboardFilters", () => {
       const select = screen.getByRole("combobox")
       await user.selectOptions(select, "2")
 
-      expect(mockPush).toHaveBeenCalledWith("/?app=2")
+      expectLastPushParams(mockPush, { app: "2" })
     })
 
     it('removes app param when selecting "all"', async () => {
@@ -101,7 +119,7 @@ describe.skip("DashboardFilters", () => {
       const select = screen.getByRole("combobox")
       await user.selectOptions(select, "all")
 
-      expect(mockPush).toHaveBeenCalledWith("/?")
+      expectLastPushParams(mockPush, { app: undefined })
     })
 
     it("preserves other query params when changing app", async () => {
@@ -113,7 +131,7 @@ describe.skip("DashboardFilters", () => {
       const select = screen.getByRole("combobox")
       await user.selectOptions(select, "1")
 
-      expect(mockPush).toHaveBeenCalledWith("/?app=1&from=2024-01-01&to=2024-01-31")
+      expectLastPushParams(mockPush, { app: "1", from: "2024-01-01", to: "2024-01-31" })
     })
   })
 
@@ -125,23 +143,34 @@ describe.skip("DashboardFilters", () => {
       }
       render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />)
 
-      // Date picker should be present
-      expect(screen.getByRole("button", { name: /select/i })).toBeInTheDocument()
+      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-01")
+      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-31")
     })
 
-    it("renders date range picker", () => {
-      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+    it("updates URL params on date change", async () => {
+      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={undefined} />)
 
-      // DateRangePicker is rendered - check for its container
-      const datePickerContainers = container.querySelectorAll(".flex.items-center")
-      expect(datePickerContainers.length).toBeGreaterThan(0)
+      fireEvent.change(screen.getByLabelText(/from/i), { target: { value: "2024-01-01" } })
+      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-01" })
+
+      fireEvent.change(screen.getByLabelText(/to/i), { target: { value: "2024-01-31" } })
+      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-31" })
+    })
+
+    it("treats single-day range as from=to", async () => {
+      const dateRange = {
+        from: new Date("2024-01-15"),
+        to: undefined,
+      }
+
+      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />)
+
+      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-15")
+      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-15")
     })
 
     it("formats dates correctly in URL params", () => {
       render(<DashboardFilters apps={mockApps} currentAppId="all" />)
-
-      // Simulate date change by calling the handler directly
-      const component = render(<DashboardFilters apps={mockApps} currentAppId="all" />).container
 
       // The actual date picker interaction would be more complex
       // This tests the date formatting logic
@@ -167,7 +196,7 @@ describe.skip("DashboardFilters", () => {
     })
 
     it("applies error styling when there is an error", () => {
-      render(<DashboardFilters apps={null} currentAppId="all" appsError="Error loading" />)
+      render(<DashboardFilters apps={undefined} currentAppId="all" appsError="Error loading" />)
 
       const errorDiv = screen.getByText("Error loading").parentElement
       expect(errorDiv).toHaveClass("border-destructive/50", "bg-destructive/10", "text-destructive")
@@ -192,7 +221,8 @@ describe.skip("DashboardFilters", () => {
 
       const select = screen.getByRole("combobox") as HTMLSelectElement
       expect(select.value).toBe("2")
-      expect(screen.getByRole("button", { name: /select/i })).toBeInTheDocument()
+      expect(screen.getByLabelText(/from/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/to/i)).toBeInTheDocument()
     })
 
     it("maintains filter state across interactions", async () => {
@@ -208,7 +238,7 @@ describe.skip("DashboardFilters", () => {
       await user.selectOptions(select, "2")
 
       // Should preserve date params
-      expect(mockPush).toHaveBeenCalledWith("/?app=2&from=2024-01-01&to=2024-01-31")
+      expectLastPushParams(mockPush, { app: "2", from: "2024-01-01", to: "2024-01-31" })
     })
 
     it("handles empty apps array with error", () => {

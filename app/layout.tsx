@@ -1,8 +1,8 @@
-import type React from "react"
+import { Analytics } from "@vercel/analytics/next"
 import type { Metadata } from "next"
+import type React from "react"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeScript } from "./theme-script"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 const siteConfig = {
@@ -29,7 +29,6 @@ export const metadata: Metadata = {
   generator: "Next.js", // Or "v0.dev" if you prefer
   keywords: ["Sparkle", "macOS", "analytics", "privacy-first", "open source", "app statistics", "developer tools"],
   robots: {
-    index: true,
     follow: true,
     googleBot: {
       index: true,
@@ -38,14 +37,10 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
+    index: true,
   },
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: siteConfig.url,
-    title: siteConfig.name,
     description: siteConfig.description,
-    siteName: siteConfig.name,
     images: [
       {
         url: siteConfig.ogImage,
@@ -54,6 +49,11 @@ export const metadata: Metadata = {
         alt: `${siteConfig.name} - ${siteConfig.description}`,
       },
     ],
+    locale: "en_US",
+    siteName: siteConfig.name,
+    title: siteConfig.name,
+    type: "website",
+    url: siteConfig.url,
   },
   twitter: {
     card: siteConfig.twitterCardType,
@@ -64,11 +64,11 @@ export const metadata: Metadata = {
     images: [siteConfig.ogImage],
   },
   icons: {
+    apple: "/favicon.png",
     icon: "/favicon.png",
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
   },
-  // manifest: "/site.webmanifest", // If you have a web app manifest
+  // Manifest: "/site.webmanifest", // If you have a web app manifest
 }
 
 export default function RootLayout({

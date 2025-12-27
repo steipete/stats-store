@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest"
-import { renderHook, act, waitFor } from "@testing-library/react"
-import { useRealtimeStats } from "@/hooks/use-realtime-stats"
 import { createBrowserClient } from "@supabase/ssr"
-import { RealtimeChannel } from "@supabase/supabase-js"
+import { act, renderHook, waitFor } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { useRealtimeStats } from "@/hooks/use-realtime-stats"
 
 // Mock Supabase
 vi.mock("@supabase/ssr", () => ({
@@ -10,16 +9,16 @@ vi.mock("@supabase/ssr", () => ({
 }))
 
 describe("useRealtimeStats", () => {
-  let mockSupabaseClient: any
-  let mockChannel: any
-  let mockSubscribeCallback: ((status: string) => void) | null = null
-  let mockEventHandlers: Record<string, any> = {}
+  let mockSupabaseClient: Record<string, unknown>
+  let mockChannel: Record<string, unknown>
+  let mockSubscribeCallback: ((status: string) => void) | null
+  let mockEventHandlers: Record<string, (payload: { new: unknown }) => void> = {}
 
   beforeEach(() => {
     vi.clearAllMocks()
 
     // Reset handlers
-    mockSubscribeCallback = null
+    mockSubscribeCallback = undefined
     mockEventHandlers = {}
 
     // Create mock channel
@@ -32,7 +31,7 @@ describe("useRealtimeStats", () => {
       subscribe: vi.fn().mockImplementation((callback) => {
         mockSubscribeCallback = callback
         // Simulate immediate subscription
-        Promise.resolve().then(() => callback("SUBSCRIBED"))
+        void Promise.resolve().then(() => callback("SUBSCRIBED"))
         return mockChannel
       }),
       unsubscribe: vi.fn().mockResolvedValue({}),
@@ -40,39 +39,20 @@ describe("useRealtimeStats", () => {
 
     // Create mock Supabase client with default mock
     const createMockQuery = () => {
-      const query = {
-        select: vi.fn().mockReturnThis(),
-        order: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        data: [],
-        error: null,
+      const query = Promise.resolve({ data: [], error: undefined }) as unknown as Record<string, unknown>
+      const chainableMethods = {
+        eq: vi.fn(() => query),
+        order: vi.fn(() => query),
+        select: vi.fn(() => query),
       }
-
-      // Make order() return a thenable when it's the last in chain
-      const originalOrder = query.order
-      query.order = vi.fn().mockImplementation(() => {
-        // Return self to allow chaining, but also make it thenable
-        const result = Object.create(query)
-        result.then = (resolve: any) => {
-          resolve({ data: query.data, error: query.error })
-        }
-        return result
-      })
-
-      // Make eq() also chainable and preserve the query methods
-      const originalEq = query.eq
-      query.eq = vi.fn().mockImplementation(() => {
-        return query
-      })
-
-      return query
+      return Object.assign(query, chainableMethods)
     }
 
     mockSupabaseClient = {
-      from: vi.fn().mockImplementation(() => createMockQuery()),
       channel: vi.fn().mockReturnValue(mockChannel),
+      from: vi.fn().mockImplementation(createMockQuery),
       removeChannel: vi.fn(),
-    }
+    } as unknown as Record<string, unknown>
 
     vi.mocked(createBrowserClient).mockReturnValue(mockSupabaseClient)
   })
@@ -85,7 +65,7 @@ describe("useRealtimeStats", () => {
     const { result } = renderHook(() => useRealtimeStats())
 
     expect(result.current.isConnected).toBe(false)
-    expect(result.current.lastUpdate).toBe(null)
+    expect(result.current.lastUpdate).toBe(undefined)
     expect(result.current.realtimeEvents).toEqual([])
     expect(result.current.statsCache).toEqual({})
   })
@@ -126,27 +106,27 @@ describe("useRealtimeStats", () => {
   it("fetches initial stats cache", async () => {
     const mockCacheData = [
       {
-        stat_type: "kpis",
         stat_data: {
           unique_users_today: 100,
           total_reports_today: 500,
           last_update: "2024-01-15T10:00:00Z",
         },
+        stat_type: "kpis",
       },
       {
-        stat_type: "os_distribution",
         stat_data: [
           { os_version: "14.0", count: 50 },
           { os_version: "13.0", count: 30 },
         ],
+        stat_type: "os_distribution",
       },
     ]
 
     // Override the mock for this test
     mockSupabaseClient.from.mockImplementation(() => ({
-      select: vi.fn().mockReturnThis(),
-      order: vi.fn().mockImplementation(() => Promise.resolve({ data: mockCacheData, error: null })),
       eq: vi.fn().mockReturnThis(),
+      order: vi.fn().mockImplementation(() => Promise.resolve({ data: mockCacheData, error: null })),
+      select: vi.fn().mockReturnThis(),
     }))
 
     const { result } = renderHook(() => useRealtimeStats())
@@ -171,16 +151,16 @@ describe("useRealtimeStats", () => {
     })
 
     const newUserEvent = {
-      id: 1,
       app_id: "test-app",
-      event_type: "new_user",
+      created_at: "2024-01-15T10:30:00Z",
       event_data: {
         unique_users_today: 101,
         total_reports_today: 501,
         app_version: "1.0.0",
         model: "MacBookPro",
       },
-      created_at: "2024-01-15T10:30:00Z",
+      event_type: "new_user",
+      id: 1,
     }
 
     // Simulate receiving a new user event
@@ -195,9 +175,9 @@ describe("useRealtimeStats", () => {
       expect(result.current.lastUpdate).toBeInstanceOf(Date)
       expect(onNewUser).toHaveBeenCalledWith(newUserEvent)
       expect(result.current.statsCache.kpis).toEqual({
-        unique_users_today: 101,
-        total_reports_today: 501,
         last_update: expect.any(String),
+        total_reports_today: 501,
+        unique_users_today: 101,
       })
     })
   })
@@ -211,11 +191,11 @@ describe("useRealtimeStats", () => {
     })
 
     const milestoneEvent = {
-      id: 2,
       app_id: "test-app",
-      event_type: "milestone",
-      event_data: { message: "Reached 1000 users!" },
       created_at: "2024-01-15T11:00:00Z",
+      event_data: { message: "Reached 1000 users!" },
+      event_type: "milestone",
+      id: 2,
     }
 
     act(() => {
@@ -238,11 +218,11 @@ describe("useRealtimeStats", () => {
     })
 
     const versionEvent = {
-      id: 3,
       app_id: "test-app",
-      event_type: "version_update",
-      event_data: { new_version: "2.0.0" },
       created_at: "2024-01-15T12:00:00Z",
+      event_data: { new_version: "2.0.0" },
+      event_type: "version_update",
+      id: 3,
     }
 
     act(() => {
@@ -261,12 +241,12 @@ describe("useRealtimeStats", () => {
     let fetchCount = 0
 
     mockSupabaseClient.from.mockImplementation(() => ({
-      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockImplementation(() => {
         fetchCount++
         return Promise.resolve({ data: [], error: null })
       }),
-      eq: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
     }))
 
     const { result } = renderHook(() => useRealtimeStats())
@@ -281,11 +261,11 @@ describe("useRealtimeStats", () => {
     })
 
     const batchEvent = {
-      id: 4,
       app_id: "test-app",
-      event_type: "report_batch",
-      event_data: { count: 100 },
       created_at: "2024-01-15T13:00:00Z",
+      event_data: { count: 100 },
+      event_type: "report_batch",
+      id: 4,
     }
 
     act(() => {
@@ -312,11 +292,11 @@ describe("useRealtimeStats", () => {
     })
 
     const cacheUpdate = {
-      stat_type: "cpu_distribution",
       stat_data: [
         { cpu_arch: "arm64", count: 80 },
         { cpu_arch: "x86_64", count: 20 },
       ],
+      stat_type: "cpu_distribution",
     }
 
     act(() => {
@@ -343,11 +323,11 @@ describe("useRealtimeStats", () => {
       for (let i = 0; i < 60; i++) {
         handler({
           new: {
-            id: i,
             app_id: "test-app",
-            event_type: "new_user",
-            event_data: {},
             created_at: new Date().toISOString(),
+            event_data: {},
+            event_type: "new_user",
+            id: i,
           },
         })
       }
@@ -393,15 +373,15 @@ describe("useRealtimeStats", () => {
   it("provides refreshCache function", async () => {
     const mockNewData = [
       {
-        stat_type: "kpis",
         stat_data: { unique_users_today: 200, total_reports_today: 1000 },
+        stat_type: "kpis",
       },
     ]
 
     let fetchCount = 0
 
     mockSupabaseClient.from.mockImplementation(() => ({
-      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockImplementation(() => {
         fetchCount++
         return Promise.resolve({
@@ -409,7 +389,7 @@ describe("useRealtimeStats", () => {
           error: null,
         })
       }),
-      eq: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
     }))
 
     const { result } = renderHook(() => useRealtimeStats())
@@ -437,11 +417,11 @@ describe("useRealtimeStats", () => {
   })
 
   it('filters by appId when not "all"', async () => {
-    const mockEq = vi.fn().mockResolvedValue({ data: [], error: null })
+    const mockEq = vi.fn().mockResolvedValue({ data: [], error: undefined })
     mockSupabaseClient.from.mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
       eq: mockEq,
+      order: vi.fn().mockReturnThis(),
+      select: vi.fn().mockReturnThis(),
     })
 
     renderHook(() => useRealtimeStats({ appId: "specific-app" }))
@@ -453,11 +433,11 @@ describe("useRealtimeStats", () => {
 
   it('does not filter when appId is "all"', async () => {
     const mockEq = vi.fn()
-    const mockOrder = vi.fn().mockResolvedValue({ data: [], error: null })
+    const mockOrder = vi.fn().mockResolvedValue({ data: [], error: undefined })
     mockSupabaseClient.from.mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      order: mockOrder,
       eq: mockEq,
+      order: mockOrder,
+      select: vi.fn().mockReturnThis(),
     })
 
     renderHook(() => useRealtimeStats({ appId: "all" }))

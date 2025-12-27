@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { KpiCard } from "./kpi-card"
 
 interface RealtimeKpiCardProps {
@@ -56,7 +56,7 @@ export function RealtimeKpiCard({ value, previousValue, isRealtime, ...props }: 
               {isUpdating && (
                 <motion.div
                   className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
-                  animate={{ scale: [1, 2, 1], opacity: [1, 0, 1] }}
+                  animate={{ opacity: [1, 0, 1], scale: [1, 2, 1] }}
                   transition={{ duration: 0.6 }}
                 />
               )}

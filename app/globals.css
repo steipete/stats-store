@@ -36,58 +36,6 @@
 
   --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.03);
   --shadow-subtle-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.03);
-
-  /* Tremor color definitions for Tailwind v4 compatibility */
-  /* Tremor brand colors */
-  --color-tremor-brand-faint: #eff6ff;
-  --color-tremor-brand-muted: #bfdbfe;
-  --color-tremor-brand-subtle: #60a5fa;
-  --color-tremor-brand: #3b82f6;
-  --color-tremor-brand-emphasis: #1d4ed8;
-  --color-tremor-brand-inverted: #ffffff;
-
-  /* Tremor background colors */
-  --color-tremor-background-muted: #f9fafb;
-  --color-tremor-background-subtle: #f3f4f6;
-  --color-tremor-background: #ffffff;
-  --color-tremor-background-emphasis: #374151;
-
-  /* Tremor border colors */
-  --color-tremor-border: #e5e7eb;
-
-  /* Tremor ring colors */
-  --color-tremor-ring: #3b82f6;
-
-  /* Tremor content colors */
-  --color-tremor-content-subtle: #9ca3af;
-  --color-tremor-content: #6b7280;
-  --color-tremor-content-emphasis: #374151;
-  --color-tremor-content-strong: #111827;
-  --color-tremor-content-inverted: #ffffff;
-
-  /* Tremor chart colors */
-  --color-blue-500: #3b82f6;
-  --color-teal-500: #14b8a6;
-  --color-cyan-500: #06b6d4;
-  --color-purple-500: #a855f7;
-  --color-rose-500: #f43f5e;
-  --color-amber-500: #f59e0b;
-  --color-emerald-500: #10b981;
-  --color-gray-500: #6b7280;
-  --color-green-500: #22c55e;
-  --color-indigo-500: #6366f1;
-  --color-lime-500: #84cc16;
-  --color-orange-500: #f97316;
-  --color-pink-500: #ec4899;
-  --color-red-500: #ef4444;
-  --color-sky-500: #0ea5e9;
-  --color-violet-500: #8b5cf6;
-  --color-yellow-500: #eab308;
-  --color-slate-500: #64748b;
-  --color-zinc-500: #71717a;
-  --color-neutral-500: #737373;
-  --color-stone-500: #78716c;
-  --color-fuchsia-500: #d946ef;
 }
 
 body {
@@ -99,10 +47,9 @@ body {
     text-wrap: balance;
   }
 
-  /* Tremor color system for Tailwind v4 compatibility */
-  /* These utilities are required for Tremor charts to display colors properly */
+  /* Legacy color utilities */
 
-  /* Background colors - all shades for Tremor */
+  /* Background colors */
   .bg-blue-50 {
     background-color: #eff6ff;
   }
@@ -518,7 +465,7 @@ body {
     background-color: #ffe4e6;
   }
 
-  /* Opacity modifiers for Tremor */
+  /* Opacity modifiers */
   .bg-opacity-10 {
     --tw-bg-opacity: 0.1;
   }
@@ -610,28 +557,6 @@ body {
     --chart-3: hsl(240 50% 70%);
     --chart-4: hsl(35 95% 65%);
     --chart-5: hsl(340 85% 70%);
-
-    /* Dark mode Tremor overrides */
-    --color-tremor-brand-faint: #0f172a;
-    --color-tremor-brand-muted: #1e3a8a;
-    --color-tremor-brand-subtle: #2563eb;
-    --color-tremor-brand: #3b82f6;
-    --color-tremor-brand-emphasis: #60a5fa;
-    --color-tremor-brand-inverted: #030712;
-
-    --color-tremor-background-muted: #111827;
-    --color-tremor-background-subtle: #1f2937;
-    --color-tremor-background: hsl(240 6% 12%);
-    --color-tremor-background-emphasis: #d1d5db;
-
-    --color-tremor-border: #374151;
-    --color-tremor-ring: #3b82f6;
-
-    --color-tremor-content-subtle: #6b7280;
-    --color-tremor-content: #9ca3af;
-    --color-tremor-content-emphasis: #e5e7eb;
-    --color-tremor-content-strong: #f9fafb;
-    --color-tremor-content-inverted: #000000;
   }
 }
 
@@ -749,12 +674,10 @@ body {
     @apply bg-transparent;
   }
 
-  /* Tremor/Recharts Dark Mode Text Overrides */
+  /* Recharts Dark Mode Text Overrides */
   .dark .recharts-cartesian-axis-tick-value,
   .dark .recharts-legend-item-text,
-  .dark text.recharts-text /* For labels inside charts like Donut */,
-  .dark .tremor-chart-tooltip-label /* Tremor's tooltip label */,
-  .dark .tremor-chart-tooltip-value /* Tremor's tooltip value */ {
+  .dark text.recharts-text /* For labels inside charts like Donut */ {
     fill: hsl(240 5% 65%) !important; /* Use muted-foreground for less emphasis */
   }
 
@@ -791,182 +714,6 @@ body {
     fill: hsl(0 0% 98%) !important;
   }
 
-  /* Dark mode table text */
-  .dark [class*="tremor-TableCell"] {
-    color: hsl(0 0% 98%) !important;
-  }
-
-  .dark [class*="tremor-TableHeaderCell"] {
-    color: hsl(240 5% 65%) !important;
-  }
-
-  /* Fix Tremor Icon colors in dark mode */
-  .dark [class*="tremor-Icon"] {
-    /* Adjust opacity for icon backgrounds in dark mode */
-    opacity: 0.9;
-  }
-
-  /* Override specific icon background colors for better visibility */
-  .dark [class*="bg-blue-50"] {
-    background-color: hsl(217 91% 20%) !important;
-  }
-
-  .dark [class*="bg-emerald-50"],
-  .dark [class*="bg-green-50"] {
-    background-color: hsl(173 65% 20%) !important;
-  }
-
-  .dark [class*="bg-amber-50"],
-  .dark [class*="bg-yellow-50"] {
-    background-color: hsl(35 95% 25%) !important;
-  }
-
-  /* Make icon colors brighter in dark mode */
-  .dark [class*="text-blue-500"] {
-    color: hsl(217 91% 70%) !important;
-  }
-
-  .dark [class*="text-emerald-500"],
-  .dark [class*="text-green-500"] {
-    color: hsl(173 65% 65%) !important;
-  }
-
-  .dark [class*="text-amber-500"],
-  .dark [class*="text-yellow-500"] {
-    color: hsl(35 95% 70%) !important;
-  }
-
-  /* Ensure Tremor DateRangePicker text is themed */
-  .tremor-DateRangePicker-input {
-    color: hsl(var(--foreground)) !important;
-  }
-
-  /* Fix DateRangePicker dark mode styling */
-  .dark .tremor-DateRangePicker-root {
-    background-color: transparent !important;
-    border: none !important;
-  }
-
-  /* Remove double borders from DateRangePicker wrapper */
-  [class*="tremor-DateRangePicker"] {
-    background-color: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-  }
-
-  /* Style the actual button inside */
-  [class*="tremor-DateRangePicker"] > button:first-child {
-    background-color: hsl(var(--card)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: var(--radius) !important;
-    width: 100% !important;
-  }
-
-  .dark [class*="tremor-DateRangePicker"] > button:first-child {
-    background-color: hsl(240 10% 3.9%) !important;
-    border-color: hsl(240 3.7% 15.9%) !important;
-  }
-
-  .dark [class*="tremor-DateRangePicker"] input {
-    background-color: transparent !important;
-    color: hsl(0 0% 98%) !important;
-    border: none !important;
-  }
-
-  .dark [class*="tremor-DateRangePicker"] button {
-    color: hsl(0 0% 98%) !important;
-    background-color: transparent !important;
-    border: none !important;
-  }
-
-  /* Fix the internal flex container */
-  [class*="tremor-DateRangePicker"] > div {
-    background-color: transparent !important;
-    border: none !important;
-  }
-
-  .dark [class*="tremor-DateRangePicker"] svg {
-    color: hsl(240 5% 65%) !important;
-  }
-
-  /* Calendar container styles - ensure proper background */
-  [role="dialog"][aria-label*="calendar"],
-  [data-state="open"][data-side]:not([role="tooltip"]),
-  .tremor-DateRangePicker-dropdownContainer,
-  .tremor-DateRangePicker-dropdown,
-  [data-radix-popper-content-wrapper] > div:not([role="tooltip"]),
-  [data-radix-popper-content-wrapper] [role="dialog"] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: var(--radius);
-    box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
-  }
-
-  /* Ensure all child elements inherit text color */
-  [role="dialog"][aria-label*="calendar"] *,
-  [data-state="open"][data-side]:not([role="tooltip"]) *,
-  .tremor-DateRangePicker-dropdownContainer *,
-  .tremor-DateRangePicker-dropdown *,
-  [data-radix-popper-content-wrapper] > div:not([role="tooltip"]) *,
-  [data-radix-popper-content-wrapper] [role="dialog"] * {
-    color: inherit;
-  }
-
-  /* Force popover backgrounds on all Radix popover elements */
-  [data-radix-popper-content-wrapper] {
-    z-index: 50;
-  }
-
-  [data-radix-popper-content-wrapper] > * {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-  }
-
-  .tremor-DateRangePicker-calendar,
-  .tremor-DateRangePicker-calendarContainer,
-  .tremor-DateRangePicker-calendarWrapper {
-    /* Calendar popup */
-    background-color: hsl(var(--popover)) !important;
-    border-color: hsl(var(--border)) !important;
-  }
-
-  /* Ensure Tremor date picker dialog has background */
-  div[data-state="open"][data-side] > div {
-    background-color: hsl(var(--popover)) !important;
-  }
-
-  .tremor-DateRangePicker-day {
-    color: hsl(var(--foreground)) !important;
-  }
-  .tremor-DateRangePicker-day:hover:not(.selected) {
-    background-color: hsl(var(--accent)) !important;
-  }
-  .tremor-DateRangePicker-day.selected {
-    background-color: hsl(var(--primary)) !important;
-    color: hsl(var(--primary-foreground)) !important;
-  }
-  .tremor-DateRangePicker-month,
-  .tremor-DateRangePicker-year,
-  .tremor-DateRangePicker-weekday {
-    color: hsl(var(--muted-foreground)) !important;
-  }
-  .tremor-DateRangePicker-header button svg {
-    stroke: hsl(var(--muted-foreground)) !important;
-  }
-
-  /* Light mode specific styles for DateRangePicker */
-  .tremor-DateRangePicker-calendar {
-    background-color: hsl(var(--popover)) !important;
-  }
-
-  /* Dark mode specific overrides */
-  .dark .tremor-DateRangePicker-calendar {
-    background-color: hsl(var(--popover)) !important;
-  }
-
   /* All tooltip backgrounds - fix transparency issue */
   [role="tooltip"] {
     background-color: var(--tooltip-bg) !important;
@@ -989,7 +736,7 @@ body {
     border: none !important;
   }
 
-  /* Recharts/Tremor tooltip backgrounds - comprehensive fix */
+  /* Recharts tooltip backgrounds - comprehensive fix */
   .recharts-tooltip-wrapper,
   .recharts-tooltip-wrapper .recharts-default-tooltip,
   .recharts-tooltip-wrapper > div,
@@ -1005,23 +752,6 @@ body {
       0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
     backdrop-filter: blur(12px) !important;
     padding: 8px 12px !important;
-  }
-
-  /* Tremor's custom tooltip styling - comprehensive */
-  [class*="tremor-ChartTooltip"],
-  [class*="tremor-chart-tooltip"],
-  [class*="tremor-ChartTooltip-frame"],
-  [class*="tremor-ChartTooltip-content"],
-  .tremor-ChartTooltip-root {
-    background-color: var(--tooltip-bg) !important;
-    color: var(--tooltip-foreground) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    box-shadow:
-      0 10px 38px -10px rgba(0, 0, 0, 0.35),
-      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
-    backdrop-filter: blur(12px) !important;
-    padding: 8px 12px !important;
-    border-radius: 6px !important;
   }
 
   /* Force tooltip container backgrounds */
@@ -1051,7 +781,7 @@ body {
     color: hsl(var(--popover-foreground)) !important;
   }
 
-  /* Specific fix for Tremor date picker popover content */
+  /* Fix popover content with inline Radix styles */
   div[data-state="open"][style*="--radix-popover"] {
     background-color: hsl(var(--popover)) !important;
     border: 1px solid hsl(var(--border)) !important;
@@ -1084,34 +814,5 @@ body {
     background-color: hsl(var(--popover)) !important;
     color: hsl(var(--popover-foreground)) !important;
     border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Specific fix for Tremor DateRangePicker calendar */
-  [class*="tremor-DateRangePicker"] [role="dialog"],
-  [class*="tremor-DateRangePicker"] [data-radix-popper-content-wrapper],
-  [class*="tremor-DateRangePicker"] [data-state="open"] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-  }
-
-  /* Tremor DateRangePicker button styling */
-  [class*="DateRangePicker"] button[type="button"] {
-    padding: 0.375rem !important;
-    border-radius: 4px !important;
-    transition: background-color 0.2s !important;
-  }
-
-  [class*="DateRangePicker"] button[type="button"]:hover {
-    background-color: hsl(var(--muted)) !important;
-  }
-
-  .dark [class*="DateRangePicker"] button[type="button"]:hover {
-    background-color: hsl(240 3.7% 20%) !important;
-  }
-
-  /* Make sure icons maintain consistent size */
-  [class*="DateRangePicker"] svg {
-    width: 1rem !important;
-    height: 1rem !important;
   }
 }

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import type { ComponentProps, ReactNode } from "react"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { RealtimeDashboard } from "@/components/realtime-dashboard"
 import { useRealtimeStats } from "@/hooks/use-realtime-stats"
-import { format } from "date-fns"
 
 // Mock the hooks and dependencies
 vi.mock("@/hooks/use-realtime-stats")
@@ -12,18 +12,18 @@ vi.mock("sonner", () => ({
 
 // Mock framer-motion
 vi.mock("framer-motion", () => ({
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: ComponentProps<"div"> & { children?: ReactNode }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
 }))
 
-describe.skip("RealtimeDashboard", () => {
+describe("RealtimeDashboard", () => {
   const mockInitialData = {
     kpis: {
-      unique_installs: 100,
-      reports_this_period: 500,
       latest_version: "1.0.0",
+      reports_this_period: 500,
+      unique_installs: 100,
     },
     kpisError: {},
   }
@@ -37,8 +37,9 @@ describe.skip("RealtimeDashboard", () => {
     isConnected: false,
     lastUpdate: null,
     realtimeEvents: [],
+    refreshCache: vi.fn(async () => {}),
     statsCache: {},
-  }
+  } satisfies ReturnType<typeof useRealtimeStats>
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -70,18 +71,20 @@ describe.skip("RealtimeDashboard", () => {
   })
 
   it("shows activity feed button with event count", () => {
-    const mockEvents = [
+    const mockEvents: ReturnType<typeof useRealtimeStats>["realtimeEvents"] = [
       {
-        id: "1",
-        event_type: "new_user",
-        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:30:00").toISOString(),
+        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        event_type: "new_user",
+        id: 1,
       },
       {
-        id: "2",
-        event_type: "milestone",
-        event_data: { message: "Reached 1000 users!" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:31:00").toISOString(),
+        event_data: { message: "Reached 1000 users!" },
+        event_type: "milestone",
+        id: 2,
       },
     ]
 
@@ -99,12 +102,13 @@ describe.skip("RealtimeDashboard", () => {
   })
 
   it("toggles activity feed on button click", async () => {
-    const mockEvents = [
+    const mockEvents: ReturnType<typeof useRealtimeStats>["realtimeEvents"] = [
       {
-        id: "1",
-        event_type: "new_user",
-        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:30:00").toISOString(),
+        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        event_type: "new_user",
+        id: 1,
       },
     ]
 
@@ -141,8 +145,9 @@ describe.skip("RealtimeDashboard", () => {
       isConnected: true,
       statsCache: {
         kpis: {
-          unique_users_today: 150,
+          last_update: new Date("2024-01-15T10:30:00").toISOString(),
           total_reports_today: 600,
+          unique_users_today: 150,
         },
         latest_version: {
           version: "1.1.0",
@@ -162,14 +167,14 @@ describe.skip("RealtimeDashboard", () => {
     const errorData = {
       ...mockInitialData,
       kpis: {
-        unique_installs: "Error loading data",
-        reports_this_period: "Error loading data",
         latest_version: "Error loading data",
+        reports_this_period: "Error loading data",
+        unique_installs: "Error loading data",
       },
       kpisError: {
-        unique_installs: "Database error",
-        reports_this_period: "Database error",
         latest_version: "Database error",
+        reports_this_period: "Database error",
+        unique_installs: "Database error",
       },
     }
 
@@ -180,24 +185,27 @@ describe.skip("RealtimeDashboard", () => {
   })
 
   it("renders different event types in activity feed", () => {
-    const mockEvents = [
+    const mockEvents: ReturnType<typeof useRealtimeStats>["realtimeEvents"] = [
       {
-        id: "1",
-        event_type: "new_user",
-        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:30:00").toISOString(),
+        event_data: { app_version: "1.0.0", model: "MacBookPro" },
+        event_type: "new_user",
+        id: 1,
       },
       {
-        id: "2",
-        event_type: "milestone",
-        event_data: { message: "Reached 1000 users!" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:31:00").toISOString(),
+        event_data: { message: "Reached 1000 users!" },
+        event_type: "milestone",
+        id: 2,
       },
       {
-        id: "3",
-        event_type: "version_update",
-        event_data: { new_version: "2.0.0" },
+        app_id: "test-app",
         created_at: new Date("2024-01-15T10:32:00").toISOString(),
+        event_data: { new_version: "2.0.0" },
+        event_type: "version_update",
+        id: 3,
       },
     ]
 
@@ -220,10 +228,6 @@ describe.skip("RealtimeDashboard", () => {
 
   it("formats date range in KPI tooltips", () => {
     render(<RealtimeDashboard selectedAppId="test-app" dateRange={mockDateRange} initialData={mockInitialData} />)
-
-    // The tooltip text should include formatted dates
-    const expectedFromDate = format(mockDateRange.from, "MMM dd, yyyy")
-    const expectedToDate = format(mockDateRange.to, "MMM dd, yyyy")
 
     // Note: Tooltips are passed as props to RealtimeKpiCard
     // We can't directly test them without also testing RealtimeKpiCard

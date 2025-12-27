@@ -1,8 +1,23 @@
-import "@testing-library/jest-dom"
 import { vi } from "vitest"
+
+if (typeof globalThis.HTMLElement !== "undefined") {
+  await import("@testing-library/jest-dom")
+}
+
+if (typeof globalThis.ResizeObserver === "undefined") {
+  class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+
+  // @ts-expect-error - runtime polyfill for tests
+  globalThis.ResizeObserver = ResizeObserver
+}
 
 // Mock Next.js router
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
@@ -14,7 +29,6 @@ vi.mock("next/navigation", () => ({
     get: vi.fn(),
     has: vi.fn(),
   }),
-  usePathname: () => "/",
 }))
 
 // Mock environment variables

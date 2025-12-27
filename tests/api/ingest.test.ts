@@ -1,11 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-import { POST } from "@/app/api/v1/ingest/route"
+import type { SupabaseClient } from "@supabase/supabase-js"
 import { NextRequest } from "next/server"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { POST } from "@/app/api/v1/ingest/route"
 
 // Mock Supabase
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: vi.fn(() => ({
     from: vi.fn(() => ({
+      insert: vi.fn(() => Promise.resolve({ error: null })),
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           single: vi.fn(() =>
@@ -16,7 +18,6 @@ vi.mock("@/lib/supabase/server", () => ({
           ),
         })),
       })),
-      insert: vi.fn(() => Promise.resolve({ error: null })),
     })),
   })),
 }))
@@ -28,11 +29,6 @@ describe("/api/v1/ingest", () => {
 
   it("should accept valid Sparkle telemetry data", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-forwarded-for": "192.168.1.1",
-      },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         appVersion: "1.0.0",
@@ -43,6 +39,11 @@ describe("/api/v1/ingest", () => {
         model: "MacBookPro17,1",
         ramMB: "16384",
       }),
+      headers: {
+        "Content-Type": "application/json",
+        "x-forwarded-for": "192.168.1.1",
+      },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -54,12 +55,12 @@ describe("/api/v1/ingest", () => {
 
   it("should reject requests without bundleIdentifier", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         appVersion: "1.0.0",
         osVersion: "14.0",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -78,12 +79,12 @@ describe("/api/v1/ingest", () => {
 
     for (const testCase of testCases) {
       const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           bundleIdentifier: "com.example.app",
           cputype: testCase.cputype,
         }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
       })
 
       await POST(request)
@@ -95,9 +96,9 @@ describe("/api/v1/ingest", () => {
 
   it("should handle malformed JSON", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: "invalid json",
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -115,22 +116,22 @@ describe("/api/v1/ingest", () => {
           eq: vi.fn(() => ({
             single: vi.fn(() =>
               Promise.resolve({
-                data: null,
+                data: undefined,
                 error: { message: "Database connection failed" },
               })
             ),
           })),
         })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         appVersion: "1.0.0",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -148,22 +149,22 @@ describe("/api/v1/ingest", () => {
           eq: vi.fn(() => ({
             single: vi.fn(() =>
               Promise.resolve({
-                data: null,
-                error: null,
+                data: undefined,
+                error: undefined,
               })
             ),
           })),
         })),
       })),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bundleIdentifier: "com.unknown.app",
         appVersion: "1.0.0",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -185,7 +186,7 @@ describe("/api/v1/ingest", () => {
               single: vi.fn(() =>
                 Promise.resolve({
                   data: { id: "test-app-id" },
-                  error: null,
+                  error: undefined,
                 })
               ),
             })),
@@ -199,15 +200,15 @@ describe("/api/v1/ingest", () => {
             })
           ),
         }),
-    } as any)
+    } as unknown as SupabaseClient)
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         appVersion: "1.0.0",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -219,15 +220,15 @@ describe("/api/v1/ingest", () => {
 
   it("should handle missing IP address gracefully", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // No x-forwarded-for header
-      },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         appVersion: "1.0.0",
       }),
+      headers: {
+        "Content-Type": "application/json",
+        // No x-forwarded-for header
+      },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -239,12 +240,12 @@ describe("/api/v1/ingest", () => {
 
   it("should handle all optional fields being missing", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         // All other fields are optional
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)
@@ -256,14 +257,14 @@ describe("/api/v1/ingest", () => {
 
   it("should parse numeric strings correctly", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         bundleIdentifier: "com.example.app",
         ncpu: "8",
         ramMB: "16384",
         cpusubtype: "2",
       }),
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
     })
 
     const response = await POST(request)

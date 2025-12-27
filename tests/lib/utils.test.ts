@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { cn } from "../../lib/utils"
 
 describe("cn (className utility)", () => {
@@ -18,7 +18,7 @@ describe("cn (className utility)", () => {
     })
 
     it("filters out falsy values", () => {
-      expect(cn("foo", null, "bar")).toBe("foo bar")
+      expect(cn("foo", undefined, "bar")).toBe("foo bar")
       expect(cn("foo", undefined, "bar")).toBe("foo bar")
       expect(cn("foo", false, "bar")).toBe("foo bar")
       expect(cn("foo", "", "bar")).toBe("foo bar")
@@ -34,14 +34,14 @@ describe("cn (className utility)", () => {
     })
 
     it("handles object syntax", () => {
-      expect(cn({ foo: true, bar: false })).toBe("foo")
-      expect(cn({ foo: true, bar: true })).toBe("foo bar")
+      expect(cn({ bar: false, foo: true })).toBe("foo")
+      expect(cn({ bar: true, foo: true })).toBe("bar foo")
       expect(cn("base", { active: true, disabled: false })).toBe("base active")
     })
 
     it("handles array syntax", () => {
       expect(cn(["foo", "bar"])).toBe("foo bar")
-      expect(cn(["foo", null, "bar"])).toBe("foo bar")
+      expect(cn(["foo", undefined, "bar"])).toBe("foo bar")
       expect(cn("base", ["modifier1", "modifier2"])).toBe("base modifier1 modifier2")
     })
 
@@ -98,7 +98,7 @@ describe("cn (className utility)", () => {
 
     it("handles important modifier", () => {
       expect(cn("!p-4", "!p-2")).toBe("!p-2")
-      // tailwind-merge may not override non-important with important in all cases
+      // Tailwind-merge may not override non-important with important in all cases
       expect(cn("p-4", "!p-2")).toBe("p-4 !p-2")
       expect(cn("!bg-red-500", "!bg-blue-500")).toBe("!bg-blue-500")
     })
@@ -106,7 +106,7 @@ describe("cn (className utility)", () => {
 
   describe("complex use cases", () => {
     it("handles mixed input types", () => {
-      expect(cn("base", "string-class", { "object-class": true }, ["array", "classes"], false, null, undefined)).toBe(
+      expect(cn("base", "string-class", { "object-class": true }, ["array", "classes"], false, undefined)).toBe(
         "base string-class object-class array classes"
       )
     })

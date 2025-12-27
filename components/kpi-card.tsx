@@ -1,9 +1,8 @@
 "use client"
 
+import { CubeTransparentIcon, ExclamationCircleIcon, TagIcon, UsersIcon } from "@heroicons/react/24/outline"
 import type React from "react"
-import { Metric, Text, Flex, Icon as TremorIcon } from "@tremor/react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { UsersIcon, CubeTransparentIcon, TagIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
 import { cn } from "@/lib/utils"
 
 type IconName = "users" | "cube" | "tag" | "exclamation"
@@ -25,20 +24,33 @@ export function KpiCard({
   value,
   iconName,
   iconColor = "blue",
-  iconVariant = "light",
   error = false,
   tooltip,
   children,
   className,
 }: KpiCardProps) {
   const iconMap = {
-    users: UsersIcon,
     cube: CubeTransparentIcon,
-    tag: TagIcon,
     exclamation: ExclamationCircleIcon,
+    tag: TagIcon,
+    users: UsersIcon,
   }
 
   const IconComponent = iconName && (error ? ExclamationCircleIcon : iconMap[iconName])
+
+  const iconClassName = error
+    ? "text-destructive"
+    : iconColor === "green"
+      ? "text-emerald-500"
+      : iconColor === "amber"
+        ? "text-amber-500"
+        : iconColor === "teal"
+          ? "text-teal-500"
+          : iconColor === "purple"
+            ? "text-purple-500"
+            : iconColor === "rose"
+              ? "text-rose-500"
+              : "text-blue-500"
 
   const cardContent = (
     <div
@@ -49,21 +61,14 @@ export function KpiCard({
       )}
     >
       {(title || iconName) && (
-        <Flex alignItems="start" justifyContent="between">
-          {title && <Text className="text-muted-foreground">{title}</Text>}
-          {IconComponent &&
-            iconName && ( // Check if IconComponent is valid before rendering TremorIcon
-              <TremorIcon
-                icon={IconComponent}
-                variant={error ? "simple" : iconVariant}
-                color={error ? "rose" : iconColor}
-                size="sm"
-                className={error ? "text-destructive" : ""} // Let Tremor handle the color
-              />
-            )}
-        </Flex>
+        <div className="flex items-start justify-between gap-3">
+          {title && <p className="text-sm text-muted-foreground">{title}</p>}
+          {IconComponent && iconName ? <IconComponent className={cn("h-5 w-5 shrink-0", iconClassName)} /> : null}
+        </div>
       )}
-      {value && <Metric className={cn("text-foreground", title || iconName ? "mt-2" : "mt-0")}>{value}</Metric>}
+      {value ? (
+        <div className={cn("text-2xl font-semibold text-foreground", title || iconName ? "mt-2" : "mt-0")}>{value}</div>
+      ) : null}
       {children && <div className={cn(title || value || iconName ? "mt-4" : "")}>{children}</div>}
     </div>
   )

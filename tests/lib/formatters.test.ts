@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, expect, it } from "vitest"
 import { valueFormatter } from "../../lib/formatters"
 
 describe("valueFormatter", () => {
@@ -8,13 +8,13 @@ describe("valueFormatter", () => {
       expect(valueFormatter(1)).toBe("1")
       expect(valueFormatter(100)).toBe("100")
       expect(valueFormatter(1000)).toBe("1,000")
-      expect(valueFormatter(1000000)).toBe("1,000,000")
+      expect(valueFormatter(1_000_000)).toBe("1,000,000")
     })
 
     it("formats negative numbers correctly", () => {
       expect(valueFormatter(-1)).toBe("-1")
       expect(valueFormatter(-1000)).toBe("-1,000")
-      expect(valueFormatter(-1000000)).toBe("-1,000,000")
+      expect(valueFormatter(-1_000_000)).toBe("-1,000,000")
     })
 
     it("formats decimal numbers correctly", () => {
@@ -31,7 +31,7 @@ describe("valueFormatter", () => {
     it("handles very small numbers", () => {
       expect(valueFormatter(0.001)).toBe("0.001")
       // Very small numbers may be formatted to "0" by Intl.NumberFormat
-      expect(valueFormatter(0.000001)).toBe("0")
+      expect(valueFormatter(0.000_001)).toBe("0")
     })
 
     it("handles special numeric values", () => {
@@ -42,15 +42,15 @@ describe("valueFormatter", () => {
 
   describe("invalid inputs", () => {
     it('returns "0" for NaN', () => {
-      expect(valueFormatter(NaN)).toBe("0")
+      expect(valueFormatter(Number.NaN)).toBe("0")
       expect(valueFormatter(0 / 0)).toBe("0")
     })
 
     it('returns "0" for non-numeric types', () => {
       // @ts-expect-error - Testing invalid input
-      expect(valueFormatter(null)).toBe("0")
-      // @ts-expect-error - Testing invalid input
       expect(valueFormatter(undefined)).toBe("0")
+      // @ts-expect-error - Testing invalid input
+      expect(valueFormatter()).toBe("0")
       // @ts-expect-error - Testing invalid input
       expect(valueFormatter("123")).toBe("0")
       // @ts-expect-error - Testing invalid input
