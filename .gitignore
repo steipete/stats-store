@@ -16,6 +16,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 coverage/
+test-report.json
 
 # env files
 .env
