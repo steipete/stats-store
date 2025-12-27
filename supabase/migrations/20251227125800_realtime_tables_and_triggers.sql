@@ -65,6 +65,28 @@ CREATE POLICY "Public read access" ON public.realtime_events FOR SELECT USING (t
 DROP POLICY IF EXISTS "Public read access" ON public.aggregation_state;
 CREATE POLICY "Public read access" ON public.aggregation_state FOR SELECT USING (true);
 
+-- Enable change feeds for Supabase Realtime (idempotent)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'realtime_events'
+    ) THEN
+      EXECUTE 'ALTER PUBLICATION supabase_realtime ADD TABLE public.realtime_events';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'stats_cache'
+    ) THEN
+      EXECUTE 'ALTER PUBLICATION supabase_realtime ADD TABLE public.stats_cache';
+    END IF;
+  END IF;
+END $$;
+
 -- Trigger functions for real-time statistics updates
 
 -- Function to update aggregated stats after new reports
@@ -341,4 +363,3 @@ CREATE TRIGGER trigger_check_milestones
 AFTER INSERT ON public.realtime_events
 FOR EACH ROW
 EXECUTE FUNCTION check_milestones();
-
