@@ -138,6 +138,11 @@ export async function getDashboardData(
 ): Promise<DashboardData> {
   const supabase = createSupabaseServerClient()
 
+  const isUuid =
+    typeof selectedAppIdParam === "string" &&
+    selectedAppIdParam !== "all" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(selectedAppIdParam)
+
   const rangeFrom =
     dateRange?.from && isValid(dateRange.from) ? startOfDay(dateRange.from) : startOfDay(subDays(new Date(), 29))
   const rangeToStart = dateRange?.to && isValid(dateRange.to) ? startOfDay(dateRange.to) : startOfDay(new Date())
@@ -145,7 +150,7 @@ export async function getDashboardData(
   const queryToDay = rangeFrom <= rangeToStart ? rangeToStart : rangeFrom
   const queryTo = endOfDay(queryToDay)
 
-  const p_app_id_filter = selectedAppIdParam && selectedAppIdParam !== "all" ? selectedAppIdParam : null
+  const p_app_id_filter = isUuid ? selectedAppIdParam : null
   const rpcParams = {
     p_app_id_filter,
     p_end_date_filter: queryTo.toISOString(),

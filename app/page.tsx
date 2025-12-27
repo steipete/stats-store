@@ -26,7 +26,11 @@ export default async function DashboardPage({
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const params = await searchParams
-  const selectedAppId = typeof params?.app === "string" ? params.app : "all"
+  const appParam = typeof params?.app === "string" ? params.app : "all"
+  const selectedAppId =
+    appParam === "all" || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(appParam)
+      ? appParam
+      : "all"
   const defaultFrom = startOfDay(subDays(new Date(), 29))
   const defaultTo = startOfDay(new Date())
 
