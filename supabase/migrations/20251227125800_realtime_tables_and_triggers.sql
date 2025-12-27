@@ -1,3 +1,70 @@
+-- Migration: real-time statistics infra for stats.store
+-- Source: scripts/12-create-realtime-tables.sql + scripts/13-create-realtime-triggers.sql
+
+-- Required for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- 1. Stats cache table for pre-computed aggregates
+CREATE TABLE IF NOT EXISTS public.stats_cache (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  app_id UUID REFERENCES public.apps(id) ON DELETE CASCADE,
+  stat_type TEXT NOT NULL, -- 'kpis', 'os_distribution', 'cpu_distribution', 'hourly_reports'
+  stat_data JSONB NOT NULL,
+  period_start TIMESTAMPTZ,
+  period_end TIMESTAMPTZ,
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(app_id, stat_type, period_start)
+);
+
+-- Ensure a single row for stat types that use NULL period_start (NULLs are distinct in UNIQUE constraints)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_stats_cache_unique_null_period ON public.stats_cache(app_id, stat_type)
+WHERE period_start IS NULL;
+
+-- Index for quick lookups
+CREATE INDEX IF NOT EXISTS idx_stats_cache_lookup ON public.stats_cache(app_id, stat_type, updated_at DESC);
+
+-- 2. Real-time event notifications table
+CREATE TABLE IF NOT EXISTS public.realtime_events (
+  id BIGSERIAL PRIMARY KEY,
+  app_id UUID REFERENCES public.apps(id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL, -- 'new_user', 'milestone', 'version_update', 'report_batch'
+  event_data JSONB NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index for recent events
+CREATE INDEX IF NOT EXISTS idx_realtime_events_recent ON public.realtime_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_realtime_events_app ON public.realtime_events(app_id, created_at DESC);
+
+-- Auto-cleanup old events (keep last 24 hours)
+CREATE OR REPLACE FUNCTION cleanup_old_events() RETURNS void AS $$
+BEGIN
+  DELETE FROM public.realtime_events
+  WHERE created_at < now() - INTERVAL '24 hours';
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. Aggregation state table (tracks last processed report)
+CREATE TABLE IF NOT EXISTS public.aggregation_state (
+  app_id UUID PRIMARY KEY REFERENCES public.apps(id) ON DELETE CASCADE,
+  last_report_id BIGINT,
+  last_aggregation_at TIMESTAMPTZ DEFAULT now(),
+  pending_count INT DEFAULT 0
+);
+
+-- Enable RLS
+ALTER TABLE public.stats_cache ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.realtime_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.aggregation_state ENABLE ROW LEVEL SECURITY;
+
+-- Public read access
+DROP POLICY IF EXISTS "Public read access" ON public.stats_cache;
+CREATE POLICY "Public read access" ON public.stats_cache FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON public.realtime_events;
+CREATE POLICY "Public read access" ON public.realtime_events FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON public.aggregation_state;
+CREATE POLICY "Public read access" ON public.aggregation_state FOR SELECT USING (true);
+
 -- Trigger functions for real-time statistics updates
 
 -- Function to update aggregated stats after new reports
@@ -13,9 +80,9 @@ DECLARE
 BEGIN
   -- Check if this is a new unique user today
   SELECT NOT EXISTS (
-    SELECT 1 FROM public.reports 
-    WHERE app_id = NEW.app_id 
-    AND ip_hash = NEW.ip_hash 
+    SELECT 1 FROM public.reports
+    WHERE app_id = NEW.app_id
+    AND ip_hash = NEW.ip_hash
     AND DATE(received_at) = DATE(NEW.received_at)
     AND id < NEW.id
   ) INTO v_is_new_user;
@@ -24,15 +91,15 @@ BEGIN
   INSERT INTO public.aggregation_state (app_id, last_report_id, pending_count)
   VALUES (NEW.app_id, NEW.id, 1)
   ON CONFLICT (app_id) DO UPDATE
-  SET 
+  SET
     pending_count = aggregation_state.pending_count + 1,
     last_report_id = NEW.id
-  RETURNING pending_count, last_aggregation_at 
+  RETURNING pending_count, last_aggregation_at
   INTO v_pending_count, v_last_aggregation;
 
   -- Decide if we should aggregate (every 10 reports or 30 seconds)
-  IF v_pending_count >= 10 OR 
-     v_last_aggregation IS NULL OR 
+  IF v_pending_count >= 10 OR
+     v_last_aggregation IS NULL OR
      v_last_aggregation < now() - INTERVAL '30 seconds' THEN
     v_should_aggregate := TRUE;
   END IF;
@@ -67,7 +134,7 @@ BEGIN
     FROM public.reports
     WHERE app_id = NEW.app_id
     AND received_at >= now() - INTERVAL '7 days';
-    
+
     IF v_new_version = NEW.app_version THEN
       -- Check if this version is newly seen
       IF NOT EXISTS (
@@ -80,10 +147,10 @@ BEGIN
         INSERT INTO public.stats_cache (app_id, stat_type, stat_data)
         VALUES (NEW.app_id, 'latest_version', jsonb_build_object('version', NEW.app_version))
         ON CONFLICT (app_id, stat_type) WHERE period_start IS NULL
-        DO UPDATE SET 
+        DO UPDATE SET
           stat_data = jsonb_build_object('version', NEW.app_version),
           updated_at = now();
-          
+
         -- Emit version update event
         INSERT INTO public.realtime_events (app_id, event_type, event_data)
         VALUES (
@@ -98,12 +165,12 @@ BEGIN
   -- Perform aggregation if needed
   IF v_should_aggregate THEN
     PERFORM aggregate_stats_for_app(NEW.app_id);
-    
+
     -- Reset pending count
-    UPDATE public.aggregation_state 
+    UPDATE public.aggregation_state
     SET pending_count = 0, last_aggregation_at = now()
     WHERE app_id = NEW.app_id;
-    
+
     -- Emit batch update event
     INSERT INTO public.realtime_events (app_id, event_type, event_data)
     VALUES (
@@ -141,8 +208,8 @@ BEGIN
   -- Update KPIs cache
   INSERT INTO public.stats_cache (app_id, stat_type, stat_data, period_start, period_end)
   VALUES (p_app_id, 'kpis', v_kpis, CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day')
-  ON CONFLICT (app_id, stat_type, period_start) 
-  DO UPDATE SET 
+  ON CONFLICT (app_id, stat_type, period_start)
+  DO UPDATE SET
     stat_data = v_kpis,
     updated_at = now();
 
@@ -168,7 +235,7 @@ BEGIN
     INSERT INTO public.stats_cache (app_id, stat_type, stat_data)
     VALUES (p_app_id, 'os_distribution', v_os_dist)
     ON CONFLICT (app_id, stat_type) WHERE period_start IS NULL
-    DO UPDATE SET 
+    DO UPDATE SET
       stat_data = v_os_dist,
       updated_at = now();
   END IF;
@@ -194,7 +261,7 @@ BEGIN
     INSERT INTO public.stats_cache (app_id, stat_type, stat_data)
     VALUES (p_app_id, 'cpu_distribution', v_cpu_dist)
     ON CONFLICT (app_id, stat_type) WHERE period_start IS NULL
-    DO UPDATE SET 
+    DO UPDATE SET
       stat_data = v_cpu_dist,
       updated_at = now();
   END IF;
@@ -207,7 +274,7 @@ BEGIN
     ) ORDER BY hour
   ) INTO v_hourly_stats
   FROM (
-    SELECT 
+    SELECT
       EXTRACT(HOUR FROM received_at) as hour,
       COUNT(*) as report_count
     FROM public.reports
@@ -221,7 +288,7 @@ BEGIN
     INSERT INTO public.stats_cache (app_id, stat_type, stat_data, period_start)
     VALUES (p_app_id, 'hourly_reports', v_hourly_stats, CURRENT_DATE)
     ON CONFLICT (app_id, stat_type, period_start)
-    DO UPDATE SET 
+    DO UPDATE SET
       stat_data = v_hourly_stats,
       updated_at = now();
   END IF;
@@ -245,7 +312,7 @@ BEGIN
   -- Only check on new_user events
   IF NEW.event_type = 'new_user' THEN
     v_total_users := (NEW.event_data->>'unique_users_today')::INT;
-    
+
     -- Check if we hit a milestone
     FOREACH v_milestone IN ARRAY v_milestones LOOP
       IF v_total_users = v_milestone THEN
@@ -263,7 +330,7 @@ BEGIN
       END IF;
     END LOOP;
   END IF;
-  
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -274,3 +341,4 @@ CREATE TRIGGER trigger_check_milestones
 AFTER INSERT ON public.realtime_events
 FOR EACH ROW
 EXECUTE FUNCTION check_milestones();
+
