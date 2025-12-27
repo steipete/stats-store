@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { valueFormatter } from "@/lib/formatters"
 import { cn } from "@/lib/utils"
@@ -59,68 +60,76 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
   stack = false,
 }: ClientBarChartProps<T>) {
   const isVertical = layout === "vertical"
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   return (
     <div className={cn("w-full", className)} data-testid="bar-chart">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data as unknown as Record<string, unknown>[]} layout={isVertical ? "vertical" : "horizontal"}>
-          <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
-          {isVertical ? (
-            <>
-              <XAxis
-                type="number"
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                tickFormatter={(v) => valueFormatter(toNumber(v))}
-              />
-              <YAxis
-                type="category"
-                dataKey={index}
-                width={yAxisWidth}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              />
-            </>
-          ) : (
-            <>
-              <XAxis
-                dataKey={index}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              />
-              <YAxis
-                width={yAxisWidth}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                tickFormatter={(v) => valueFormatter(toNumber(v))}
-              />
-            </>
-          )}
-          <Tooltip
-            formatter={(v) => valueFormatter(toNumber(v))}
-            contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: 8,
-            }}
-            labelStyle={{ color: "hsl(var(--muted-foreground))" }}
-            itemStyle={{ color: "hsl(var(--foreground))" }}
-          />
-          {categories.map((category, seriesIndex) => (
-            <Bar
-              key={category}
-              dataKey={category}
-              fill={resolveSeriesColor(colors, seriesIndex)}
-              radius={4}
-              isAnimationActive={showAnimation}
-              stackId={stack ? "a" : undefined}
+      {isMounted ? (
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
+          <BarChart data={data as unknown as Record<string, unknown>[]} layout={isVertical ? "vertical" : "horizontal"}>
+            <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
+            {isVertical ? (
+              <>
+                <XAxis
+                  type="number"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                  tickFormatter={(v) => valueFormatter(toNumber(v))}
+                />
+                <YAxis
+                  type="category"
+                  dataKey={index}
+                  width={yAxisWidth}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                />
+              </>
+            ) : (
+              <>
+                <XAxis
+                  dataKey={index}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                />
+                <YAxis
+                  width={yAxisWidth}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                  tickFormatter={(v) => valueFormatter(toNumber(v))}
+                />
+              </>
+            )}
+            <Tooltip
+              formatter={(v) => valueFormatter(toNumber(v))}
+              contentStyle={{
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+              }}
+              labelStyle={{ color: "hsl(var(--muted-foreground))" }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
             />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+            {categories.map((category, seriesIndex) => (
+              <Bar
+                key={category}
+                dataKey={category}
+                fill={resolveSeriesColor(colors, seriesIndex)}
+                radius={4}
+                isAnimationActive={showAnimation}
+                stackId={stack ? "a" : undefined}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      ) : null}
     </div>
   )
 }

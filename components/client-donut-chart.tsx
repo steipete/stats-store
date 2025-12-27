@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 import { valueFormatter } from "@/lib/formatters"
 import { cn } from "@/lib/utils"
@@ -55,37 +56,45 @@ export function ClientDonutChart<T extends object = Record<string, unknown>>({
   variant = "donut",
 }: ClientDonutChartProps<T>) {
   const isPie = variant === "pie"
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
   return (
     <div className={cn("w-full", className)} data-testid="donut-chart">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Tooltip
-            formatter={(v) => valueFormatter(toNumber(v))}
-            contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: 8,
-            }}
-            labelStyle={{ color: "hsl(var(--muted-foreground))" }}
-            itemStyle={{ color: "hsl(var(--foreground))" }}
-          />
-          <Pie
-            data={data as unknown as Record<string, unknown>[]}
-            dataKey={category}
-            nameKey={index}
-            cx="50%"
-            cy="50%"
-            innerRadius={isPie ? 0 : "60%"}
-            outerRadius="90%"
-            paddingAngle={2}
-            isAnimationActive={showAnimation}
-          >
-            {data.map((_, sliceIndex) => (
-              <Cell key={String(sliceIndex)} fill={resolveSliceColor(colors, sliceIndex)} />
-            ))}
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
+      {isMounted ? (
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
+          <PieChart>
+            <Tooltip
+              formatter={(v) => valueFormatter(toNumber(v))}
+              contentStyle={{
+                background: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+              }}
+              labelStyle={{ color: "hsl(var(--muted-foreground))" }}
+              itemStyle={{ color: "hsl(var(--foreground))" }}
+            />
+            <Pie
+              data={data as unknown as Record<string, unknown>[]}
+              dataKey={category}
+              nameKey={index}
+              cx="50%"
+              cy="50%"
+              innerRadius={isPie ? 0 : "60%"}
+              outerRadius="90%"
+              paddingAngle={2}
+              isAnimationActive={showAnimation}
+            >
+              {data.map((_, sliceIndex) => (
+                <Cell key={String(sliceIndex)} fill={resolveSliceColor(colors, sliceIndex)} />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      ) : null}
     </div>
   )
 }

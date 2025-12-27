@@ -64,7 +64,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(([_, config]) => config.theme || config.color)
 
   if (colorConfig.length === 0) {
-    return
+    return null
   }
 
   const css = Object.entries(THEMES)
@@ -162,7 +162,7 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, ChartTooltipContent
     }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey])
 
     if (!active || !payload?.length) {
-      return
+      return null
     }
 
     const nestLabel = payload.length === 1 && indicator !== "dot"
@@ -263,7 +263,7 @@ const ChartLegendContent = React.forwardRef<
   const { config } = useChart()
 
   if (!payload?.length) {
-    return
+    return null
   }
 
   return (
