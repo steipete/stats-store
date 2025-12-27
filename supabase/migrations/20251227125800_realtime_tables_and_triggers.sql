@@ -1,5 +1,5 @@
 -- Migration: real-time statistics infra for stats.store
--- Source: scripts/12-create-realtime-tables.sql + scripts/13-create-realtime-triggers.sql
+-- Single-file migration (tables + triggers + realtime publication)
 
 -- Required for gen_random_uuid()
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

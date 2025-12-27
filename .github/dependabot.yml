@@ -17,10 +17,6 @@ updates:
           - "@testing-library/*"
           - "vitest*"
           - "@vitest/*"
-      eslint:
-        patterns:
-          - "eslint*"
-          - "@typescript-eslint/*"
       types:
         patterns:
           - "@types/*"

@@ -87,7 +87,11 @@ pnpm install
 cp .env.example .env.local
 # Edit .env.local with your Supabase credentials
 
-# Run database migrations (see scripts/ directory)
+# Run database migrations (Supabase)
+# (requires Supabase CLI + DB password/connection string; see docs/deployment.md)
+supabase link --project-ref <your_project_ref>
+supabase db push
+
 # Start development server
 pnpm dev
 ```

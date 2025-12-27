@@ -31,14 +31,12 @@ The real-time system uses an aggregated update approach (Option 2) that provides
 
 ### 1. Run Database Migrations
 
-Execute the following SQL scripts in your Supabase dashboard:
+Apply the Supabase migration:
 
 \`\`\`bash
-
-# In Supabase SQL Editor, run these scripts in order:
-
-scripts/12-create-realtime-tables.sql
-scripts/13-create-realtime-triggers.sql
+# Recommended (CLI)
+supabase link --project-ref <your_project_ref>
+supabase db push
 \`\`\`
 
 ### 2. Configure Environment Variables
@@ -54,7 +52,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 
 1. Go to your Supabase dashboard
 2. Navigate to Database → Replication
-3. Enable replication for these tables:
+3. Enable replication for these tables (if not already enabled by migration):
    - `realtime_events`
    - `stats_cache`
 
@@ -109,7 +107,7 @@ Updates are batched to balance real-time feel with performance:
 
 ### Adjust Update Frequency
 
-In `scripts/13-create-realtime-triggers.sql`, modify:
+In `supabase/migrations/20251227125800_realtime_tables_and_triggers.sql`, modify:
 
 \`\`\`sql
 -- Change batch size (default: 10)

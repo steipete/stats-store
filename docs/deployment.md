@@ -19,11 +19,15 @@ This guide will help you deploy your own instance of stats.store.
 
 2. **Run the database migrations**
 
-   - In your Supabase dashboard, go to SQL Editor
-   - Run each file from the `scripts/` directory in order:
-     - Start with `01-create-apps-table.sql`
-     - End with `13-create-realtime-triggers.sql`
-   - Each script should show "Success" ✅
+   - Install Supabase CLI (`supabase --version`)
+   - Copy `.env.migrations.example` → `.env.migrations` and fill it in
+   - Run:
+     \`\`\`bash
+     set -a; source .env.migrations; set +a
+     supabase link --project-ref "$SUPABASE_PROJECT_REF"
+     supabase db push --password "$SUPABASE_DB_PASSWORD"
+     \`\`\`
+   - This applies `supabase/migrations/*` to your remote database
 
 3. **Enable real-time (optional but cool!)**
 
@@ -136,8 +140,7 @@ When new features are released:
 
 2. **Run new migrations** (if any)
 
-   - Check the `scripts/` directory for new SQL files
-   - Run them in order in your Supabase SQL editor
+   - Run `supabase db push` again
 
 3. **Redeploy**
    - Vercel will automatically redeploy when you push to main

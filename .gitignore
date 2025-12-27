@@ -23,6 +23,9 @@ test-report.json
 .env.local
 .env.*.local
 !.env.example
+.env.migrations
+.env.migrations.local
+!.env.migrations.example
 
 # vercel
 .vercel
