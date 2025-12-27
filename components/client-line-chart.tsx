@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
+import { useElementSize } from "@/hooks/use-element-size"
 import { valueFormatter } from "@/lib/formatters"
 import { cn } from "@/lib/utils"
 
@@ -55,54 +55,49 @@ export function ClientLineChart<T extends object = Record<string, unknown>>({
   showAnimation = true,
   yAxisWidth = 48,
 }: ClientLineChartProps<T>) {
-  const [isMounted, setIsMounted] = useState(false)
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
+  const { ref, size } = useElementSize<HTMLDivElement>()
+  const isReady = size.width > 0 && size.height > 0
 
   return (
-    <div className={cn("w-full", className)} data-testid="line-chart">
-      {isMounted ? (
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={1}>
-          <LineChart data={data as unknown as Record<string, unknown>[]}>
-            <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
-            <XAxis
-              dataKey={index}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+    <div ref={ref} className={cn("w-full", className)} data-testid="line-chart">
+      {isReady ? (
+        <LineChart width={size.width} height={size.height} data={data as unknown as Record<string, unknown>[]}>
+          <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
+          <XAxis
+            dataKey={index}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+          />
+          <YAxis
+            width={yAxisWidth}
+            tickLine={false}
+            axisLine={false}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            tickFormatter={(v) => valueFormatter(toNumber(v))}
+          />
+          <Tooltip
+            formatter={(v) => valueFormatter(toNumber(v))}
+            contentStyle={{
+              background: "hsl(var(--popover))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: 8,
+            }}
+            labelStyle={{ color: "hsl(var(--muted-foreground))" }}
+            itemStyle={{ color: "hsl(var(--foreground))" }}
+          />
+          {categories.map((category, seriesIndex) => (
+            <Line
+              key={category}
+              type="monotone"
+              dataKey={category}
+              stroke={resolveSeriesColor(colors, seriesIndex)}
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={showAnimation}
             />
-            <YAxis
-              width={yAxisWidth}
-              tickLine={false}
-              axisLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-              tickFormatter={(v) => valueFormatter(toNumber(v))}
-            />
-            <Tooltip
-              formatter={(v) => valueFormatter(toNumber(v))}
-              contentStyle={{
-                background: "hsl(var(--popover))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: 8,
-              }}
-              labelStyle={{ color: "hsl(var(--muted-foreground))" }}
-              itemStyle={{ color: "hsl(var(--foreground))" }}
-            />
-            {categories.map((category, seriesIndex) => (
-              <Line
-                key={category}
-                type="monotone"
-                dataKey={category}
-                stroke={resolveSeriesColor(colors, seriesIndex)}
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive={showAnimation}
-              />
-            ))}
-          </LineChart>
-        </ResponsiveContainer>
+          ))}
+        </LineChart>
       ) : null}
     </div>
   )

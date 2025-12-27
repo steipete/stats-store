@@ -18,7 +18,10 @@ yarn-error.log*
 coverage/
 
 # env files
-.env*
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # vercel
 .vercel
@@ -35,4 +38,3 @@ temp_url.txt
 
 # OS files
 .DS_Store
-.env*.local

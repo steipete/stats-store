@@ -85,7 +85,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
-        <Analytics />
+        {process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === "1" ? <Analytics /> : null}
       </body>
     </html>
   )
