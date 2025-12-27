@@ -30,8 +30,6 @@ describe("useRealtimeStats", () => {
       }),
       subscribe: vi.fn().mockImplementation((callback) => {
         mockSubscribeCallback = callback
-        // Simulate immediate subscription
-        void Promise.resolve().then(() => callback("SUBSCRIBED"))
         return mockChannel
       }),
       unsubscribe: vi.fn().mockResolvedValue({}),
@@ -57,6 +55,17 @@ describe("useRealtimeStats", () => {
     vi.mocked(createBrowserClient).mockReturnValue(mockSupabaseClient)
   })
 
+  async function connect() {
+    await waitFor(() => {
+      expect(mockChannel.subscribe).toHaveBeenCalled()
+      expect(mockSubscribeCallback).toBeTypeOf("function")
+    })
+
+    act(() => {
+      mockSubscribeCallback?.("SUBSCRIBED")
+    })
+  }
+
   afterEach(() => {
     vi.useRealTimers()
   })
@@ -73,9 +82,8 @@ describe("useRealtimeStats", () => {
   it("establishes realtime connection", async () => {
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     expect(mockSupabaseClient.channel).toHaveBeenCalledWith("all-app-stats")
     expect(mockChannel.subscribe).toHaveBeenCalled()
@@ -87,18 +95,8 @@ describe("useRealtimeStats", () => {
 
     const { result } = renderHook(() => useRealtimeStats({ appId: "test-app-123" }))
 
-    // Wait for subscription - the callback should be called immediately
-    await waitFor(() => {
-      expect(mockChannel.subscribe).toHaveBeenCalled()
-    })
-
-    // The subscribe callback should set isConnected to true
-    await waitFor(
-      () => {
-        expect(result.current.isConnected).toBe(true)
-      },
-      { timeout: 2000 }
-    )
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     expect(mockSupabaseClient.channel).toHaveBeenCalledWith("app-stats-test-app-123")
   })
@@ -130,6 +128,7 @@ describe("useRealtimeStats", () => {
     }))
 
     const { result } = renderHook(() => useRealtimeStats())
+    await connect()
 
     await waitFor(
       () => {
@@ -146,9 +145,7 @@ describe("useRealtimeStats", () => {
     const onNewUser = vi.fn()
     const { result } = renderHook(() => useRealtimeStats({ onNewUser }))
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
 
     const newUserEvent = {
       app_id: "test-app",
@@ -186,9 +183,7 @@ describe("useRealtimeStats", () => {
     const onMilestone = vi.fn()
     const { result } = renderHook(() => useRealtimeStats({ onMilestone }))
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
 
     const milestoneEvent = {
       app_id: "test-app",
@@ -213,9 +208,7 @@ describe("useRealtimeStats", () => {
     const onVersionUpdate = vi.fn()
     const { result } = renderHook(() => useRealtimeStats({ onVersionUpdate }))
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
 
     const versionEvent = {
       app_id: "test-app",
@@ -251,14 +244,11 @@ describe("useRealtimeStats", () => {
 
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     // Initial fetch should have happened
-    await waitFor(() => {
-      expect(fetchCount).toBe(1)
-    })
+    expect(fetchCount).toBe(1)
 
     const batchEvent = {
       app_id: "test-app",
@@ -287,9 +277,8 @@ describe("useRealtimeStats", () => {
   it("handles stats cache updates", async () => {
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     const cacheUpdate = {
       stat_data: [
@@ -313,9 +302,8 @@ describe("useRealtimeStats", () => {
   it("limits event history to 50 events", async () => {
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     // Add 60 events
     act(() => {
@@ -343,9 +331,8 @@ describe("useRealtimeStats", () => {
   it("handles connection closure", async () => {
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     // Simulate connection closed
     act(() => {
@@ -360,9 +347,8 @@ describe("useRealtimeStats", () => {
   it("cleans up on unmount", async () => {
     const { result, unmount } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     unmount()
 
@@ -394,9 +380,8 @@ describe("useRealtimeStats", () => {
 
     const { result } = renderHook(() => useRealtimeStats())
 
-    await waitFor(() => {
-      expect(result.current.isConnected).toBe(true)
-    })
+    await connect()
+    expect(result.current.isConnected).toBe(true)
 
     // Initial cache should be empty after first fetch
     await waitFor(() => {

@@ -7,6 +7,7 @@ export default defineConfig({
     environmentMatchGlobs: [["**/tests/api/**", "node"]],
     globals: true,
     setupFiles: "./tests/setup.ts",
+    silent: true,
     exclude: ["**/node_modules/**", "**/tests/appcast-integration.test.mjs"],
     coverage: {
       provider: "v8",

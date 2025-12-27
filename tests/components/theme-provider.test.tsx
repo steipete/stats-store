@@ -1,18 +1,22 @@
 import { render, screen } from "@testing-library/react"
-import type { ComponentProps, ReactNode } from "react"
+import type { ReactNode } from "react"
 import { describe, expect, it, vi } from "vitest"
 import { ThemeProvider } from "../../components/theme-provider"
 
 // Mock next-themes
+const mockNextThemesProvider = vi.fn(({ children }: { children?: ReactNode }) => (
+  <div data-testid="next-themes-provider">{children}</div>
+))
+
 vi.mock("next-themes", () => ({
-  ThemeProvider: ({ children, ...props }: { children?: ReactNode } & Record<string, unknown>) => (
-    <div data-testid="next-themes-provider" {...(props as ComponentProps<"div">)}>
-      {children}
-    </div>
-  ),
+  ThemeProvider: (props: { children?: ReactNode }) => mockNextThemesProvider(props),
 }))
 
 describe("ThemeProvider", () => {
+  afterEach(() => {
+    mockNextThemesProvider.mockClear()
+  })
+
   it("renders children correctly", () => {
     render(
       <ThemeProvider>
@@ -30,11 +34,15 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     )
 
-    const provider = screen.getByTestId("next-themes-provider")
-    expect(provider).toHaveAttribute("attribute", "class")
-    expect(provider).toHaveAttribute("defaultTheme", "system")
-    // Boolean props might not be rendered as attributes in the DOM
-    expect(provider).toBeInTheDocument()
+    expect(screen.getByTestId("next-themes-provider")).toBeInTheDocument()
+    expect(mockNextThemesProvider).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribute: "class",
+        defaultTheme: "system",
+        disableTransitionOnChange: true,
+        enableSystem: true,
+      })
+    )
   })
 
   it("renders multiple children", () => {
@@ -58,8 +66,7 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     )
 
-    const provider = screen.getByTestId("next-themes-provider")
-    expect(provider).toHaveAttribute("storageKey", "app-theme")
+    expect(mockNextThemesProvider).toHaveBeenCalledWith(expect.objectContaining({ storageKey: "app-theme" }))
   })
 
   it("handles theme values prop", () => {
@@ -75,8 +82,9 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     )
 
-    const provider = screen.getByTestId("next-themes-provider")
-    expect(provider).toHaveAttribute("themes", "light,dark,custom")
+    expect(mockNextThemesProvider).toHaveBeenCalledWith(
+      expect.objectContaining({ themes: ["light", "dark", "custom"], value: themes })
+    )
   })
 
   it("handles forced theme prop", () => {
@@ -86,8 +94,7 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     )
 
-    const provider = screen.getByTestId("next-themes-provider")
-    expect(provider).toHaveAttribute("forcedTheme", "dark")
+    expect(mockNextThemesProvider).toHaveBeenCalledWith(expect.objectContaining({ forcedTheme: "dark" }))
   })
 
   it("renders without any props", () => {
@@ -108,8 +115,7 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     )
 
-    const provider = screen.getByTestId("next-themes-provider")
-    expect(provider).toHaveAttribute("nonce", "abc123")
+    expect(mockNextThemesProvider).toHaveBeenCalledWith(expect.objectContaining({ nonce: "abc123" }))
   })
 
   it("works with complex nested components", () => {
