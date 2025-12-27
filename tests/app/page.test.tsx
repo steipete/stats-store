@@ -199,4 +199,44 @@ describe("Dashboard Page", () => {
       }
     })
   })
+
+  it("ignores invalid date query params", async () => {
+    const mockClient = createMockSupabaseClient({
+      apps: mockApps,
+      reports: [],
+    })
+
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+
+    const Page = (await import("@/app/page")).default
+    await expect(
+      Page({ searchParams: Promise.resolve({ from: "not-a-date", to: "also-not-a-date" }) })
+    ).resolves.toBeDefined()
+  })
+
+  it("normalizes reversed date ranges (from > to)", async () => {
+    const mockClient = createMockSupabaseClient({
+      apps: mockApps,
+      reports: [],
+    })
+
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+
+    const Page = (await import("@/app/page")).default
+    await Page({ searchParams: Promise.resolve({ from: "2025-12-20", to: "2025-12-01" }) })
+
+    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls
+    const dailyCounts = rpcCalls.find((call) => call[0] === "get_daily_report_counts") as
+      | [string, { start_date_filter: string; end_date_filter: string }]
+      | undefined
+
+    expect(dailyCounts).toBeDefined()
+    if (!dailyCounts) {
+      throw new Error("Missing get_daily_report_counts rpc call")
+    }
+    const [, params] = dailyCounts
+    expect(new Date(params.start_date_filter).getTime()).toBeLessThanOrEqual(new Date(params.end_date_filter).getTime())
+  })
 })
