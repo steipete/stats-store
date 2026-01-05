@@ -77,7 +77,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.10",
+    "@biomejs/biome": "^2.3.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "latest",
     "@testing-library/jest-dom": "^6.9.1",
