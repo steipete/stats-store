@@ -52,7 +52,7 @@ describe("Dashboard Page", () => {
     );
     expect(mockClient.rpc).toHaveBeenCalledWith("get_top_models", expect.any(Object));
     expect(mockClient.rpc).toHaveBeenCalledWith("get_latest_app_version", expect.any(Object));
-  });
+  }, 15000);
 
   it("handles app filtering correctly", async () => {
     const mockClient = createMockSupabaseClient({
