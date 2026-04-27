@@ -1,22 +1,22 @@
-import { beforeEach, describe, expect, it, vi } from "vitest"
-import { createMockSupabaseClient, createMockSupabaseWithError } from "@/tests/utils/supabase-mock"
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createMockSupabaseClient, createMockSupabaseWithError } from "@/tests/utils/supabase-mock";
 import {
   generateDailyCountsData,
   mockApps,
   mockCpuDistribution,
   mockOsDistribution,
   mockTopModels,
-} from "@/tests/utils/test-data"
+} from "@/tests/utils/test-data";
 
 // Mock the Supabase server module
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: vi.fn(),
-}))
+}));
 
 describe("Dashboard Page", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   it("fetches all required data successfully", async () => {
     const mockClient = createMockSupabaseClient({
@@ -32,24 +32,27 @@ describe("Dashboard Page", () => {
           received_at: new Date().toISOString(),
         })),
       top_models: mockTopModels,
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Import and call the page to trigger data fetching
-    const Page = (await import("@/app/page")).default
-    await Page({ searchParams: Promise.resolve({}) })
+    const Page = (await import("@/app/page")).default;
+    await Page({ searchParams: Promise.resolve({}) });
 
     // Verify correct queries are made
-    expect(mockClient.from).toHaveBeenCalledWith("apps")
-    expect(mockClient.from).toHaveBeenCalledWith("reports")
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_daily_report_counts", expect.any(Object))
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_os_version_distribution", expect.any(Object))
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_cpu_architecture_distribution", expect.any(Object))
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_top_models", expect.any(Object))
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_latest_app_version", expect.any(Object))
-  })
+    expect(mockClient.from).toHaveBeenCalledWith("apps");
+    expect(mockClient.from).toHaveBeenCalledWith("reports");
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_daily_report_counts", expect.any(Object));
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_os_version_distribution", expect.any(Object));
+    expect(mockClient.rpc).toHaveBeenCalledWith(
+      "get_cpu_architecture_distribution",
+      expect.any(Object),
+    );
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_top_models", expect.any(Object));
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_latest_app_version", expect.any(Object));
+  });
 
   it("handles app filtering correctly", async () => {
     const mockClient = createMockSupabaseClient({
@@ -59,15 +62,15 @@ describe("Dashboard Page", () => {
       os_distribution: [],
       reports: [],
       top_models: [],
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Test that the eq method is called with correct app_id
-    const reportsQuery = mockClient.from("reports").select("*")
-    expect(reportsQuery.eq).toBeDefined()
-  })
+    const reportsQuery = mockClient.from("reports").select("*");
+    expect(reportsQuery.eq).toBeDefined();
+  });
 
   it("handles date range filtering correctly", async () => {
     const mockClient = createMockSupabaseClient({
@@ -77,29 +80,29 @@ describe("Dashboard Page", () => {
       os_distribution: [],
       reports: [],
       top_models: [],
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Test that date filters are applied
-    const reportsQuery = mockClient.from("reports").select("*")
-    expect(reportsQuery.gte).toBeDefined()
-    expect(reportsQuery.lte).toBeDefined()
-  })
+    const reportsQuery = mockClient.from("reports").select("*");
+    expect(reportsQuery.gte).toBeDefined();
+    expect(reportsQuery.lte).toBeDefined();
+  });
 
   it("handles database errors gracefully", async () => {
     const mockClient = createMockSupabaseWithError({
       message: "Database connection failed",
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Verify error handling
-    expect(mockClient.from).toBeDefined()
-    expect(mockClient.rpc).toBeDefined()
-  })
+    expect(mockClient.from).toBeDefined();
+    expect(mockClient.rpc).toBeDefined();
+  });
 
   it("handles empty data gracefully", async () => {
     const mockClient = createMockSupabaseClient({
@@ -109,16 +112,16 @@ describe("Dashboard Page", () => {
       os_distribution: [],
       reports: [],
       top_models: [],
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Verify empty data is handled
-    const appsResult = await mockClient.from("apps").select("id, name").order("name")
-    expect(appsResult.data).toEqual([])
-    expect(appsResult.error).toBeNull()
-  })
+    const appsResult = await mockClient.from("apps").select("id, name").order("name");
+    expect(appsResult.data).toEqual([]);
+    expect(appsResult.error).toBeNull();
+  });
 
   it("calculates unique installs correctly", async () => {
     const mockReports = [
@@ -126,24 +129,24 @@ describe("Dashboard Page", () => {
       { ip_hash: "hash1", received_at: new Date().toISOString() }, // Duplicate
       { ip_hash: "hash2", received_at: new Date().toISOString() },
       { ip_hash: "hash3", received_at: new Date().toISOString() },
-    ]
+    ];
 
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
       reports: mockReports,
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Get reports and calculate unique IPs
-    const query = mockClient.from("reports").select("ip_hash")
-    const result = await query
-    const uniqueIps = new Set(result.data?.map((r: { ip_hash: string }) => r.ip_hash))
+    const query = mockClient.from("reports").select("ip_hash");
+    const result = await query;
+    const uniqueIps = new Set(result.data?.map((r: { ip_hash: string }) => r.ip_hash));
 
-    expect(uniqueIps.size).toBe(3) // Hash1, hash2, hash3
-    expect(result.data?.length).toBe(4) // Total reports
-  })
+    expect(uniqueIps.size).toBe(3); // Hash1, hash2, hash3
+    expect(result.data?.length).toBe(4); // Total reports
+  });
 
   it("fetches all RPC endpoints with correct parameters", async () => {
     const mockClient = createMockSupabaseClient({
@@ -154,89 +157,93 @@ describe("Dashboard Page", () => {
       os_distribution: mockOsDistribution,
       reports: [],
       top_models: mockTopModels,
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
     // Import and call the page to trigger data fetching
-    const Page = (await import("@/app/page")).default
-    await Page({ searchParams: Promise.resolve({}) })
+    const Page = (await import("@/app/page")).default;
+    await Page({ searchParams: Promise.resolve({}) });
 
     // Verify RPC calls were made (order may vary)
-    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls
-    const rpcNames = rpcCalls.map((call) => call[0] as string)
+    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls;
+    const rpcNames = rpcCalls.map((call) => call[0] as string);
 
-    expect(rpcNames).toContain("get_daily_report_counts")
-    expect(rpcNames).toContain("get_os_version_distribution")
-    expect(rpcNames).toContain("get_cpu_architecture_distribution")
-    expect(rpcNames).toContain("get_top_models")
-    expect(rpcNames).toContain("get_latest_app_version")
+    expect(rpcNames).toContain("get_daily_report_counts");
+    expect(rpcNames).toContain("get_os_version_distribution");
+    expect(rpcNames).toContain("get_cpu_architecture_distribution");
+    expect(rpcNames).toContain("get_top_models");
+    expect(rpcNames).toContain("get_latest_app_version");
 
     // Verify each call has the correct parameters structure
     rpcCalls.forEach((call) => {
-      const [name, params] = call as [string, Record<string, unknown>]
+      const [name, params] = call as [string, Record<string, unknown>];
       if (name.startsWith("get_")) {
         const usesPrefixedParams =
-          "p_app_id_filter" in params || "p_start_date_filter" in params || "p_end_date_filter" in params
+          "p_app_id_filter" in params ||
+          "p_start_date_filter" in params ||
+          "p_end_date_filter" in params;
 
         if (usesPrefixedParams) {
           expect(params).toMatchObject({
             p_app_id_filter: null,
             p_end_date_filter: expect.any(String),
             p_start_date_filter: expect.any(String),
-          })
+          });
           if ("p_limit_count" in params && typeof params.p_limit_count === "number") {
-            expect(params.p_limit_count).toBeGreaterThan(0)
+            expect(params.p_limit_count).toBeGreaterThan(0);
           }
         } else {
           expect(params).toMatchObject({
             app_id_filter: null,
             end_date_filter: expect.any(String),
             start_date_filter: expect.any(String),
-          })
+          });
         }
       }
-    })
-  })
+    });
+  });
 
   it("ignores invalid date query params", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
       reports: [],
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
-    const Page = (await import("@/app/page")).default
+    const Page = (await import("@/app/page")).default;
     await expect(
-      Page({ searchParams: Promise.resolve({ from: "not-a-date", to: "also-not-a-date" }) })
-    ).resolves.toBeDefined()
-  })
+      Page({ searchParams: Promise.resolve({ from: "not-a-date", to: "also-not-a-date" }) }),
+    ).resolves.toBeDefined();
+  });
 
   it("normalizes reversed date ranges (from > to)", async () => {
     const mockClient = createMockSupabaseClient({
       apps: mockApps,
       reports: [],
-    })
+    });
 
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
-    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient)
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValue(mockClient);
 
-    const Page = (await import("@/app/page")).default
-    await Page({ searchParams: Promise.resolve({ from: "2025-12-20", to: "2025-12-01" }) })
+    const Page = (await import("@/app/page")).default;
+    await Page({ searchParams: Promise.resolve({ from: "2025-12-20", to: "2025-12-01" }) });
 
-    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls
+    const rpcCalls = (mockClient.rpc as unknown as { mock: { calls: unknown[][] } }).mock.calls;
     const dailyCounts = rpcCalls.find((call) => call[0] === "get_daily_report_counts") as
       | [string, { start_date_filter: string; end_date_filter: string }]
-      | undefined
+      | undefined;
 
-    expect(dailyCounts).toBeDefined()
+    expect(dailyCounts).toBeDefined();
     if (!dailyCounts) {
-      throw new Error("Missing get_daily_report_counts rpc call")
+      throw new Error("Missing get_daily_report_counts rpc call");
     }
-    const [, params] = dailyCounts
-    expect(new Date(params.start_date_filter).getTime()).toBeLessThanOrEqual(new Date(params.end_date_filter).getTime())
-  })
-})
+    const [, params] = dailyCounts;
+    expect(new Date(params.start_date_filter).getTime()).toBeLessThanOrEqual(
+      new Date(params.end_date_filter).getTime(),
+    );
+  });
+});

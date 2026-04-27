@@ -1,16 +1,14 @@
 {
-  "plugins": ["unicorn", "typescript", "oxc"],
+  "plugins": ["unicorn", "oxc"],
   "categories": {},
   "rules": {
     "eslint/no-await-in-loop": "allow",
+    "jest/expect-expect": "allow",
+    "jest/no-conditional-expect": "allow",
+    "nextjs/no-html-link-for-pages": "allow",
     "react/react-in-jsx-scope": "allow",
-    "react/jsx-uses-react": "allow",
     "unicorn/consistent-function-scoping": "allow",
-    "typescript-eslint/no-base-to-string": "allow",
-    "typescript-eslint/no-unnecessary-type-assertion": "allow",
-    "typescript-eslint/no-unsafe-enum-comparison": "allow",
-    "typescript-eslint/no-unsafe-type-assertion": "allow",
-    "typescript-eslint/unbound-method": "allow"
+    "vitest/require-mock-type-parameters": "allow"
   },
   "settings": {
     "jsx-a11y": {

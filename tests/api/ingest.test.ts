@@ -1,7 +1,7 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
-import { NextRequest } from "next/server"
-import { beforeEach, describe, expect, it, vi } from "vitest"
-import { POST } from "@/app/api/v1/ingest/route"
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { NextRequest } from "next/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { POST } from "@/app/api/v1/ingest/route";
 
 // Mock Supabase
 vi.mock("@/lib/supabase/server", () => ({
@@ -14,18 +14,18 @@ vi.mock("@/lib/supabase/server", () => ({
             Promise.resolve({
               data: { id: "test-app-id" },
               error: null,
-            })
+            }),
           ),
         })),
       })),
     })),
   })),
-}))
+}));
 
 describe("/api/v1/ingest", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-  })
+    vi.clearAllMocks();
+  });
 
   it("should accept valid Sparkle telemetry data", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -44,14 +44,14 @@ describe("/api/v1/ingest", () => {
         "x-forwarded-for": "192.168.1.1",
       },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(201)
-    expect(json.message).toBe("Report received")
-  })
+    expect(response.status).toBe(201);
+    expect(json.message).toBe("Report received");
+  });
 
   it("should reject requests without bundleIdentifier", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -61,21 +61,21 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(400)
-    expect(json.error).toBe("Missing bundleIdentifier")
-  })
+    expect(response.status).toBe(400);
+    expect(json.error).toBe("Missing bundleIdentifier");
+  });
 
   it("should map CPU types correctly", async () => {
     const testCases = [
       { cputype: "16777228", expected: "arm64" },
       { cputype: "16777223", expected: "x86_64" },
       { cputype: "12345", expected: "unknown" },
-    ]
+    ];
 
     for (const testCase of testCases) {
       const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -85,31 +85,31 @@ describe("/api/v1/ingest", () => {
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
-      })
+      });
 
-      await POST(request)
+      await POST(request);
 
       // Verify the CPU mapping logic works correctly
       // In a real test, we'd check the actual inserted data
     }
-  })
+  });
 
   it("should handle malformed JSON", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
       body: "invalid json",
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(400)
-    expect(json.error).toBe("Invalid JSON payload")
-  })
+    expect(response.status).toBe(400);
+    expect(json.error).toBe("Invalid JSON payload");
+  });
 
   it("should handle database errors when checking app", async () => {
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
         select: vi.fn(() => ({
@@ -118,12 +118,12 @@ describe("/api/v1/ingest", () => {
               Promise.resolve({
                 data: undefined,
                 error: { message: "Database connection failed" },
-              })
+              }),
             ),
           })),
         })),
       })),
-    } as unknown as SupabaseClient)
+    } as unknown as SupabaseClient);
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
       body: JSON.stringify({
@@ -132,17 +132,17 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(500)
-    expect(json.error).toBe("Internal server error")
-  })
+    expect(response.status).toBe(500);
+    expect(json.error).toBe("Internal server error");
+  });
 
   it("should handle unknown bundle identifier", async () => {
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi.fn(() => ({
         select: vi.fn(() => ({
@@ -151,12 +151,12 @@ describe("/api/v1/ingest", () => {
               Promise.resolve({
                 data: undefined,
                 error: undefined,
-              })
+              }),
             ),
           })),
         })),
       })),
-    } as unknown as SupabaseClient)
+    } as unknown as SupabaseClient);
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
       body: JSON.stringify({
@@ -165,17 +165,17 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(400)
-    expect(json.error).toBe("Unknown bundle identifier")
-  })
+    expect(response.status).toBe(400);
+    expect(json.error).toBe("Unknown bundle identifier");
+  });
 
   it("should handle database errors when inserting report", async () => {
-    const { createSupabaseServerClient } = await import("@/lib/supabase/server")
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
     vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
       from: vi
         .fn()
@@ -187,7 +187,7 @@ describe("/api/v1/ingest", () => {
                 Promise.resolve({
                   data: { id: "test-app-id" },
                   error: undefined,
-                })
+                }),
               ),
             })),
           })),
@@ -197,10 +197,10 @@ describe("/api/v1/ingest", () => {
           insert: vi.fn(() =>
             Promise.resolve({
               error: { message: "Insert failed" },
-            })
+            }),
           ),
         }),
-    } as unknown as SupabaseClient)
+    } as unknown as SupabaseClient);
 
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
       body: JSON.stringify({
@@ -209,14 +209,14 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(500)
-    expect(json.error).toBe("Internal server error")
-  })
+    expect(response.status).toBe(500);
+    expect(json.error).toBe("Internal server error");
+  });
 
   it("should handle missing IP address gracefully", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -229,14 +229,14 @@ describe("/api/v1/ingest", () => {
         // No x-forwarded-for header
       },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(201)
-    expect(json.message).toBe("Report received")
-  })
+    expect(response.status).toBe(201);
+    expect(json.message).toBe("Report received");
+  });
 
   it("should handle all optional fields being missing", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -246,14 +246,14 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
-    const json = await response.json()
+    const response = await POST(request);
+    const json = await response.json();
 
-    expect(response.status).toBe(201)
-    expect(json.message).toBe("Report received")
-  })
+    expect(response.status).toBe(201);
+    expect(json.message).toBe("Report received");
+  });
 
   it("should parse numeric strings correctly", async () => {
     const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -265,11 +265,11 @@ describe("/api/v1/ingest", () => {
       }),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-    })
+    });
 
-    const response = await POST(request)
+    const response = await POST(request);
 
-    expect(response.status).toBe(201)
+    expect(response.status).toBe(201);
     // In a real test, we'd verify the parsed values were inserted correctly
-  })
-})
+  });
+});

@@ -1,10 +1,10 @@
-import { ArrowPathIcon } from "@heroicons/react/24/outline"
-import { cn } from "@/lib/utils"
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { cn } from "@/lib/utils";
 
 // Helper for skeleton styling
 const SkeletonBox = ({ className = "" }: { className?: string }) => (
   <div className={cn("bg-muted animate-pulse rounded", className)} />
-)
+);
 
 export default function Loading() {
   return (
@@ -23,7 +23,10 @@ export default function Loading() {
       {/* KPI Skeletons */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border">
+          <div
+            key={i}
+            className="rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border"
+          >
             <SkeletonBox className="h-5 w-1/2 mb-2" />
             <SkeletonBox className="h-8 w-1/3" />
           </div>
@@ -58,5 +61,5 @@ export default function Loading() {
         <p className="mt-2 text-sm text-muted-foreground">Loading dashboard data...</p>
       </div>
     </main>
-  )
+  );
 }

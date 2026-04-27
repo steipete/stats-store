@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { Cell, Pie, PieChart, Tooltip } from "recharts"
-import { useElementSize } from "@/hooks/use-element-size"
-import { valueFormatter } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { useElementSize } from "@/hooks/use-element-size";
+import { valueFormatter } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export interface ClientDonutChartProps<T extends object = Record<string, unknown>> {
-  className?: string
-  data: T[]
-  category: string
-  index: string
-  colors?: string[]
-  showAnimation?: boolean
-  variant?: "donut" | "pie"
+  className?: string;
+  data: T[];
+  category: string;
+  index: string;
+  colors?: string[];
+  showAnimation?: boolean;
+  variant?: "donut" | "pie";
 }
 
 const colorMap: Record<string, string> = {
@@ -24,26 +24,32 @@ const colorMap: Record<string, string> = {
   purple: "var(--chart-3)",
   rose: "var(--chart-5)",
   teal: "var(--chart-2)",
-}
+};
 
 function resolveSliceColor(colors: string[] | undefined, sliceIndex: number) {
-  const requested = colors?.[sliceIndex]
+  const requested = colors?.[sliceIndex];
   if (requested && requested in colorMap) {
-    return colorMap[requested]
+    return colorMap[requested];
   }
-  const palette = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"]
-  return palette[sliceIndex % palette.length]
+  const palette = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ];
+  return palette[sliceIndex % palette.length];
 }
 
 function toNumber(value: unknown): number {
   if (typeof value === "number") {
-    return value
+    return value;
   }
   if (typeof value === "string") {
-    const n = Number(value)
-    return Number.isFinite(n) ? n : 0
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
   }
-  return 0
+  return 0;
 }
 
 export function ClientDonutChart<T extends object = Record<string, unknown>>({
@@ -55,9 +61,9 @@ export function ClientDonutChart<T extends object = Record<string, unknown>>({
   showAnimation = true,
   variant = "donut",
 }: ClientDonutChartProps<T>) {
-  const isPie = variant === "pie"
-  const { ref, size } = useElementSize<HTMLDivElement>()
-  const isReady = size.width > 0 && size.height > 0
+  const isPie = variant === "pie";
+  const { ref, size } = useElementSize<HTMLDivElement>();
+  const isReady = size.width > 0 && size.height > 0;
 
   return (
     <div ref={ref} className={cn("w-full", className)} data-testid="donut-chart">
@@ -91,5 +97,5 @@ export function ClientDonutChart<T extends object = Record<string, unknown>>({
         </PieChart>
       ) : null}
     </div>
-  )
+  );
 }

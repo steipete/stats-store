@@ -1,66 +1,76 @@
-import { isValid, parseISO, startOfDay, subDays } from "date-fns"
-import type { Metadata } from "next"
-import { Suspense } from "react"
-import { CardStatusDisplay } from "@/components/card-status-display"
-import { ClientBarChart } from "@/components/client-bar-chart"
-import { ClientDonutChart } from "@/components/client-donut-chart"
-import { ClientLineChart } from "@/components/client-line-chart"
-import { DashboardFilters } from "@/components/dashboard-filters"
-import { KpiCard } from "@/components/kpi-card"
-import { RealtimeWrapper } from "@/components/realtime-wrapper"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getDashboardData } from "@/lib/dashboard/get-dashboard-data"
-import type { DateRangeValue } from "@/lib/date-range"
-import { valueFormatter } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
+import { isValid, parseISO, startOfDay, subDays } from "date-fns";
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { CardStatusDisplay } from "@/components/card-status-display";
+import { ClientBarChart } from "@/components/client-bar-chart";
+import { ClientDonutChart } from "@/components/client-donut-chart";
+import { ClientLineChart } from "@/components/client-line-chart";
+import { DashboardFilters } from "@/components/dashboard-filters";
+import { KpiCard } from "@/components/kpi-card";
+import { RealtimeWrapper } from "@/components/realtime-wrapper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getDashboardData } from "@/lib/dashboard/get-dashboard-data";
+import type { DateRangeValue } from "@/lib/date-range";
+import { valueFormatter } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   description:
     "View detailed statistics and analytics for your applications, including installations, user demographics, OS versions, CPU architectures, and top models. Make data-driven decisions.",
   title: "stats.store - Fast, open, privacy-first analytics for Sparkle",
-}
+};
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const params = await searchParams
-  const appParam = typeof params?.app === "string" ? params.app : "all"
+  const params = await searchParams;
+  const appParam = typeof params?.app === "string" ? params.app : "all";
   const selectedAppId =
-    appParam === "all" || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(appParam)
+    appParam === "all" ||
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(appParam)
       ? appParam
-      : "all"
-  const defaultFrom = startOfDay(subDays(new Date(), 29))
-  const defaultTo = startOfDay(new Date())
+      : "all";
+  const defaultFrom = startOfDay(subDays(new Date(), 29));
+  const defaultTo = startOfDay(new Date());
 
-  const fromParam = typeof params?.from === "string" ? parseISO(params.from) : undefined
-  const toParam = typeof params?.to === "string" ? parseISO(params.to) : undefined
-  const from = fromParam && isValid(fromParam) ? startOfDay(fromParam) : undefined
-  const to = toParam && isValid(toParam) ? startOfDay(toParam) : undefined
+  const fromParam = typeof params?.from === "string" ? parseISO(params.from) : undefined;
+  const toParam = typeof params?.to === "string" ? parseISO(params.to) : undefined;
+  const from = fromParam && isValid(fromParam) ? startOfDay(fromParam) : undefined;
+  const to = toParam && isValid(toParam) ? startOfDay(toParam) : undefined;
   const baseDateRange: DateRangeValue =
     from || to
       ? {
           from: from ?? startOfDay(subDays(to ?? defaultTo, 29)),
           to: to ?? defaultTo,
         }
-      : { from: defaultFrom, to: defaultTo }
+      : { from: defaultFrom, to: defaultTo };
 
   const dateRange =
     baseDateRange.from && baseDateRange.to && baseDateRange.from > baseDateRange.to
       ? { from: baseDateRange.to, to: baseDateRange.from }
-      : baseDateRange
-  const data = await getDashboardData(selectedAppId, dateRange)
-  const showInstallationsChart = !data.installs_timeseries_error && data.installs_timeseries.length > 0
-  const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0
-  const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0
-  const showTopModelsTable = !data.top_models_error && data.top_models.length > 0
-  const showLanguageChart = !data.language_breakdown_error && data.language_breakdown.length > 0
-  const showRamChart = !data.ram_breakdown_error && data.ram_breakdown.length > 0
-  const showCpuCoresChart = !data.cpu_cores_breakdown_error && data.cpu_cores_breakdown.length > 0
-  const showVersionAdoptionChart = !data.version_adoption_error && data.version_adoption.length > 0
-  const showHourlyActivityChart = !data.hourly_activity_error && data.hourly_activity.length > 0
-  const chartCardClassName = "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border"
+      : baseDateRange;
+  const data = await getDashboardData(selectedAppId, dateRange);
+  const showInstallationsChart =
+    !data.installs_timeseries_error && data.installs_timeseries.length > 0;
+  const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0;
+  const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0;
+  const showTopModelsTable = !data.top_models_error && data.top_models.length > 0;
+  const showLanguageChart = !data.language_breakdown_error && data.language_breakdown.length > 0;
+  const showRamChart = !data.ram_breakdown_error && data.ram_breakdown.length > 0;
+  const showCpuCoresChart = !data.cpu_cores_breakdown_error && data.cpu_cores_breakdown.length > 0;
+  const showVersionAdoptionChart = !data.version_adoption_error && data.version_adoption.length > 0;
+  const showHourlyActivityChart = !data.hourly_activity_error && data.hourly_activity.length > 0;
+  const chartCardClassName =
+    "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border";
 
   return (
     <main className="p-4 md:p-6 lg:p-8 mx-auto max-w-7xl bg-background text-foreground min-h-screen">
@@ -199,7 +209,11 @@ export default async function DashboardPage({
                 data={data.version_adoption}
                 index="date"
                 categories={[
-                  ...new Set(data.version_adoption.flatMap((d) => Object.keys(d).filter((k) => k !== "date"))),
+                  ...new Set(
+                    data.version_adoption.flatMap((d) =>
+                      Object.keys(d).filter((k) => k !== "date"),
+                    ),
+                  ),
                 ]}
                 colors={["blue", "teal", "cyan", "purple", "rose"]}
                 yAxisWidth={48}
@@ -277,7 +291,9 @@ export default async function DashboardPage({
             )}
           </KpiCard>
           <KpiCard className={chartCardClassName}>
-            <h2 className="text-card-foreground mb-1 font-medium">Activity Pattern (UTC, Last 7 Days)</h2>
+            <h2 className="text-card-foreground mb-1 font-medium">
+              Activity Pattern (UTC, Last 7 Days)
+            </h2>
             {showHourlyActivityChart ? (
               <ClientLineChart
                 className="mt-4 h-56"
@@ -340,5 +356,5 @@ export default async function DashboardPage({
         </div>
       </footer>
     </main>
-  )
+  );
 }

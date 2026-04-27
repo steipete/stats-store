@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 describe("Table Components", () => {
   it("renders Table with proper styling", () => {
@@ -20,12 +20,12 @@ describe("Table Components", () => {
             <TableCell>Cell</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const table = screen.getByTestId("table")
-    expect(table).toHaveClass("w-full", "caption-bottom", "text-sm")
-  })
+    const table = screen.getByTestId("table");
+    expect(table).toHaveClass("w-full", "caption-bottom", "text-sm");
+  });
 
   it("renders TableHeader with proper styling", () => {
     render(
@@ -35,12 +35,12 @@ describe("Table Components", () => {
             <TableHead>Header</TableHead>
           </TableRow>
         </TableHeader>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const header = screen.getByTestId("header")
-    expect(header).toHaveClass("[&_tr]:border-b")
-  })
+    const header = screen.getByTestId("header");
+    expect(header).toHaveClass("[&_tr]:border-b");
+  });
 
   it("renders TableBody with proper styling", () => {
     render(
@@ -50,12 +50,12 @@ describe("Table Components", () => {
             <TableCell>Cell</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const body = screen.getByTestId("body")
-    expect(body).toHaveClass("[&_tr:last-child]:border-0")
-  })
+    const body = screen.getByTestId("body");
+    expect(body).toHaveClass("[&_tr:last-child]:border-0");
+  });
 
   it("renders TableFooter with proper styling", () => {
     render(
@@ -65,12 +65,12 @@ describe("Table Components", () => {
             <TableCell>Footer</TableCell>
           </TableRow>
         </TableFooter>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const footer = screen.getByTestId("footer")
-    expect(footer).toHaveClass("border-t", "bg-muted/50", "font-medium")
-  })
+    const footer = screen.getByTestId("footer");
+    expect(footer).toHaveClass("border-t", "bg-muted/50", "font-medium");
+  });
 
   it("renders TableRow with proper styling", () => {
     render(
@@ -80,12 +80,17 @@ describe("Table Components", () => {
             <TableCell>Cell</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const row = screen.getByTestId("row")
-    expect(row).toHaveClass("border-b", "transition-colors", "hover:bg-muted/50", "data-[state=selected]:bg-muted")
-  })
+    const row = screen.getByTestId("row");
+    expect(row).toHaveClass(
+      "border-b",
+      "transition-colors",
+      "hover:bg-muted/50",
+      "data-[state=selected]:bg-muted",
+    );
+  });
 
   it("renders TableHead with proper styling", () => {
     render(
@@ -95,12 +100,19 @@ describe("Table Components", () => {
             <TableHead data-testid="head">Column Header</TableHead>
           </TableRow>
         </TableHeader>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const head = screen.getByTestId("head")
-    expect(head).toHaveClass("h-12", "px-4", "text-left", "align-middle", "font-medium", "text-muted-foreground")
-  })
+    const head = screen.getByTestId("head");
+    expect(head).toHaveClass(
+      "h-12",
+      "px-4",
+      "text-left",
+      "align-middle",
+      "font-medium",
+      "text-muted-foreground",
+    );
+  });
 
   it("renders TableCell with proper styling", () => {
     render(
@@ -110,12 +122,12 @@ describe("Table Components", () => {
             <TableCell data-testid="cell">Cell Content</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const cell = screen.getByTestId("cell")
-    expect(cell).toHaveClass("p-4", "align-middle")
-  })
+    const cell = screen.getByTestId("cell");
+    expect(cell).toHaveClass("p-4", "align-middle");
+  });
 
   it("renders TableCaption with proper styling", () => {
     render(
@@ -126,12 +138,12 @@ describe("Table Components", () => {
             <TableCell>Cell</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    const caption = screen.getByTestId("caption")
-    expect(caption).toHaveClass("mt-4", "text-sm", "text-muted-foreground")
-  })
+    const caption = screen.getByTestId("caption");
+    expect(caption).toHaveClass("mt-4", "text-sm", "text-muted-foreground");
+  });
 
   it("renders complete table structure", () => {
     render(
@@ -165,15 +177,15 @@ describe("Table Components", () => {
             <TableCell>$400.00</TableCell>
           </TableRow>
         </TableFooter>
-      </Table>
-    )
+      </Table>,
+    );
 
     // Check all parts are rendered
-    expect(screen.getByText("A list of recent invoices.")).toBeInTheDocument()
-    expect(screen.getByText("Invoice")).toBeInTheDocument()
-    expect(screen.getByText("INV001")).toBeInTheDocument()
-    expect(screen.getByText("$400.00")).toBeInTheDocument()
-  })
+    expect(screen.getByText("A list of recent invoices.")).toBeInTheDocument();
+    expect(screen.getByText("Invoice")).toBeInTheDocument();
+    expect(screen.getByText("INV001")).toBeInTheDocument();
+    expect(screen.getByText("$400.00")).toBeInTheDocument();
+  });
 
   it("accepts custom className on all components", () => {
     render(
@@ -188,9 +200,9 @@ describe("Table Components", () => {
             <TableCell className="custom-cell">Cell</TableCell>
           </TableRow>
         </TableBody>
-      </Table>
-    )
+      </Table>,
+    );
 
-    expect(screen.getByRole("table")).toHaveClass("custom-table")
-  })
-})
+    expect(screen.getByRole("table")).toHaveClass("custom-table");
+  });
+});

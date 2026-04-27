@@ -28,7 +28,6 @@ The endpoint expects a JSON payload with the following structure:
 ## Setting Up Your App
 
 1. **Register Your App**: First, ensure your app's bundle identifier is registered in the database:
-
    - Access your Supabase dashboard
    - Add your app to the `apps` table with its `bundle_identifier`
 

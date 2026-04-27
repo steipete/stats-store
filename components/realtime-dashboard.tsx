@@ -1,31 +1,35 @@
-"use client"
+"use client";
 
-import { BellAlertIcon, SparklesIcon } from "@heroicons/react/24/outline"
-import { format } from "date-fns"
-import { AnimatePresence, motion } from "framer-motion"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { Toaster } from "sonner"
-import { useRealtimeStats } from "@/hooks/use-realtime-stats"
-import { valueFormatter } from "@/lib/formatters"
-import { RealtimeKpiCard } from "./realtime-kpi-card"
+import { BellAlertIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Toaster } from "sonner";
+import { useRealtimeStats } from "@/hooks/use-realtime-stats";
+import { valueFormatter } from "@/lib/formatters";
+import { RealtimeKpiCard } from "./realtime-kpi-card";
 
 interface RealtimeDashboardProps {
-  selectedAppId: string
-  dateRange: { from: Date; to: Date }
+  selectedAppId: string;
+  dateRange: { from: Date; to: Date };
   initialData: {
     kpis: {
-      unique_installs: number | string
-      reports_this_period: number | string
-      latest_version: string
-    }
+      unique_installs: number | string;
+      reports_this_period: number | string;
+      latest_version: string;
+    };
     kpisError?: {
-      unique_installs?: string
-      reports_this_period?: string
-      latest_version?: string
-    }
-  }
-  hideStatusIndicator?: boolean
-  onStatusChange?: (status: { isConnected: boolean; lastUpdate?: Date; realtimeEventsCount: number }) => void
+      unique_installs?: string;
+      reports_this_period?: string;
+      latest_version?: string;
+    };
+  };
+  hideStatusIndicator?: boolean;
+  onStatusChange?: (status: {
+    isConnected: boolean;
+    lastUpdate?: Date;
+    realtimeEventsCount: number;
+  }) => void;
 }
 
 export function RealtimeDashboard({
@@ -35,36 +39,41 @@ export function RealtimeDashboard({
   hideStatusIndicator = false,
   onStatusChange,
 }: RealtimeDashboardProps) {
-  const [showActivityFeed, setShowActivityFeed] = useState(false)
-  const [previousKpis, setPreviousKpis] = useState(initialData.kpis)
+  const [showActivityFeed, setShowActivityFeed] = useState(false);
+  const [previousKpis, setPreviousKpis] = useState(initialData.kpis);
 
   const { isConnected, lastUpdate, realtimeEvents, statsCache } = useRealtimeStats({
     appId: selectedAppId,
-  })
+  });
 
   // Notify parent of status changes
   useEffect(() => {
     if (onStatusChange) {
-      onStatusChange({ isConnected, lastUpdate: lastUpdate ?? undefined, realtimeEventsCount: realtimeEvents.length })
+      onStatusChange({
+        isConnected,
+        lastUpdate: lastUpdate ?? undefined,
+        realtimeEventsCount: realtimeEvents.length,
+      });
     }
-  }, [isConnected, lastUpdate, realtimeEvents.length, onStatusChange])
+  }, [isConnected, lastUpdate, realtimeEvents.length, onStatusChange]);
 
   const currentKpis = useMemo(
     () => ({
       latest_version: statsCache.latest_version?.version ?? initialData.kpis.latest_version,
-      reports_this_period: statsCache.kpis?.total_reports_today ?? initialData.kpis.reports_this_period,
+      reports_this_period:
+        statsCache.kpis?.total_reports_today ?? initialData.kpis.reports_this_period,
       unique_installs: statsCache.kpis?.unique_users_today ?? initialData.kpis.unique_installs,
     }),
-    [statsCache.kpis, statsCache.latest_version, initialData.kpis]
-  )
+    [statsCache.kpis, statsCache.latest_version, initialData.kpis],
+  );
 
-  const currentKpisRef = useRef(currentKpis)
+  const currentKpisRef = useRef(currentKpis);
   useEffect(() => {
     if (currentKpisRef.current !== currentKpis) {
-      setPreviousKpis(currentKpisRef.current)
-      currentKpisRef.current = currentKpis
+      setPreviousKpis(currentKpisRef.current);
+      currentKpisRef.current = currentKpis;
     }
-  }, [currentKpis])
+  }, [currentKpis]);
 
   return (
     <>
@@ -91,7 +100,9 @@ export function RealtimeDashboard({
                 </div>
                 <span className="text-sm text-muted-foreground">
                   Real-time updates active
-                  {lastUpdate && <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>}
+                  {lastUpdate && (
+                    <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>
+                  )}
                 </span>
               </div>
 
@@ -208,7 +219,9 @@ export function RealtimeDashboard({
                     {event.event_type === "version_update" && (
                       <>
                         <div className="h-2 w-2 bg-blue-500 rounded-full" />
-                        <span className="text-sm">Version update: {event.event_data.new_version}</span>
+                        <span className="text-sm">
+                          Version update: {event.event_data.new_version}
+                        </span>
                       </>
                     )}
                   </div>
@@ -222,5 +235,5 @@ export function RealtimeDashboard({
         )}
       </AnimatePresence>
     </>
-  )
+  );
 }

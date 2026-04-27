@@ -1,252 +1,263 @@
-import { fireEvent, render, screen } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { format, startOfDay, subDays } from "date-fns"
-import { useRouter, useSearchParams } from "next/navigation"
-import { beforeEach, describe, expect, it, vi } from "vitest"
-import { DashboardFilters } from "../../components/dashboard-filters"
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { format, startOfDay, subDays } from "date-fns";
+import { useRouter, useSearchParams } from "next/navigation";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DashboardFilters } from "../../components/dashboard-filters";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
   useRouter: vi.fn(),
   useSearchParams: vi.fn(),
-}))
+}));
 
-function expectLastPushParams(mockPush: ReturnType<typeof vi.fn>, expected: Record<string, string | undefined>) {
-  const lastCall = mockPush.mock.calls.at(-1)
-  expect(lastCall).toBeTruthy()
-  const pushedUrl = String(lastCall?.[0] ?? "")
+function expectLastPushParams(
+  mockPush: ReturnType<typeof vi.fn>,
+  expected: Record<string, string | undefined>,
+) {
+  const lastCall = mockPush.mock.calls.at(-1);
+  expect(lastCall).toBeTruthy();
+  const pushedUrl = String(lastCall?.[0] ?? "");
 
-  expect(pushedUrl.startsWith("/?")).toBe(true)
+  expect(pushedUrl.startsWith("/?")).toBe(true);
 
-  const query = pushedUrl.split("?")[1] ?? ""
-  const params = new URLSearchParams(query)
+  const query = pushedUrl.split("?")[1] ?? "";
+  const params = new URLSearchParams(query);
 
   for (const [key, value] of Object.entries(expected)) {
     if (value === undefined) {
-      expect(params.has(key)).toBe(false)
+      expect(params.has(key)).toBe(false);
     } else {
-      expect(params.get(key)).toBe(value)
+      expect(params.get(key)).toBe(value);
     }
   }
 }
 
 describe("DashboardFilters", () => {
-  const mockPush = vi.fn()
-  let mockSearchParams = new URLSearchParams()
+  const mockPush = vi.fn();
+  let mockSearchParams = new URLSearchParams();
 
   const mockApps = [
     { id: "1", name: "App One" },
     { id: "2", name: "App Two" },
     { id: "3", name: "App Three" },
-  ]
+  ];
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockSearchParams = new URLSearchParams()
-    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<typeof useRouter>)
-    vi.mocked(useSearchParams).mockReturnValue(mockSearchParams as unknown as ReturnType<typeof useSearchParams>)
-  })
+    vi.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
+    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<
+      typeof useRouter
+    >);
+    vi.mocked(useSearchParams).mockReturnValue(
+      mockSearchParams as unknown as ReturnType<typeof useSearchParams>,
+    );
+  });
 
   describe("app filter rendering", () => {
     it("renders with all apps option", () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const select = screen.getByRole("combobox")
-      expect(select).toBeInTheDocument()
-      expect(screen.getByText("All Apps")).toBeInTheDocument()
-      expect(screen.getByText("App One")).toBeInTheDocument()
-      expect(screen.getByText("App Two")).toBeInTheDocument()
-      expect(screen.getByText("App Three")).toBeInTheDocument()
-    })
+      const select = screen.getByRole("combobox");
+      expect(select).toBeInTheDocument();
+      expect(screen.getByText("All Apps")).toBeInTheDocument();
+      expect(screen.getByText("App One")).toBeInTheDocument();
+      expect(screen.getByText("App Two")).toBeInTheDocument();
+      expect(screen.getByText("App Three")).toBeInTheDocument();
+    });
 
     it("selects current app correctly", () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="2" />)
+      render(<DashboardFilters apps={mockApps} currentAppId="2" />);
 
-      const select = screen.getByRole("combobox") as HTMLSelectElement
-      expect(select.value).toBe("2")
-    })
+      const select = screen.getByRole("combobox") as HTMLSelectElement;
+      expect(select.value).toBe("2");
+    });
 
     it('defaults to "all" when no currentAppId', () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="" />)
+      render(<DashboardFilters apps={mockApps} currentAppId="" />);
 
-      const select = screen.getByRole("combobox") as HTMLSelectElement
-      expect(select.value).toBe("all")
-    })
+      const select = screen.getByRole("combobox") as HTMLSelectElement;
+      expect(select.value).toBe("all");
+    });
 
     it("renders error state when appsError is provided", () => {
-      render(<DashboardFilters apps={null} currentAppId="all" appsError="Failed to load apps" />)
+      render(<DashboardFilters apps={null} currentAppId="all" appsError="Failed to load apps" />);
 
-      expect(screen.getByText("Failed to load apps")).toBeInTheDocument()
-      expect(screen.queryByRole("combobox")).not.toBeInTheDocument()
-    })
+      expect(screen.getByText("Failed to load apps")).toBeInTheDocument();
+      expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    });
 
     it('renders only "All Apps" option when no apps', () => {
-      render(<DashboardFilters apps={[]} currentAppId="all" />)
+      render(<DashboardFilters apps={[]} currentAppId="all" />);
 
-      const select = screen.getByRole("combobox")
-      expect(select).toBeInTheDocument()
-      expect(screen.getByText("All Apps")).toBeInTheDocument()
+      const select = screen.getByRole("combobox");
+      expect(select).toBeInTheDocument();
+      expect(screen.getByText("All Apps")).toBeInTheDocument();
       // Should not show other apps
-      expect(screen.queryByText("App One")).not.toBeInTheDocument()
-    })
+      expect(screen.queryByText("App One")).not.toBeInTheDocument();
+    });
 
     it("handles null apps gracefully", () => {
-      render(<DashboardFilters apps={null} currentAppId="all" />)
+      render(<DashboardFilters apps={null} currentAppId="all" />);
 
       // Should show the select with just "All Apps" option
-      const select = screen.getByRole("combobox")
-      expect(select).toBeInTheDocument()
-      expect(screen.getByText("All Apps")).toBeInTheDocument()
-    })
-  })
+      const select = screen.getByRole("combobox");
+      expect(select).toBeInTheDocument();
+      expect(screen.getByText("All Apps")).toBeInTheDocument();
+    });
+  });
 
   describe("app filter interactions", () => {
     it("handles app selection change", async () => {
-      const user = userEvent.setup()
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      const user = userEvent.setup();
+      render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const select = screen.getByRole("combobox")
-      await user.selectOptions(select, "2")
+      const select = screen.getByRole("combobox");
+      await user.selectOptions(select, "2");
 
-      expectLastPushParams(mockPush, { app: "2" })
-    })
+      expectLastPushParams(mockPush, { app: "2" });
+    });
 
     it('removes app param when selecting "all"', async () => {
-      const user = userEvent.setup()
-      mockSearchParams.set("app", "2")
-      render(<DashboardFilters apps={mockApps} currentAppId="2" />)
+      const user = userEvent.setup();
+      mockSearchParams.set("app", "2");
+      render(<DashboardFilters apps={mockApps} currentAppId="2" />);
 
-      const select = screen.getByRole("combobox")
-      await user.selectOptions(select, "all")
+      const select = screen.getByRole("combobox");
+      await user.selectOptions(select, "all");
 
-      expectLastPushParams(mockPush, { app: undefined })
-    })
+      expectLastPushParams(mockPush, { app: undefined });
+    });
 
     it("preserves other query params when changing app", async () => {
-      const user = userEvent.setup()
-      mockSearchParams.set("from", "2024-01-01")
-      mockSearchParams.set("to", "2024-01-31")
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      const user = userEvent.setup();
+      mockSearchParams.set("from", "2024-01-01");
+      mockSearchParams.set("to", "2024-01-31");
+      render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const select = screen.getByRole("combobox")
-      await user.selectOptions(select, "1")
+      const select = screen.getByRole("combobox");
+      await user.selectOptions(select, "1");
 
-      expectLastPushParams(mockPush, { app: "1", from: "2024-01-01", to: "2024-01-31" })
-    })
-  })
+      expectLastPushParams(mockPush, { app: "1", from: "2024-01-01", to: "2024-01-31" });
+    });
+  });
 
   describe("date range picker", () => {
     it("renders with current date range", () => {
       const dateRange = {
         from: new Date("2024-01-01"),
         to: new Date("2024-01-31"),
-      }
-      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />)
+      };
+      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />);
 
-      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-01")
-      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-31")
-    })
+      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-01");
+      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-31");
+    });
 
     it("updates URL params on date change", async () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={undefined} />)
+      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={undefined} />);
 
-      fireEvent.change(screen.getByLabelText(/from/i), { target: { value: "2024-01-01" } })
-      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-01" })
+      fireEvent.change(screen.getByLabelText(/from/i), { target: { value: "2024-01-01" } });
+      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-01" });
 
-      fireEvent.change(screen.getByLabelText(/to/i), { target: { value: "2024-01-31" } })
-      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-31" })
-    })
+      fireEvent.change(screen.getByLabelText(/to/i), { target: { value: "2024-01-31" } });
+      expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-31" });
+    });
 
     it("treats single-day range as from=to", async () => {
       const dateRange = {
         from: new Date("2024-01-15"),
         to: undefined,
-      }
+      };
 
-      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />)
+      render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />);
 
-      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-15")
-      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-15")
-    })
+      expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-15");
+      expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-15");
+    });
 
     it("formats dates correctly in URL params", () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
       // The actual date picker interaction would be more complex
       // This tests the date formatting logic
-      const testDate = new Date("2024-01-15")
-      const formattedDate = format(startOfDay(testDate), "yyyy-MM-dd")
-      expect(formattedDate).toBe("2024-01-15")
-    })
-  })
+      const testDate = new Date("2024-01-15");
+      const formattedDate = format(startOfDay(testDate), "yyyy-MM-dd");
+      expect(formattedDate).toBe("2024-01-15");
+    });
+  });
 
   describe("styling and layout", () => {
     it("applies responsive grid layout", () => {
-      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const grid = container.firstChild
-      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "gap-4")
-    })
+      const grid = container.firstChild;
+      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "gap-4");
+    });
 
     it("applies correct styling to inputs", () => {
-      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const selectWrapper = container.querySelector(".relative.w-full")
-      expect(selectWrapper).toHaveClass("rounded-lg", "border", "shadow-subtle")
-    })
+      const selectWrapper = container.querySelector(".relative.w-full");
+      expect(selectWrapper).toHaveClass("rounded-lg", "border", "shadow-subtle");
+    });
 
     it("applies error styling when there is an error", () => {
-      render(<DashboardFilters apps={undefined} currentAppId="all" appsError="Error loading" />)
+      render(<DashboardFilters apps={undefined} currentAppId="all" appsError="Error loading" />);
 
-      const errorDiv = screen.getByText("Error loading").parentElement
-      expect(errorDiv).toHaveClass("border-destructive/50", "bg-destructive/10", "text-destructive")
-    })
+      const errorDiv = screen.getByText("Error loading").parentElement;
+      expect(errorDiv).toHaveClass(
+        "border-destructive/50",
+        "bg-destructive/10",
+        "text-destructive",
+      );
+    });
 
     it("shows chevron icon in select", () => {
-      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />)
+      const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const chevron = container.querySelector(".h-5.w-5.text-muted-foreground")
-      expect(chevron).toBeInTheDocument()
-    })
-  })
+      const chevron = container.querySelector(".h-5.w-5.text-muted-foreground");
+      expect(chevron).toBeInTheDocument();
+    });
+  });
 
   describe("complex scenarios", () => {
     it("handles all props together", () => {
       const dateRange = {
         from: subDays(new Date(), 30),
         to: new Date(),
-      }
+      };
 
-      render(<DashboardFilters apps={mockApps} currentAppId="2" currentDateRange={dateRange} />)
+      render(<DashboardFilters apps={mockApps} currentAppId="2" currentDateRange={dateRange} />);
 
-      const select = screen.getByRole("combobox") as HTMLSelectElement
-      expect(select.value).toBe("2")
-      expect(screen.getByLabelText(/from/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/to/i)).toBeInTheDocument()
-    })
+      const select = screen.getByRole("combobox") as HTMLSelectElement;
+      expect(select.value).toBe("2");
+      expect(screen.getByLabelText(/from/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/to/i)).toBeInTheDocument();
+    });
 
     it("maintains filter state across interactions", async () => {
-      const user = userEvent.setup()
-      mockSearchParams.set("from", "2024-01-01")
-      mockSearchParams.set("to", "2024-01-31")
-      mockSearchParams.set("app", "1")
+      const user = userEvent.setup();
+      mockSearchParams.set("from", "2024-01-01");
+      mockSearchParams.set("to", "2024-01-31");
+      mockSearchParams.set("app", "1");
 
-      render(<DashboardFilters apps={mockApps} currentAppId="1" />)
+      render(<DashboardFilters apps={mockApps} currentAppId="1" />);
 
       // Change app
-      const select = screen.getByRole("combobox")
-      await user.selectOptions(select, "2")
+      const select = screen.getByRole("combobox");
+      await user.selectOptions(select, "2");
 
       // Should preserve date params
-      expectLastPushParams(mockPush, { app: "2", from: "2024-01-01", to: "2024-01-31" })
-    })
+      expectLastPushParams(mockPush, { app: "2", from: "2024-01-01", to: "2024-01-31" });
+    });
 
     it("handles empty apps array with error", () => {
-      render(<DashboardFilters apps={[]} currentAppId="all" appsError="No apps configured" />)
+      render(<DashboardFilters apps={[]} currentAppId="all" appsError="No apps configured" />);
 
       // Error should take precedence
-      expect(screen.getByText("No apps configured")).toBeInTheDocument()
-      expect(screen.queryByText("No applications found.")).not.toBeInTheDocument()
-    })
-  })
-})
+      expect(screen.getByText("No apps configured")).toBeInTheDocument();
+      expect(screen.queryByText("No applications found.")).not.toBeInTheDocument();
+    });
+  });
+});

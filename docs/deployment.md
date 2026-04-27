@@ -11,14 +11,12 @@ This guide will help you deploy your own instance of stats.store.
 ## Step 1: Set Up Supabase
 
 1. **Create a new Supabase project**
-
    - Go to [app.supabase.com](https://app.supabase.com/)
    - Click "New project"
    - Choose a name and password
    - Select a region close to your users
 
 2. **Run the database migrations**
-
    - Install Supabase CLI (`supabase --version`)
    - Copy `.env.migrations.example` → `.env.migrations` and fill it in
    - Run:
@@ -30,7 +28,6 @@ This guide will help you deploy your own instance of stats.store.
    - This applies `supabase/migrations/*` to your remote database
 
 3. **Enable real-time (optional but cool!)**
-
    - Go to Database → Replication
    - Enable replication for:
      - `realtime_events` table
@@ -64,7 +61,6 @@ Click the button and fill in your Supabase credentials!
    \`\`\`
 
 2. **Import to Vercel**
-
    - Go to [vercel.com/new](https://vercel.com/new)
    - Import your forked repository
    - Configure environment variables:
@@ -139,7 +135,6 @@ When new features are released:
    \`\`\`
 
 2. **Run new migrations** (if any)
-
    - Run `supabase db push` again
 
 3. **Redeploy**

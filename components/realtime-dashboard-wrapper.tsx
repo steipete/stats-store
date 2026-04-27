@@ -1,24 +1,27 @@
-"use client"
+"use client";
 
-import { BellIcon, SparklesIcon } from "@heroicons/react/24/outline"
-import { AnimatePresence, motion } from "framer-motion"
-import { useState } from "react"
-import { toast } from "sonner"
-import { useRealtimeStats } from "@/hooks/use-realtime-stats"
+import { BellIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useRealtimeStats } from "@/hooks/use-realtime-stats";
 
 interface RealtimeDashboardWrapperProps {
-  children: React.ReactNode
-  selectedAppId: string
+  children: React.ReactNode;
+  selectedAppId: string;
   initialKpis?: {
-    unique_installs: number | string
-    reports_this_period: number | string
-    latest_version: string
-  }
+    unique_installs: number | string;
+    reports_this_period: number | string;
+    latest_version: string;
+  };
 }
 
-export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDashboardWrapperProps) {
-  const [showRealtimeIndicator, setShowRealtimeIndicator] = useState(false)
-  const [latestEvent, setLatestEvent] = useState<string | null>(null)
+export function RealtimeDashboardWrapper({
+  children,
+  selectedAppId,
+}: RealtimeDashboardWrapperProps) {
+  const [showRealtimeIndicator, setShowRealtimeIndicator] = useState(false);
+  const [latestEvent, setLatestEvent] = useState<string | null>(null);
 
   const { isConnected, lastUpdate, realtimeEvents } = useRealtimeStats({
     appId: selectedAppId,
@@ -27,25 +30,25 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
       toast.success(`Milestone reached! 🎉`, {
         description: event.event_data.message,
         duration: 5000,
-      })
+      });
     },
     onNewUser: (event) => {
       // Show toast notification for new users
       toast.success(`New user detected!`, {
         description: `App version: ${event.event_data.app_version}`,
         icon: <SparklesIcon className="h-4 w-4" />,
-      })
-      setLatestEvent("New user joined")
+      });
+      setLatestEvent("New user joined");
 
       // Flash the indicator
-      setShowRealtimeIndicator(true)
-      setTimeout(() => setShowRealtimeIndicator(false), 3000)
+      setShowRealtimeIndicator(true);
+      setTimeout(() => setShowRealtimeIndicator(false), 3000);
     },
     onVersionUpdate: (event) => {
       // Notify about version updates
-      toast.info(`New version detected: ${event.event_data.new_version}`)
+      toast.info(`New version detected: ${event.event_data.new_version}`);
     },
-  })
+  });
 
   // Merge real-time KPIs with initial data
   // Const realtimeKpis = statsCache.kpis
@@ -79,7 +82,9 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
             </div>
             <span className="text-sm text-muted-foreground">Real-time updates active</span>
             {lastUpdate && (
-              <span className="text-xs text-muted-foreground">• Last: {new Date(lastUpdate).toLocaleTimeString()}</span>
+              <span className="text-xs text-muted-foreground">
+                • Last: {new Date(lastUpdate).toLocaleTimeString()}
+              </span>
             )}
           </motion.div>
         )}
@@ -129,12 +134,14 @@ export function RealtimeDashboardWrapper({ children, selectedAppId }: RealtimeDa
                   {event.event_type === "version_update" && "Version update"}
                   {event.event_type === "report_batch" && "Batch update"}
                 </span>
-                <span className="text-xs text-muted-foreground">{new Date(event.created_at).toLocaleTimeString()}</span>
+                <span className="text-xs text-muted-foreground">
+                  {new Date(event.created_at).toLocaleTimeString()}
+                </span>
               </motion.div>
             ))}
           </div>
         </motion.div>
       )}
     </div>
-  )
+  );
 }

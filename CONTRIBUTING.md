@@ -43,7 +43,6 @@ Awesome! Here's how:
    \`\`\`
 
 3. **Make Your Changes**
-
    - Write clean, readable code
    - Follow the existing style (Prettier will help!)
    - Add tests if needed
@@ -67,7 +66,6 @@ Awesome! Here's how:
    \`\`\`
 
    We use [conventional commits](https://www.conventionalcommits.org/):
-
    - `fix:` for bug fixes
    - `feat:` for new features
    - `docs:` for documentation

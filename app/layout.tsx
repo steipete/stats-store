@@ -1,9 +1,9 @@
-import { Analytics } from "@vercel/analytics/next"
-import type { Metadata } from "next"
-import type React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
-import { ThemeScript } from "./theme-script"
-import "./globals.css"
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata } from "next";
+import type React from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeScript } from "./theme-script";
+import "./globals.css";
 
 const siteConfig = {
   name: "stats.store",
@@ -14,7 +14,7 @@ const siteConfig = {
   author: "Peter Steinberger",
   twitterHandle: "@steipete",
   twitterCardType: "summary_large_image" as const, // Explicitly type for Metadata
-}
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -27,7 +27,15 @@ export const metadata: Metadata = {
   creator: siteConfig.author,
   publisher: siteConfig.author,
   generator: "Next.js", // Or "v0.dev" if you prefer
-  keywords: ["Sparkle", "macOS", "analytics", "privacy-first", "open source", "app statistics", "developer tools"],
+  keywords: [
+    "Sparkle",
+    "macOS",
+    "analytics",
+    "privacy-first",
+    "open source",
+    "app statistics",
+    "developer tools",
+  ],
   robots: {
     follow: true,
     googleBot: {
@@ -69,12 +77,12 @@ export const metadata: Metadata = {
     shortcut: "/favicon.png",
   },
   // Manifest: "/site.webmanifest", // If you have a web app manifest
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -82,11 +90,16 @@ export default function RootLayout({
         <ThemeScript />
       </head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
         </ThemeProvider>
         {process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === "1" ? <Analytics /> : null}
       </body>
     </html>
-  )
+  );
 }

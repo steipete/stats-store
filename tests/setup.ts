@@ -1,7 +1,7 @@
-import { vi } from "vitest"
+import { vi } from "vitest";
 
 if (typeof globalThis.HTMLElement !== "undefined") {
-  await import("@testing-library/jest-dom")
+  await import("@testing-library/jest-dom");
 }
 
 if (typeof globalThis.ResizeObserver === "undefined") {
@@ -12,7 +12,7 @@ if (typeof globalThis.ResizeObserver === "undefined") {
   }
 
   // @ts-expect-error - runtime polyfill for tests
-  globalThis.ResizeObserver = ResizeObserver
+  globalThis.ResizeObserver = ResizeObserver;
 }
 
 // Mock Next.js router
@@ -29,11 +29,11 @@ vi.mock("next/navigation", () => ({
     get: vi.fn(),
     has: vi.fn(),
   }),
-}))
+}));
 
 // Mock environment variables
-process.env.SUPABASE_URL = "https://test.supabase.co"
-process.env.SUPABASE_ANON_KEY = "test-anon-key"
-process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key"
-process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co"
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key"
+process.env.SUPABASE_URL = "https://test.supabase.co";
+process.env.SUPABASE_ANON_KEY = "test-anon-key";
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";

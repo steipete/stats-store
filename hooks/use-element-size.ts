@@ -1,43 +1,45 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
 
-type ElementSize = { width: number; height: number }
+type ElementSize = { width: number; height: number };
 
 export function useElementSize<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null)
-  const [size, setSize] = useState<ElementSize>({ height: 0, width: 0 })
+  const ref = useRef<T | null>(null);
+  const [size, setSize] = useState<ElementSize>({ height: 0, width: 0 });
 
   useEffect(() => {
-    const element = ref.current
+    const element = ref.current;
     if (!element) {
-      return
+      return;
     }
 
-    let frame = 0
+    let frame = 0;
 
     const update = () => {
-      cancelAnimationFrame(frame)
+      cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        const rect = element.getBoundingClientRect()
-        const width = Math.max(0, Math.round(rect.width))
-        const height = Math.max(0, Math.round(rect.height))
-        setSize((prev) => (prev.width === width && prev.height === height ? prev : { height, width }))
-      })
-    }
+        const rect = element.getBoundingClientRect();
+        const width = Math.max(0, Math.round(rect.width));
+        const height = Math.max(0, Math.round(rect.height));
+        setSize((prev) =>
+          prev.width === width && prev.height === height ? prev : { height, width },
+        );
+      });
+    };
 
-    update()
+    update();
 
     const resizeObserver = new ResizeObserver(() => {
-      update()
-    })
-    resizeObserver.observe(element)
+      update();
+    });
+    resizeObserver.observe(element);
 
     return () => {
-      cancelAnimationFrame(frame)
-      resizeObserver.disconnect()
-    }
-  }, [])
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+    };
+  }, []);
 
-  return { ref, size }
+  return { ref, size };
 }

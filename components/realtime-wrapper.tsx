@@ -1,33 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { RealtimeDashboard } from "./realtime-dashboard"
-import { RealtimeStatusFooter } from "./realtime-status-footer"
+import { useState } from "react";
+import { RealtimeDashboard } from "./realtime-dashboard";
+import { RealtimeStatusFooter } from "./realtime-status-footer";
 
 interface RealtimeWrapperProps {
-  selectedAppId: string
-  dateRange: { from: Date; to: Date }
+  selectedAppId: string;
+  dateRange: { from: Date; to: Date };
   initialData: {
     kpis: {
-      unique_installs: number | string
-      reports_this_period: number | string
-      latest_version: string
-    }
+      unique_installs: number | string;
+      reports_this_period: number | string;
+      latest_version: string;
+    };
     kpisError?: {
-      unique_installs?: string
-      reports_this_period?: string
-      latest_version?: string
-    }
-  }
-  children: React.ReactNode
+      unique_installs?: string;
+      reports_this_period?: string;
+      latest_version?: string;
+    };
+  };
+  children: React.ReactNode;
 }
 
-export function RealtimeWrapper({ selectedAppId, dateRange, initialData, children }: RealtimeWrapperProps) {
+export function RealtimeWrapper({
+  selectedAppId,
+  dateRange,
+  initialData,
+  children,
+}: RealtimeWrapperProps) {
   const [realtimeStatus, setRealtimeStatus] = useState<{
-    isConnected: boolean
-    lastUpdate?: Date
-    realtimeEventsCount: number
-  }>({ isConnected: false, realtimeEventsCount: 0 })
+    isConnected: boolean;
+    lastUpdate?: Date;
+    realtimeEventsCount: number;
+  }>({ isConnected: false, realtimeEventsCount: 0 });
 
   return (
     <>
@@ -45,5 +50,5 @@ export function RealtimeWrapper({ selectedAppId, dateRange, initialData, childre
         realtimeEventsCount={realtimeStatus.realtimeEventsCount}
       />
     </>
-  )
+  );
 }

@@ -34,7 +34,9 @@ The real-time system uses an aggregated update approach (Option 2) that provides
 Apply the Supabase migration:
 
 \`\`\`bash
+
 # Recommended (CLI)
+
 supabase link --project-ref <your_project_ref>
 supabase db push
 \`\`\`

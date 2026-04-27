@@ -1,25 +1,25 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
-import { vi } from "vitest"
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { vi } from "vitest";
 
 interface MockData {
-  apps?: unknown[]
-  reports?: unknown[]
-  daily_counts?: unknown[]
-  os_distribution?: unknown[]
-  cpu_distribution?: unknown[]
-  top_models?: unknown[]
-  latest_version?: string
+  apps?: unknown[];
+  reports?: unknown[];
+  daily_counts?: unknown[];
+  os_distribution?: unknown[];
+  cpu_distribution?: unknown[];
+  top_models?: unknown[];
+  latest_version?: string;
 }
 
 export function createMockSupabaseClient(mockData: MockData = {}) {
   const mockFrom = (table: string) => {
     const buildResult = () => {
-      const data = mockData[table as keyof MockData] ?? []
-      const count = Array.isArray(data) ? data.length : 0
-      return { count, data, error: null }
-    }
+      const data = mockData[table as keyof MockData] ?? [];
+      const count = Array.isArray(data) ? data.length : 0;
+      return { count, data, error: null };
+    };
 
-    const query = Promise.resolve(buildResult()) as unknown as Record<string, unknown>
+    const query = Promise.resolve(buildResult()) as unknown as Record<string, unknown>;
 
     const chainableMethods = {
       delete: vi.fn(() => query),
@@ -40,42 +40,42 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
       select: vi.fn(() => query),
       single: vi.fn(() => query),
       update: vi.fn(() => query),
-    }
+    };
 
-    return Object.assign(query, chainableMethods)
-  }
+    return Object.assign(query, chainableMethods);
+  };
 
   const mockRpc = (functionName: string, _params?: unknown) => {
-    let data: unknown
+    let data: unknown;
 
     switch (functionName) {
       case "get_daily_report_counts": {
-        data = mockData.daily_counts ?? []
-        break
+        data = mockData.daily_counts ?? [];
+        break;
       }
       case "get_os_version_distribution": {
-        data = mockData.os_distribution ?? []
-        break
+        data = mockData.os_distribution ?? [];
+        break;
       }
       case "get_cpu_architecture_distribution": {
-        data = mockData.cpu_distribution ?? []
-        break
+        data = mockData.cpu_distribution ?? [];
+        break;
       }
       case "get_top_models": {
-        data = mockData.top_models ?? []
-        break
+        data = mockData.top_models ?? [];
+        break;
       }
       case "get_latest_app_version": {
-        data = mockData.latest_version ?? "N/A"
-        break
+        data = mockData.latest_version ?? "N/A";
+        break;
       }
       default: {
-        data = null
+        data = null;
       }
     }
 
-    return Promise.resolve({ data, error: undefined }) as unknown as Record<string, unknown>
-  }
+    return Promise.resolve({ data, error: undefined }) as unknown as Record<string, unknown>;
+  };
 
   const mockClient: Partial<SupabaseClient> = {
     auth: {
@@ -84,28 +84,30 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
     } as unknown as SupabaseClient["auth"],
     from: vi.fn().mockImplementation(mockFrom),
     rpc: vi.fn().mockImplementation(mockRpc),
-  }
+  };
 
-  return mockClient as SupabaseClient
+  return mockClient as SupabaseClient;
 }
 
 export function createMockSupabaseWithError(error: unknown) {
   const buildErrorQuery = () => {
-    const query = Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>
+    const query = Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>;
     const chainableMethods = {
       eq: vi.fn(() => query),
       order: vi.fn(() => query),
       select: vi.fn(() => query),
-    }
-    return Object.assign(query, chainableMethods)
-  }
+    };
+    return Object.assign(query, chainableMethods);
+  };
 
   const mockClient: Partial<SupabaseClient> = {
     from: vi.fn().mockImplementation(buildErrorQuery),
     rpc: vi
       .fn()
-      .mockImplementation(() => Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>),
-  }
+      .mockImplementation(
+        () => Promise.resolve({ data: undefined, error }) as unknown as Record<string, unknown>,
+      ),
+  };
 
-  return mockClient as SupabaseClient
+  return mockClient as SupabaseClient;
 }

@@ -1,4 +1,4 @@
 export type DateRangeValue = {
-  from?: Date
-  to?: Date
-}
+  from?: Date;
+  to?: Date;
+};

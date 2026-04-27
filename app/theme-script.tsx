@@ -11,7 +11,7 @@ export function ThemeScript() {
         document.documentElement.classList.remove("dark");
       }
     } catch {}
-  `
+  `;
 
-  return <script>{script}</script>
+  return <script>{script}</script>;
 }

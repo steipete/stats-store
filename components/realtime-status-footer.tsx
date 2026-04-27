@@ -1,18 +1,22 @@
-"use client"
+"use client";
 
-import { BellAlertIcon } from "@heroicons/react/24/outline"
-import { format } from "date-fns"
-import { AnimatePresence, motion } from "framer-motion"
-import { useState } from "react"
+import { BellAlertIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 interface RealtimeStatusFooterProps {
-  isConnected: boolean
-  lastUpdate?: Date
-  realtimeEventsCount: number
+  isConnected: boolean;
+  lastUpdate?: Date;
+  realtimeEventsCount: number;
 }
 
-export function RealtimeStatusFooter({ isConnected, lastUpdate, realtimeEventsCount }: RealtimeStatusFooterProps) {
-  const [showActivityFeed, setShowActivityFeed] = useState(false)
+export function RealtimeStatusFooter({
+  isConnected,
+  lastUpdate,
+  realtimeEventsCount,
+}: RealtimeStatusFooterProps) {
+  const [showActivityFeed, setShowActivityFeed] = useState(false);
 
   return (
     <AnimatePresence>
@@ -34,7 +38,9 @@ export function RealtimeStatusFooter({ isConnected, lastUpdate, realtimeEventsCo
             </div>
             <span className="text-sm text-muted-foreground">
               Real-time updates active
-              {lastUpdate && <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>}
+              {lastUpdate && (
+                <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>
+              )}
             </span>
           </div>
 
@@ -54,5 +60,5 @@ export function RealtimeStatusFooter({ isConnected, lastUpdate, realtimeEventsCo
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

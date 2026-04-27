@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { BellAlertIcon } from "@heroicons/react/24/outline"
-import { format } from "date-fns"
-import { AnimatePresence, motion } from "framer-motion"
+import { BellAlertIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface RealtimeStatusIndicatorProps {
-  isConnected: boolean
-  lastUpdate?: Date
-  showActivityFeed: boolean
-  setShowActivityFeed: (show: boolean) => void
-  realtimeEventsCount: number
+  isConnected: boolean;
+  lastUpdate?: Date;
+  showActivityFeed: boolean;
+  setShowActivityFeed: (show: boolean) => void;
+  realtimeEventsCount: number;
 }
 
 export function RealtimeStatusIndicator({
@@ -39,7 +39,9 @@ export function RealtimeStatusIndicator({
             </div>
             <span className="text-sm text-muted-foreground">
               Real-time updates active
-              {lastUpdate && <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>}
+              {lastUpdate && (
+                <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>
+              )}
             </span>
           </div>
 
@@ -59,5 +61,5 @@ export function RealtimeStatusIndicator({
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

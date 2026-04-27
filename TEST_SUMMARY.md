@@ -24,14 +24,12 @@ I've added comprehensive tests for the Stats Store project. Here's what was test
   - Tooltip functionality
   - Children rendering and spacing
 - `tests/components/kpi-card-simple.test.tsx` - Simple KPI Card variant
-
   - Required props validation
   - Icon customization
   - Error state with custom error icon
   - Tooltip functionality
 
 - `tests/components/dashboard-filters.test.tsx` - Dashboard filters
-
   - App filter dropdown functionality
   - Date range picker presence
   - URL parameter updates
@@ -39,7 +37,6 @@ I've added comprehensive tests for the Stats Store project. Here's what was test
   - Refresh button functionality
 
 - `tests/components/client-charts.test.tsx` - Chart wrapper components
-
   - Line, Bar, and Donut chart components
   - Data rendering and formatting
   - Props pass-through

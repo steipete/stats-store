@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts"
-import { useElementSize } from "@/hooks/use-element-size"
-import { valueFormatter } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { useElementSize } from "@/hooks/use-element-size";
+import { valueFormatter } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export interface ClientLineChartProps<T extends object = Record<string, unknown>> {
-  className?: string
-  data: T[]
-  index: string
-  categories: string[]
-  colors?: string[]
-  showAnimation?: boolean
-  yAxisWidth?: number
+  className?: string;
+  data: T[];
+  index: string;
+  categories: string[];
+  colors?: string[];
+  showAnimation?: boolean;
+  yAxisWidth?: number;
 }
 
 const colorMap: Record<string, string> = {
@@ -24,26 +24,32 @@ const colorMap: Record<string, string> = {
   purple: "var(--chart-3)",
   rose: "var(--chart-5)",
   teal: "var(--chart-2)",
-}
+};
 
 function resolveSeriesColor(colors: string[] | undefined, seriesIndex: number) {
-  const requested = colors?.[seriesIndex]
+  const requested = colors?.[seriesIndex];
   if (requested && requested in colorMap) {
-    return colorMap[requested]
+    return colorMap[requested];
   }
-  const palette = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"]
-  return palette[seriesIndex % palette.length]
+  const palette = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ];
+  return palette[seriesIndex % palette.length];
 }
 
 function toNumber(value: unknown): number {
   if (typeof value === "number") {
-    return value
+    return value;
   }
   if (typeof value === "string") {
-    const n = Number(value)
-    return Number.isFinite(n) ? n : 0
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
   }
-  return 0
+  return 0;
 }
 
 export function ClientLineChart<T extends object = Record<string, unknown>>({
@@ -55,13 +61,17 @@ export function ClientLineChart<T extends object = Record<string, unknown>>({
   showAnimation = true,
   yAxisWidth = 48,
 }: ClientLineChartProps<T>) {
-  const { ref, size } = useElementSize<HTMLDivElement>()
-  const isReady = size.width > 0 && size.height > 0
+  const { ref, size } = useElementSize<HTMLDivElement>();
+  const isReady = size.width > 0 && size.height > 0;
 
   return (
     <div ref={ref} className={cn("w-full", className)} data-testid="line-chart">
       {isReady ? (
-        <LineChart width={size.width} height={size.height} data={data as unknown as Record<string, unknown>[]}>
+        <LineChart
+          width={size.width}
+          height={size.height}
+          data={data as unknown as Record<string, unknown>[]}
+        >
           <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
           <XAxis
             dataKey={index}
@@ -100,5 +110,5 @@ export function ClientLineChart<T extends object = Record<string, unknown>>({
         </LineChart>
       ) : null}
     </div>
-  )
+  );
 }

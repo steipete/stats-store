@@ -74,13 +74,11 @@ Useful for:
 The appcast proxy is the most complex endpoint, handling:
 
 1. **Multiple identification methods**:
-
    - `bundleIdentifier` parameter (legacy)
    - `appName` parameter (Sparkle standard)
    - User-Agent parsing (fallback for most requests)
 
 2. **Sparkle's "once per week" behavior**:
-
    - Most requests come without query parameters
    - User-Agent is the only reliable identifier
    - Test both scenarios

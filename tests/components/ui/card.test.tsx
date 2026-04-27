@@ -1,18 +1,25 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 describe("Card Components", () => {
   it("renders Card with proper styling", () => {
     render(
       <Card data-testid="card">
         <CardContent>Card content</CardContent>
-      </Card>
-    )
+      </Card>,
+    );
 
-    const card = screen.getByTestId("card")
-    expect(card).toHaveClass("rounded-lg", "border", "bg-card", "text-card-foreground")
-  })
+    const card = screen.getByTestId("card");
+    expect(card).toHaveClass("rounded-lg", "border", "bg-card", "text-card-foreground");
+  });
 
   it("renders CardHeader with proper styling", () => {
     render(
@@ -20,48 +27,48 @@ describe("Card Components", () => {
         <CardHeader data-testid="header">
           <CardTitle>Title</CardTitle>
         </CardHeader>
-      </Card>
-    )
+      </Card>,
+    );
 
-    const header = screen.getByTestId("header")
-    expect(header).toHaveClass("flex", "flex-col", "space-y-1.5", "p-6")
-  })
+    const header = screen.getByTestId("header");
+    expect(header).toHaveClass("flex", "flex-col", "space-y-1.5", "p-6");
+  });
 
   it("renders CardTitle with proper styling", () => {
-    render(<CardTitle>Test Title</CardTitle>)
+    render(<CardTitle>Test Title</CardTitle>);
 
-    const title = screen.getByText("Test Title")
-    expect(title).toHaveClass("text-2xl", "font-semibold", "leading-none", "tracking-tight")
-  })
+    const title = screen.getByText("Test Title");
+    expect(title).toHaveClass("text-2xl", "font-semibold", "leading-none", "tracking-tight");
+  });
 
   it("renders CardDescription with proper styling", () => {
-    render(<CardDescription>Test description</CardDescription>)
+    render(<CardDescription>Test description</CardDescription>);
 
-    const description = screen.getByText("Test description")
-    expect(description).toHaveClass("text-sm", "text-muted-foreground")
-  })
+    const description = screen.getByText("Test description");
+    expect(description).toHaveClass("text-sm", "text-muted-foreground");
+  });
 
   it("renders CardContent with proper styling", () => {
     render(
       <Card>
         <CardContent data-testid="content">Content</CardContent>
-      </Card>
-    )
+      </Card>,
+    );
 
-    const content = screen.getByTestId("content")
-    expect(content).toHaveClass("p-6", "pt-0")
-  })
+    const content = screen.getByTestId("content");
+    expect(content).toHaveClass("p-6", "pt-0");
+  });
 
   it("renders CardFooter with proper styling", () => {
     render(
       <Card>
         <CardFooter data-testid="footer">Footer</CardFooter>
-      </Card>
-    )
+      </Card>,
+    );
 
-    const footer = screen.getByTestId("footer")
-    expect(footer).toHaveClass("flex", "items-center", "p-6", "pt-0")
-  })
+    const footer = screen.getByTestId("footer");
+    expect(footer).toHaveClass("flex", "items-center", "p-6", "pt-0");
+  });
 
   it("renders complete card structure", () => {
     render(
@@ -76,14 +83,14 @@ describe("Card Components", () => {
         <CardFooter>
           <button type="button">Action</button>
         </CardFooter>
-      </Card>
-    )
+      </Card>,
+    );
 
-    expect(screen.getByText("Card Title")).toBeInTheDocument()
-    expect(screen.getByText("Card description")).toBeInTheDocument()
-    expect(screen.getByText("Card content goes here")).toBeInTheDocument()
-    expect(screen.getByText("Action")).toBeInTheDocument()
-  })
+    expect(screen.getByText("Card Title")).toBeInTheDocument();
+    expect(screen.getByText("Card description")).toBeInTheDocument();
+    expect(screen.getByText("Card content goes here")).toBeInTheDocument();
+    expect(screen.getByText("Action")).toBeInTheDocument();
+  });
 
   it("accepts custom className on all components", () => {
     render(
@@ -94,12 +101,12 @@ describe("Card Components", () => {
         </CardHeader>
         <CardContent className="custom-content">Content</CardContent>
         <CardFooter className="custom-footer">Footer</CardFooter>
-      </Card>
-    )
+      </Card>,
+    );
 
-    expect(screen.getByText("Title").parentElement?.parentElement).toHaveClass("custom-card")
-    expect(screen.getByText("Title").parentElement).toHaveClass("custom-header")
-    expect(screen.getByText("Title")).toHaveClass("custom-title")
-    expect(screen.getByText("Desc")).toHaveClass("custom-description")
-  })
-})
+    expect(screen.getByText("Title").parentElement?.parentElement).toHaveClass("custom-card");
+    expect(screen.getByText("Title").parentElement).toHaveClass("custom-header");
+    expect(screen.getByText("Title")).toHaveClass("custom-title");
+    expect(screen.getByText("Desc")).toHaveClass("custom-description");
+  });
+});

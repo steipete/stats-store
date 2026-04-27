@@ -1,20 +1,20 @@
-"use client"
+"use client";
 
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts"
-import { useElementSize } from "@/hooks/use-element-size"
-import { valueFormatter } from "@/lib/formatters"
-import { cn } from "@/lib/utils"
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
+import { useElementSize } from "@/hooks/use-element-size";
+import { valueFormatter } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 export interface ClientBarChartProps<T extends object = Record<string, unknown>> {
-  className?: string
-  data: T[]
-  index: string
-  categories: string[]
-  colors?: string[]
-  layout?: "horizontal" | "vertical"
-  yAxisWidth?: number
-  showAnimation?: boolean
-  stack?: boolean
+  className?: string;
+  data: T[];
+  index: string;
+  categories: string[];
+  colors?: string[];
+  layout?: "horizontal" | "vertical";
+  yAxisWidth?: number;
+  showAnimation?: boolean;
+  stack?: boolean;
 }
 
 const colorMap: Record<string, string> = {
@@ -26,26 +26,32 @@ const colorMap: Record<string, string> = {
   purple: "var(--chart-3)",
   rose: "var(--chart-5)",
   teal: "var(--chart-2)",
-}
+};
 
 function resolveSeriesColor(colors: string[] | undefined, seriesIndex: number) {
-  const requested = colors?.[seriesIndex]
+  const requested = colors?.[seriesIndex];
   if (requested && requested in colorMap) {
-    return colorMap[requested]
+    return colorMap[requested];
   }
-  const palette = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"]
-  return palette[seriesIndex % palette.length]
+  const palette = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ];
+  return palette[seriesIndex % palette.length];
 }
 
 function toNumber(value: unknown): number {
   if (typeof value === "number") {
-    return value
+    return value;
   }
   if (typeof value === "string") {
-    const n = Number(value)
-    return Number.isFinite(n) ? n : 0
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
   }
-  return 0
+  return 0;
 }
 
 export function ClientBarChart<T extends object = Record<string, unknown>>({
@@ -59,9 +65,9 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
   showAnimation = true,
   stack = false,
 }: ClientBarChartProps<T>) {
-  const isVertical = layout === "vertical"
-  const { ref, size } = useElementSize<HTMLDivElement>()
-  const isReady = size.width > 0 && size.height > 0
+  const isVertical = layout === "vertical";
+  const { ref, size } = useElementSize<HTMLDivElement>();
+  const isReady = size.width > 0 && size.height > 0;
 
   return (
     <div ref={ref} className={cn("w-full", className)} data-testid="bar-chart">
@@ -131,5 +137,5 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
         </BarChart>
       ) : null}
     </div>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { ChartBarIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline"
+import { ChartBarIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface CardStatusDisplayProps {
-  error?: string
-  noData?: boolean
-  minHeightClassName: string
-  noDataMessage?: string
+  error?: string;
+  noData?: boolean;
+  minHeightClassName: string;
+  noDataMessage?: string;
 }
 
 export const CardStatusDisplay = ({
@@ -21,7 +21,7 @@ export const CardStatusDisplay = ({
         <ExclamationCircleIcon className="h-8 w-8 text-destructive" />
         <p className="mt-2 text-center text-sm text-destructive">{error}</p>
       </div>
-    )
+    );
   }
   if (noData) {
     return (
@@ -29,7 +29,7 @@ export const CardStatusDisplay = ({
         <ChartBarIcon className="h-8 w-8 text-muted-foreground" />
         <p className="mt-2 text-center text-sm text-muted-foreground">{noDataMessage}</p>
       </div>
-    )
+    );
   }
-  return null
-}
+  return null;
+};
