@@ -177,32 +177,45 @@ describe("Dashboard Page", () => {
     expect(rpcNames).toContain("get_latest_app_version");
 
     // Verify each call has the correct parameters structure
-    rpcCalls.forEach((call) => {
-      const [name, params] = call as [string, Record<string, unknown>];
-      if (name.startsWith("get_")) {
+    const normalizedRpcParams = rpcCalls
+      .map((call) => {
+        const [name, params] = call as [string, Record<string, unknown>];
+        if (!name.startsWith("get_")) {
+          return undefined;
+        }
+
         const usesPrefixedParams =
           "p_app_id_filter" in params ||
           "p_start_date_filter" in params ||
           "p_end_date_filter" in params;
 
-        if (usesPrefixedParams) {
-          expect(params).toMatchObject({
-            p_app_id_filter: null,
-            p_end_date_filter: expect.any(String),
-            p_start_date_filter: expect.any(String),
-          });
-          if ("p_limit_count" in params && typeof params.p_limit_count === "number") {
-            expect(params.p_limit_count).toBeGreaterThan(0);
-          }
-        } else {
-          expect(params).toMatchObject({
-            app_id_filter: null,
-            end_date_filter: expect.any(String),
-            start_date_filter: expect.any(String),
-          });
-        }
-      }
-    });
+        return usesPrefixedParams
+          ? {
+              appId: params.p_app_id_filter,
+              endDate: params.p_end_date_filter,
+              limit: params.p_limit_count,
+              startDate: params.p_start_date_filter,
+            }
+          : {
+              appId: params.app_id_filter,
+              endDate: params.end_date_filter,
+              limit: params.limit_count,
+              startDate: params.start_date_filter,
+            };
+      })
+      .filter((params): params is Record<string, unknown> => params !== undefined);
+
+    expect(normalizedRpcParams.length).toBeGreaterThan(0);
+    for (const params of normalizedRpcParams) {
+      expect(params).toMatchObject({
+        appId: null,
+        endDate: expect.any(String),
+        startDate: expect.any(String),
+      });
+      expect(
+        params.limit === undefined || (typeof params.limit === "number" && params.limit > 0),
+      ).toBe(true);
+    }
   });
 
   it("ignores invalid date query params", async () => {

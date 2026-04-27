@@ -3,19 +3,19 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "@/app/api/v1/ingest/route";
 
+const supabaseMocks = vi.hoisted(() => ({
+  insert: vi.fn(),
+  single: vi.fn(),
+}));
+
 // Mock Supabase
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: vi.fn(() => ({
     from: vi.fn(() => ({
-      insert: vi.fn(() => Promise.resolve({ error: null })),
+      insert: supabaseMocks.insert,
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() =>
-            Promise.resolve({
-              data: { id: "test-app-id" },
-              error: null,
-            }),
-          ),
+          single: supabaseMocks.single,
         })),
       })),
     })),
@@ -25,6 +25,11 @@ vi.mock("@/lib/supabase/server", () => ({
 describe("/api/v1/ingest", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    supabaseMocks.insert.mockResolvedValue({ error: null });
+    supabaseMocks.single.mockResolvedValue({
+      data: { id: "test-app-id" },
+      error: null,
+    });
   });
 
   it("should accept valid Sparkle telemetry data", async () => {
@@ -76,6 +81,12 @@ describe("/api/v1/ingest", () => {
       { cputype: "16777223", expected: "x86_64" },
       { cputype: "12345", expected: "unknown" },
     ];
+    const insertedReports: Array<Record<string, unknown>> = [];
+
+    supabaseMocks.insert.mockImplementation((reportData: Record<string, unknown>) => {
+      insertedReports.push(reportData);
+      return Promise.resolve({ error: null });
+    });
 
     for (const testCase of testCases) {
       const request = new NextRequest("http://localhost:3000/api/v1/ingest", {
@@ -87,11 +98,14 @@ describe("/api/v1/ingest", () => {
         method: "POST",
       });
 
-      await POST(request);
+      const response = await POST(request);
 
-      // Verify the CPU mapping logic works correctly
-      // In a real test, we'd check the actual inserted data
+      expect(response.status).toBe(201);
     }
+
+    expect(insertedReports.map((report) => report.cpu_arch)).toEqual(
+      testCases.map((testCase) => testCase.expected),
+    );
   });
 
   it("should handle malformed JSON", async () => {

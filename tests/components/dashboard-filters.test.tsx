@@ -24,13 +24,14 @@ function expectLastPushParams(
   const query = pushedUrl.split("?")[1] ?? "";
   const params = new URLSearchParams(query);
 
-  for (const [key, value] of Object.entries(expected)) {
-    if (value === undefined) {
-      expect(params.has(key)).toBe(false);
-    } else {
-      expect(params.get(key)).toBe(value);
-    }
-  }
+  const actual = Object.fromEntries(
+    Object.keys(expected).map((key) => [
+      key,
+      params.has(key) ? (params.get(key) ?? undefined) : undefined,
+    ]),
+  );
+
+  expect(actual).toEqual(expected);
 }
 
 describe("DashboardFilters", () => {
