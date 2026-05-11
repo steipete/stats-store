@@ -73,7 +73,7 @@
     "sonner": "latest",
     "tailwind-merge": "^3.5.0",
     "vaul": "latest",
-    "zod": "^4.4.2"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.4",
