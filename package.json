@@ -71,7 +71,7 @@
     "react-resizable-panels": "latest",
     "recharts": "latest",
     "sonner": "latest",
-    "tailwind-merge": "^3.5.0",
+    "tailwind-merge": "^3.6.0",
     "vaul": "latest",
     "zod": "^4.4.2"
   },
