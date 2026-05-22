@@ -87,8 +87,8 @@
     "@types/react-dom": "^19.2.3",
     "@typescript/native-preview": "7.0.0-dev.20260511.1",
     "@vitest/browser": "latest",
-    "@vitest/coverage-v8": "^4.1.5",
-    "@vitest/ui": "^4.1.5",
+    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/ui": "^4.1.6",
     "cross-env": "^10.1.0",
     "happy-dom": "^20.9.0",
     "jsdom": "^29.1.1",
@@ -99,7 +99,7 @@
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.12",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.6"
   },
   "engines": {
     "node": ">=24.0.0",
