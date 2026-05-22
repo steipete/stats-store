@@ -83,7 +83,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/debug": "latest",
     "@types/node": "^25.9.1",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@typescript/native-preview": "7.0.0-dev.20260511.1",
     "@vitest/browser": "latest",
