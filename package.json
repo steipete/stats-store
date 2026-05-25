@@ -23,7 +23,7 @@
     "@edge-runtime/vm": "latest",
     "@emotion/is-prop-valid": "latest",
     "@heroicons/react": "latest",
-    "@hookform/resolvers": "^5.2.2",
+    "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
     "@radix-ui/react-aspect-ratio": "latest",
