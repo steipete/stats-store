@@ -23,7 +23,7 @@
     "@edge-runtime/vm": "latest",
     "@emotion/is-prop-valid": "latest",
     "@heroicons/react": "latest",
-    "@hookform/resolvers": "^5.2.2",
+    "@hookform/resolvers": "^5.4.0",
     "@radix-ui/react-accordion": "latest",
     "@radix-ui/react-alert-dialog": "latest",
     "@radix-ui/react-aspect-ratio": "latest",
@@ -76,7 +76,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.2.4",
+    "@tailwindcss/postcss": "^4.3.0",
     "@testing-library/dom": "latest",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -85,7 +85,7 @@
     "@types/node": "^25.9.1",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260511.1",
+    "@typescript/native-preview": "7.0.0-dev.20260524.1",
     "@vitest/browser": "latest",
     "@vitest/coverage-v8": "^4.1.7",
     "@vitest/ui": "^4.1.7",
@@ -94,11 +94,11 @@
     "jsdom": "^29.1.1",
     "oxfmt": "^0.51.0",
     "oxlint": "^1.66.0",
-    "oxlint-tsgolint": "^0.22.1",
-    "postcss": "^8.5.14",
-    "tailwindcss": "^4.2.4",
+    "oxlint-tsgolint": "^0.23.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.12",
+    "vite": "^8.0.14",
     "vitest": "^4.1.7"
   },
   "engines": {
