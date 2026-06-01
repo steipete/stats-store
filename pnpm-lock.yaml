@@ -30,7 +30,7 @@ importers:
         version: 2.2.0(react@19.2.6)
       '@hookform/resolvers':
         specifier: ^5.4.0
-        version: 5.4.0(react-hook-form@7.76.1(react@19.2.6))
+        version: 5.4.0(react-hook-form@7.77.0(react@19.2.6))
       '@radix-ui/react-accordion':
         specifier: latest
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -114,10 +114,10 @@ importers:
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@supabase/ssr':
         specifier: latest
-        version: 0.10.3(@supabase/supabase-js@2.106.1)
+        version: 0.10.3(@supabase/supabase-js@2.106.2)
       '@supabase/supabase-js':
         specifier: latest
-        version: 2.106.1
+        version: 2.106.2
       '@vercel/analytics':
         specifier: latest
         version: 2.0.1(next@16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
@@ -132,7 +132,7 @@ importers:
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       date-fns:
         specifier: latest
-        version: 4.3.0
+        version: 4.4.0
       embla-carousel-react:
         specifier: latest
         version: 8.6.0(react@19.2.6)
@@ -143,8 +143,8 @@ importers:
         specifier: latest
         version: 1.4.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       lucide-react:
-        specifier: ^1.16.0
-        version: 1.16.0(react@19.2.6)
+        specifier: ^1.17.0
+        version: 1.17.0(react@19.2.6)
       next:
         specifier: 16.2.6
         version: 16.2.6(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -162,7 +162,7 @@ importers:
         version: 19.2.6(react@19.2.6)
       react-hook-form:
         specifier: latest
-        version: 7.76.1(react@19.2.6)
+        version: 7.77.0(react@19.2.6)
       react-resizable-panels:
         specifier: latest
         version: 4.11.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -1851,23 +1851,23 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@supabase/auth-js@2.106.1':
-    resolution: {integrity: sha512-7eyheXfAGwkB9bZewJPs+N3UYt6kra2JG6mIxNEgbkvcO15PLD1e75PTIUEYYl3zrifm3GrpShVl7QZxKrXO/w==}
+  '@supabase/auth-js@2.106.2':
+    resolution: {integrity: sha512-VcAjUErkHkhC5Jaf+g/G1qbkQrFh8edaCdHa7pxJmHUjkWKjT7UnYCtPA89XV0N0GIYRkEqJZw5V62CtOxTmBQ==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/functions-js@2.106.1':
-    resolution: {integrity: sha512-XbOPnR2mW7jp/EcW447xmGwCa+/Wc00Hkw8t4tUIJjRsHQ4xAESsLKcyLRhRJjJoUnJVXUlC+w0wUxUCM7CG2A==}
+  '@supabase/functions-js@2.106.2':
+    resolution: {integrity: sha512-oRnr0QrL8H+zTO1YyQ1QjiHZU/957jvubbxSJTUm2XLAgzoGGV9Tahfyd+uvLsBLRVmXLtpU3oyCjdQIvkGMOA==}
     engines: {node: '>=20.0.0'}
 
   '@supabase/phoenix@0.4.2':
     resolution: {integrity: sha512-YSAGnmDAfuleFCVt3CeurQZAhxRfXWeZIIkwp7NhYzQ1UwW6ePSnzsFAiUm/mbCkfoCf70QQHKW/K6RKh52a4A==}
 
-  '@supabase/postgrest-js@2.106.1':
-    resolution: {integrity: sha512-Qbn6d2lqiqeaBX1Uko0e/hL90dtQGRN6CG2wMVQtJpRFstlVW45qmUTyTOsiB8dYUWu1fWYo4YzJuDbokGv3tQ==}
+  '@supabase/postgrest-js@2.106.2':
+    resolution: {integrity: sha512-tDOzyPgp9pIRMR2x6C9+uDSJrnXSzxLtt3d7nC+Lrsy3jnJDHYfdQC/xcRyhJE/TOBJ0heSqRKR3UmejDjZxsw==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/realtime-js@2.106.1':
-    resolution: {integrity: sha512-eQCYri5E8KsjpDgC7g28cOOS2britjUWdNSJluFMainqrMRepzjOnaxqXc3RoAz7H0dxmBrfLUNF6NGP8C+YaA==}
+  '@supabase/realtime-js@2.106.2':
+    resolution: {integrity: sha512-LdRGT7DNhyZkPjubUv5bSdAZ0jSEX8wTHvx7htj7+K59TOZRvz4TuQK7tL2RWxyIZVeFMRluL04SzWS61rKnUA==}
     engines: {node: '>=20.0.0'}
 
   '@supabase/ssr@0.10.3':
@@ -1875,12 +1875,12 @@ packages:
     peerDependencies:
       '@supabase/supabase-js': ^2.105.3
 
-  '@supabase/storage-js@2.106.1':
-    resolution: {integrity: sha512-HWcLIhqinhWKpOQ3WzglR2unjW0eh9J7yOu3IZrZNIEkraK4La/HDvTqndljGsNw0itPtyHhuKBxRoPG1VUARw==}
+  '@supabase/storage-js@2.106.2':
+    resolution: {integrity: sha512-xgKCSYuev1YarV+iVqr+zlfgSyremnJtn8T0NCT8L4XmMv1CLtESc0Q6kNp8+mKWdX/8ND0nzm7OMKx08kwNAw==}
     engines: {node: '>=20.0.0'}
 
-  '@supabase/supabase-js@2.106.1':
-    resolution: {integrity: sha512-gP4HurGkGu7Z3xoOCjtAI17BKKp7jpsmwY0Ssbsks9XQRzJ7ZhK7LxfLdBSYgUdgZCQgjRK+Mr7+cl4Gxrk0Rw==}
+  '@supabase/supabase-js@2.106.2':
+    resolution: {integrity: sha512-2/RZ/1fmJx/MRSEDG2Xk8+J4JVk5clM9V0uSI6kUTrcS32KA89DtqI5RUOC9r6mzY3WBC9qexLjssIHjbLyVJA==}
     engines: {node: '>=20.0.0'}
 
   '@swc/helpers@0.5.15':
@@ -2330,8 +2330,8 @@ packages:
     resolution: {integrity: sha512-23XHcCF+coGYevirZceTVD7NdJOqVn+49IHyxgszm+JIiHLoB2TkmPtsYkNWT1pvRSGkc35L6NHs0yHkN2SumA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
-  date-fns@4.3.0:
-    resolution: {integrity: sha512-OYcL+3N/jyWbYdFGqoMAhytDgxP9pbYPUUiRCOgn4Fewaadk9l/Wam4Avciiyp2BgkpfQyBV9B+ehnVJych+eQ==}
+  date-fns@4.4.0:
+    resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
 
   decimal.js-light@2.5.1:
     resolution: {integrity: sha512-qIMFpTMZmny+MMIitAB6D7iVPEorVw6YQRWkvarTkT4tBeSLLiHzcwj6q0MmYSFCiVpiqPJTJEYIrpcPzVEIvg==}
@@ -2597,8 +2597,8 @@ packages:
     resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
     engines: {node: 20 || >=22}
 
-  lucide-react@1.16.0:
-    resolution: {integrity: sha512-dYwyPzb4MEKpGUmNYk3WKWPnMrHs3FKM+q94kAnJrcDIqqn1hq2xY8scaS2ovsOCM5D51ey2gaRG3PBb1vgoYQ==}
+  lucide-react@1.17.0:
+    resolution: {integrity: sha512-9FA9evdox/JQL5PT57fdA1x/yg8T7knJ98+zjTL3UfKza6pflQUUh3XtaQIHKvnsJw1lmsEyHVlt5jchYxOQ5w==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -2744,8 +2744,8 @@ packages:
     peerDependencies:
       react: ^19.2.6
 
-  react-hook-form@7.76.1:
-    resolution: {integrity: sha512-rYM7tPiWlu3nZchkR/ex7piyzui2vFPyaLnXnI/RnblB/L4qfMmyses8llJVtF1NpE9WBBsJlGtcSZzPCXW1qQ==}
+  react-hook-form@7.77.0:
+    resolution: {integrity: sha512-Sslh9YDYc0GDlWT/lxasnIduNo4v3yyvqRGvmGKUre5AFjDs/HV9/OafHGD8d+sB2yoL4UIL9L8X9i0WlZZebg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -3371,10 +3371,10 @@ snapshots:
     dependencies:
       react: 19.2.6
 
-  '@hookform/resolvers@5.4.0(react-hook-form@7.76.1(react@19.2.6))':
+  '@hookform/resolvers@5.4.0(react-hook-form@7.77.0(react@19.2.6))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.76.1(react@19.2.6)
+      react-hook-form: 7.77.0(react@19.2.6)
 
   '@img/colour@1.1.0':
     optional: true
@@ -4423,42 +4423,42 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@supabase/auth-js@2.106.1':
+  '@supabase/auth-js@2.106.2':
     dependencies:
       tslib: 2.8.1
 
-  '@supabase/functions-js@2.106.1':
+  '@supabase/functions-js@2.106.2':
     dependencies:
       tslib: 2.8.1
 
   '@supabase/phoenix@0.4.2': {}
 
-  '@supabase/postgrest-js@2.106.1':
+  '@supabase/postgrest-js@2.106.2':
     dependencies:
       tslib: 2.8.1
 
-  '@supabase/realtime-js@2.106.1':
+  '@supabase/realtime-js@2.106.2':
     dependencies:
       '@supabase/phoenix': 0.4.2
       tslib: 2.8.1
 
-  '@supabase/ssr@0.10.3(@supabase/supabase-js@2.106.1)':
+  '@supabase/ssr@0.10.3(@supabase/supabase-js@2.106.2)':
     dependencies:
-      '@supabase/supabase-js': 2.106.1
+      '@supabase/supabase-js': 2.106.2
       cookie: 1.1.1
 
-  '@supabase/storage-js@2.106.1':
+  '@supabase/storage-js@2.106.2':
     dependencies:
       iceberg-js: 0.8.1
       tslib: 2.8.1
 
-  '@supabase/supabase-js@2.106.1':
+  '@supabase/supabase-js@2.106.2':
     dependencies:
-      '@supabase/auth-js': 2.106.1
-      '@supabase/functions-js': 2.106.1
-      '@supabase/postgrest-js': 2.106.1
-      '@supabase/realtime-js': 2.106.1
-      '@supabase/storage-js': 2.106.1
+      '@supabase/auth-js': 2.106.2
+      '@supabase/functions-js': 2.106.2
+      '@supabase/postgrest-js': 2.106.2
+      '@supabase/realtime-js': 2.106.2
+      '@supabase/storage-js': 2.106.2
 
   '@swc/helpers@0.5.15':
     dependencies:
@@ -4875,7 +4875,7 @@ snapshots:
     transitivePeerDependencies:
       - '@noble/hashes'
 
-  date-fns@4.3.0: {}
+  date-fns@4.4.0: {}
 
   decimal.js-light@2.5.1: {}
 
@@ -5116,7 +5116,7 @@ snapshots:
 
   lru-cache@11.3.5: {}
 
-  lucide-react@1.16.0(react@19.2.6):
+  lucide-react@1.17.0(react@19.2.6):
     dependencies:
       react: 19.2.6
 
@@ -5274,7 +5274,7 @@ snapshots:
   react-day-picker@10.0.1(@types/react@19.2.15)(react@19.2.6):
     dependencies:
       '@date-fns/tz': 1.4.1
-      date-fns: 4.3.0
+      date-fns: 4.4.0
       react: 19.2.6
     optionalDependencies:
       '@types/react': 19.2.15
@@ -5284,7 +5284,7 @@ snapshots:
       react: 19.2.6
       scheduler: 0.27.0
 
-  react-hook-form@7.76.1(react@19.2.6):
+  react-hook-form@7.77.0(react@19.2.6):
     dependencies:
       react: 19.2.6
 
