@@ -116,6 +116,7 @@ describe("DashboardFilters", () => {
       const select = screen.getByRole("combobox");
       await user.selectOptions(select, "2");
 
+      expect(mockPush).toHaveBeenCalledTimes(1);
       expectLastPushParams(mockPush, { app: "2" });
     });
 
@@ -127,6 +128,7 @@ describe("DashboardFilters", () => {
       const select = screen.getByRole("combobox");
       await user.selectOptions(select, "all");
 
+      expect(mockPush).toHaveBeenCalledTimes(1);
       expectLastPushParams(mockPush, { app: undefined });
     });
 
@@ -139,6 +141,7 @@ describe("DashboardFilters", () => {
       const select = screen.getByRole("combobox");
       await user.selectOptions(select, "1");
 
+      expect(mockPush).toHaveBeenCalledTimes(1);
       expectLastPushParams(mockPush, { app: "1", from: "2024-01-01", to: "2024-01-31" });
     });
   });
@@ -159,9 +162,11 @@ describe("DashboardFilters", () => {
       render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={undefined} />);
 
       fireEvent.change(screen.getByLabelText(/from/i), { target: { value: "2024-01-01" } });
+      expect(mockPush).toHaveBeenCalledTimes(1);
       expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-01" });
 
       fireEvent.change(screen.getByLabelText(/to/i), { target: { value: "2024-01-31" } });
+      expect(mockPush).toHaveBeenCalledTimes(2);
       expectLastPushParams(mockPush, { from: "2024-01-01", to: "2024-01-31" });
     });
 
@@ -250,6 +255,7 @@ describe("DashboardFilters", () => {
       await user.selectOptions(select, "2");
 
       // Should preserve date params
+      expect(mockPush).toHaveBeenCalledTimes(1);
       expectLastPushParams(mockPush, { app: "2", from: "2024-01-01", to: "2024-01-31" });
     });
 
