@@ -212,6 +212,50 @@ describe("/api/v1/appcast/[...path]", () => {
     );
   });
 
+  it("should swap the filename when the stored URL is a non-default .xml feed", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    // Stored URL points at the prerelease feed; a stable client requests appcast.xml.
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
+      from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() =>
+              Promise.resolve({
+                data: {
+                  id: "test-app-id",
+                  appcast_base_url: "https://example.com/updates/appcast-prerelease.xml",
+                },
+                error: null,
+              }),
+            ),
+          })),
+        })),
+      })),
+    } as unknown as SupabaseClient);
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    // The stable client must get appcast.xml, not the stored prerelease feed.
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/updates/appcast.xml",
+      expect.any(Object),
+    );
+  });
+
   it("should parse app identification from User-Agent when no params provided", async () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>';
 

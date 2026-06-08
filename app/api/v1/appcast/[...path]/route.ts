@@ -85,9 +85,11 @@ function constructAppcastUrl(baseUrl: string, appcastPath: string): string {
   // Check if the base URL already ends with the appcast filename
   // This handles cases where the full appcast URL is stored in the database
   if (cleanBaseUrl.endsWith(".xml")) {
-    // If the base URL already includes the XML file, use it as-is
-    // Unless the appcast path is different from the default
-    if (appcastPath === "appcast.xml" || cleanBaseUrl.endsWith(`/${appcastPath}`)) {
+    // If the stored URL already points at the requested file, use it as-is.
+    // Key this only on whether the stored filename matches the requested one;
+    // matching on the default "appcast.xml" name regardless of the stored file
+    // served stable clients a stored prerelease feed.
+    if (cleanBaseUrl.endsWith(`/${appcastPath}`) || cleanBaseUrl === appcastPath) {
       return cleanBaseUrl.startsWith("http://") || cleanBaseUrl.startsWith("https://")
         ? cleanBaseUrl
         : `https://${cleanBaseUrl}`;
