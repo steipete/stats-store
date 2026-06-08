@@ -62,7 +62,7 @@
     "framer-motion": "latest",
     "input-otp": "latest",
     "lucide-react": "^1.17.0",
-    "next": "16.2.6",
+    "next": "16.2.7",
     "next-themes": "latest",
     "react": "^19.2.7",
     "react-day-picker": "latest",
