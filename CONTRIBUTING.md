@@ -82,7 +82,7 @@ Awesome! Here's how:
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24+
 - pnpm (`npm install -g pnpm`)
 - Supabase account (for database)
 

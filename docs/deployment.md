@@ -119,7 +119,7 @@ Want to use your own domain instead of `*.vercel.app`?
 
 ### Build failures
 
-- Make sure you're using Node.js 20+
+- Make sure you're using Node.js 24+
 - Check the Vercel build logs for specific errors
 
 ## Updating Your Deployment
