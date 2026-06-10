@@ -105,23 +105,5 @@
     "node": ">=24.0.0",
     "pnpm": ">=10.33.2"
   },
-  "packageManager": "pnpm@10.33.2",
-  "pnpm": {
-    "overrides": {
-      "cookie@<0.7.0": ">=0.7.0",
-      "semver@<7.5.2": ">=7.5.2",
-      "postcss@<8.5.10": "8.5.12",
-      "tough-cookie@<4.1.3": ">=4.1.3",
-      "axios@<1.6.0": ">=1.6.0",
-      "follow-redirects@<1.15.4": ">=1.15.4",
-      "@babel/traverse@<7.23.2": ">=7.23.2",
-      "braces@<3.0.3": ">=3.0.3",
-      "ws@<8.17.1": ">=8.17.1"
-    },
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
-  }
+  "packageManager": "pnpm@10.33.2"
 }
