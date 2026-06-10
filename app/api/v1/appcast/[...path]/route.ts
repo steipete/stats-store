@@ -78,27 +78,60 @@ function getIpFromRequest(request: NextRequest): string {
   return "unknown_ip";
 }
 
+function withProtocol(url: string): string {
+  return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+}
+
+function appcastFileName(path: string): string {
+  return path.split("/").pop() || path;
+}
+
+function splitUrlSuffix(url: string): { path: string; suffix: string } {
+  const suffixIndex = url.search(/[?#]/);
+  if (suffixIndex === -1) {
+    return { path: url, suffix: "" };
+  }
+
+  return {
+    path: url.slice(0, suffixIndex),
+    suffix: url.slice(suffixIndex),
+  };
+}
+
+function isKnownUnstableAppcastFile(fileName: string): boolean {
+  return fileName === "appcast-beta.xml" || fileName === "appcast-prerelease.xml";
+}
+
 function constructAppcastUrl(baseUrl: string, appcastPath: string): string {
-  // Remove trailing slash from base URL if present
-  const cleanBaseUrl = baseUrl.replace(/\/$/, "");
+  // Remove trailing slash from the path without mutating query strings or fragments.
+  const baseUrlParts = splitUrlSuffix(baseUrl);
+  const cleanBasePath = baseUrlParts.path.replace(/\/$/, "");
+  const cleanBaseUrl = `${cleanBasePath}${baseUrlParts.suffix}`;
 
   // Check if the base URL already ends with the appcast filename
   // This handles cases where the full appcast URL is stored in the database
-  if (cleanBaseUrl.endsWith(".xml")) {
-    // If the base URL already includes the XML file, use it as-is
-    // Unless the appcast path is different from the default
-    if (appcastPath === "appcast.xml" || cleanBaseUrl.endsWith(`/${appcastPath}`)) {
-      return cleanBaseUrl.startsWith("http://") || cleanBaseUrl.startsWith("https://")
-        ? cleanBaseUrl
-        : `https://${cleanBaseUrl}`;
+  if (cleanBasePath.endsWith(".xml")) {
+    const storedFileName = appcastFileName(cleanBasePath);
+
+    // Direct XML URLs are stable feeds by default, including custom stable
+    // filenames like releases.xml or appcast-enterprise.xml. Only the known
+    // unstable proxy basenames are rewritten for stable clients.
+    if (
+      cleanBasePath.endsWith(`/${appcastPath}`) ||
+      cleanBasePath === appcastPath ||
+      (appcastPath === "appcast.xml" && !isKnownUnstableAppcastFile(storedFileName))
+    ) {
+      return withProtocol(cleanBaseUrl);
     }
+
     // If requesting a different appcast file, replace the filename
-    const baseWithoutFile = cleanBaseUrl.slice(0, cleanBaseUrl.lastIndexOf("/"));
-    return `${baseWithoutFile}/${appcastPath}`;
+    const baseWithoutFile = cleanBasePath.slice(0, cleanBasePath.lastIndexOf("/"));
+    const replacedPath = baseWithoutFile ? `${baseWithoutFile}/${appcastPath}` : appcastPath;
+    return withProtocol(`${replacedPath}${baseUrlParts.suffix}`);
   }
 
   // Handle GitHub URLs - convert to raw.githubusercontent.com
-  const githubMatch = cleanBaseUrl.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/?$/);
+  const githubMatch = cleanBasePath.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/?$/);
   if (githubMatch) {
     const [, owner, repo] = githubMatch;
     return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${appcastPath}`;
@@ -106,12 +139,12 @@ function constructAppcastUrl(baseUrl: string, appcastPath: string): string {
 
   // For other URLs, append the appcast path
   // If baseUrl already includes protocol, use as-is
-  if (cleanBaseUrl.startsWith("http://") || cleanBaseUrl.startsWith("https://")) {
-    return `${cleanBaseUrl}/${appcastPath}`;
+  if (cleanBasePath.startsWith("http://") || cleanBasePath.startsWith("https://")) {
+    return `${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`;
   }
 
   // Otherwise, add https://
-  return `https://${cleanBaseUrl}/${appcastPath}`;
+  return `https://${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`;
 }
 
 export async function GET(
