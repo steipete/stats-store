@@ -52,6 +52,10 @@ https://stats.store/api/v1/appcast/appcast-prerelease.xml
 - Input: `https://example.com/downloads/appcast.xml`
 - Proxy uses as-is: `https://example.com/downloads/appcast.xml`
 - Smart detection prevents duplicate .xml extensions
+- Custom stable filenames are supported. If `appcast_base_url` is `https://example.com/downloads/releases.xml` and the client requests `/appcast.xml`, the proxy fetches `releases.xml`.
+- Known unstable feed filenames are `appcast-prerelease.xml` and `appcast-beta.xml`. If `appcast_base_url` accidentally points at one of these and a stable client requests `/appcast.xml`, the proxy fetches sibling `appcast.xml` instead of serving the unstable feed.
+- Other custom stable filenames remain exact URLs, including names like `appcast-enterprise.xml`.
+- Query strings and fragments on direct `.xml` URLs are preserved when the proxy uses the URL as-is or replaces the filename.
 
 ### Domain only
 
@@ -63,6 +67,8 @@ https://stats.store/api/v1/appcast/appcast-prerelease.xml
 The proxy intelligently handles cases where:
 
 - The base URL already includes the `.xml` file - it won't add it again
+- A direct stable `.xml` URL has a custom filename - default `/appcast.xml` clients still receive that configured URL
+- A stored known unstable filename would otherwise be served to a stable client - default `/appcast.xml` requests fetch sibling `appcast.xml`
 - You're requesting a different appcast file (e.g., `appcast-beta.xml`) - it will replace the filename
 - The base URL is a folder - it will append the requested appcast filename
 

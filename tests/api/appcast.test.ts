@@ -1,10 +1,14 @@
+import { createServer } from "node:http";
+import type { AddressInfo } from "node:net";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/v1/appcast/[...path]/route";
 
 // Mock fetch
-global.fetch = vi.fn();
+const realFetch = global.fetch;
+const mockFetch = vi.fn();
+global.fetch = mockFetch as unknown as typeof fetch;
 
 // Mock Supabase
 vi.mock("@/lib/supabase/server", () => ({
@@ -30,8 +34,70 @@ vi.mock("@/lib/supabase/server", () => ({
 
 describe("/api/v1/appcast/[...path]", () => {
   beforeEach(() => {
+    global.fetch = mockFetch as unknown as typeof fetch;
     vi.clearAllMocks();
   });
+
+  async function mockAppcastBaseUrl(appcastBaseUrl: string) {
+    const { createSupabaseServerClient } = await import("@/lib/supabase/server");
+    vi.mocked(createSupabaseServerClient).mockReturnValueOnce({
+      from: vi.fn(() => ({
+        insert: vi.fn(() => Promise.resolve({ error: null })),
+        select: vi.fn(() => ({
+          eq: vi.fn(() => ({
+            single: vi.fn(() =>
+              Promise.resolve({
+                data: {
+                  appcast_base_url: appcastBaseUrl,
+                  id: "test-app-id",
+                },
+                error: null,
+              }),
+            ),
+          })),
+        })),
+      })),
+    } as unknown as SupabaseClient);
+  }
+
+  async function startLocalAppcastServer() {
+    const requests: string[] = [];
+    const server = createServer((request, response) => {
+      requests.push(request.url || "");
+      response.setHeader("Content-Type", "application/xml");
+
+      if (request.url === "/updates/appcast.xml") {
+        response.end("<stable></stable>");
+        return;
+      }
+
+      if (request.url === "/updates/appcast-prerelease.xml") {
+        response.end("<prerelease></prerelease>");
+        return;
+      }
+
+      response.statusCode = 404;
+      response.end("<missing></missing>");
+    });
+
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address() as AddressInfo;
+
+    return {
+      close: () =>
+        new Promise<void>((resolve, reject) => {
+          server.close((error) => {
+            if (error) {
+              reject(error);
+              return;
+            }
+            resolve();
+          });
+        }),
+      origin: `http://127.0.0.1:${address.port}`,
+      requests,
+    };
+  }
 
   it("should proxy appcast and capture telemetry", async () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss><channel><item></item></channel></rss>';
@@ -168,6 +234,128 @@ describe("/api/v1/appcast/[...path]", () => {
     );
   });
 
+  it("should preserve custom direct stable XML filenames for default clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/releases.xml");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/releases.xml",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve unrecognized appcast-prefixed XML filenames for default clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/appcast-enterprise.xml");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/appcast-enterprise.xml",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve custom direct stable XML URLs with query parameters", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/appcast-enterprise.xml?token=abc");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/appcast-enterprise.xml?token=abc",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve unrecognized mixed-case appcast XML filenames for default clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/Appcast-Beta.xml");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/Appcast-Beta.xml",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve trailing slashes inside direct XML query parameters", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl(
+      "https://example.com/downloads/releases.xml?redirect=https://cdn.example/",
+    );
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/releases.xml?redirect=https://cdn.example/",
+      expect.any(Object),
+    );
+  });
+
   it("should replace XML filename when requesting different appcast file", async () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       headers: new Headers({
@@ -254,6 +442,148 @@ describe("/api/v1/appcast/[...path]", () => {
       "https://example.com/updates/appcast.xml",
       expect.any(Object),
     );
+  });
+
+  it("should swap a known stored beta feed filename for stable clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/updates/appcast-beta.xml");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/updates/appcast.xml",
+      expect.any(Object),
+    );
+  });
+
+  it("should swap a known stored beta feed filename with query parameters for stable clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/updates/appcast-beta.xml?token=abc");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/updates/appcast.xml?token=abc",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve trailing slashes inside fragments when replacing known unstable filenames", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/updates/appcast-beta.xml#stable/");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/updates/appcast.xml#stable/",
+      expect.any(Object),
+    );
+  });
+
+  it("should replace a stored stable filename for beta channel clients", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/releases.xml");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast-beta.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast-beta.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/appcast-beta.xml",
+      expect.any(Object),
+    );
+  });
+
+  it("should preserve query parameters when replacing a direct stable filename", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce({
+      headers: new Headers({
+        "Content-Type": "application/xml",
+      }),
+      ok: true,
+      text: async () => "<xml></xml>",
+    } as Response);
+
+    await mockAppcastBaseUrl("https://example.com/downloads/releases.xml?token=abc");
+
+    const request = new NextRequest(
+      "http://localhost:3000/api/v1/appcast/appcast-beta.xml?bundleIdentifier=com.example.app",
+      { method: "GET" },
+    );
+
+    await GET(request, { params: Promise.resolve({ path: ["appcast-beta.xml"] }) });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/downloads/appcast-beta.xml?token=abc",
+      expect.any(Object),
+    );
+  });
+
+  it("should proxy a stable request to sibling stable XML when stored URL is a channel feed", async () => {
+    const upstream = await startLocalAppcastServer();
+    global.fetch = realFetch;
+
+    try {
+      await mockAppcastBaseUrl(`${upstream.origin}/updates/appcast-prerelease.xml`);
+
+      const request = new NextRequest(
+        "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+        { method: "GET" },
+      );
+
+      const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+      expect(response.status).toBe(200);
+      expect(await response.text()).toBe("<stable></stable>");
+      expect(upstream.requests).toEqual(["/updates/appcast.xml"]);
+    } finally {
+      await upstream.close();
+    }
   });
 
   it("should parse app identification from User-Agent when no params provided", async () => {
