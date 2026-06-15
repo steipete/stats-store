@@ -85,7 +85,7 @@
     "@types/node": "^25.9.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260609.1",
+    "@typescript/native-preview": "7.0.0-dev.20260614.1",
     "@vitest/browser": "latest",
     "@vitest/coverage-v8": "^4.1.8",
     "@vitest/ui": "^4.1.8",
