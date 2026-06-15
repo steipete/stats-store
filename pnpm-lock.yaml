@@ -225,8 +225,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       happy-dom:
-        specifier: ^20.10.2
-        version: 20.10.2
+        specifier: ^20.10.3
+        version: 20.10.3
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -253,7 +253,7 @@ importers:
         version: 8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0)
       vitest:
         specifier: ^4.1.8
-        version: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.2)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
+        version: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.3)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
 
 packages:
 
@@ -2419,8 +2419,8 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
-  happy-dom@20.10.2:
-    resolution: {integrity: sha512-5p9Sxis3eowDJKqx90QCsgbNA02XXqJ59NOHvD4V6cxp+rP4d/xOyVx7uY3hS8hiUbY1VeiFH8lbJ81AyuDVLQ==}
+  happy-dom@20.10.3:
+    resolution: {integrity: sha512-Hjdiy8RziuCcn5z04QI/rlsNuQoG8P0xxjgvsSMpi89cvIXIOcucQtiHS1yHSShxoBcSCeYqAskINmTiy/mlfw==}
     engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
@@ -4638,7 +4638,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.2)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
+      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.3)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
       ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
@@ -4658,7 +4658,7 @@ snapshots:
       obug: 2.1.2
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.2)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
+      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.3)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
     optionalDependencies:
       '@vitest/browser': 4.1.8(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))(vitest@4.1.8)
 
@@ -4706,7 +4706,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.0
-      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.2)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
+      vitest: 4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.3)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
 
   '@vitest/utils@4.1.8':
     dependencies:
@@ -4943,7 +4943,7 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
-  happy-dom@20.10.2:
+  happy-dom@20.10.3:
     dependencies:
       '@types/node': 25.9.3
       '@types/whatwg-mimetype': 3.0.2
@@ -5544,7 +5544,7 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
 
-  vitest@4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.2)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0)):
+  vitest@4.1.8(@edge-runtime/vm@5.0.0)(@types/node@25.9.3)(@vitest/coverage-v8@4.1.8)(@vitest/ui@4.1.8)(happy-dom@20.10.3)(jsdom@29.1.1)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0)):
     dependencies:
       '@vitest/expect': 4.1.8
       '@vitest/mocker': 4.1.8(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.2)(jiti@2.7.0))
@@ -5571,7 +5571,7 @@ snapshots:
       '@types/node': 25.9.3
       '@vitest/coverage-v8': 4.1.8(@vitest/browser@4.1.8)(vitest@4.1.8)
       '@vitest/ui': 4.1.8(vitest@4.1.8)
-      happy-dom: 20.10.2
+      happy-dom: 20.10.3
       jsdom: 29.1.1
     transitivePeerDependencies:
       - msw
