@@ -1,6 +1,9 @@
 packages:
   - "."
 
+# Preserve immediate stable and daily preview updates from pnpm 10.
+minimumReleaseAge: 0
+
 overrides:
   cookie@<0.7.0: ">=0.7.0"
   semver@<7.5.2: ">=7.5.2"
@@ -12,7 +15,7 @@ overrides:
   braces@<3.0.3: ">=3.0.3"
   ws@<8.17.1: ">=8.17.1"
 
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-  - unrs-resolver
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
