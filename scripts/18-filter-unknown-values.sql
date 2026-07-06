@@ -226,17 +226,17 @@ AS $$
 BEGIN
     RETURN QUERY
     WITH top_versions AS (
-        SELECT app_version
-        FROM public.reports
+        SELECT top_report.app_version
+        FROM public.reports AS top_report
         WHERE 
-            (p_app_id_filter IS NULL OR app_id = p_app_id_filter) AND
-            received_at >= p_start_date_filter AND
-            received_at < (p_end_date_filter + INTERVAL '1 day') AND
-            app_version IS NOT NULL AND
-            app_version != '' AND
-            app_version != 'Unknown'
-        GROUP BY app_version
-        ORDER BY COUNT(DISTINCT ip_hash) DESC
+            (p_app_id_filter IS NULL OR top_report.app_id = p_app_id_filter) AND
+            top_report.received_at >= p_start_date_filter AND
+            top_report.received_at < (p_end_date_filter + INTERVAL '1 day') AND
+            top_report.app_version IS NOT NULL AND
+            top_report.app_version != '' AND
+            top_report.app_version != 'Unknown'
+        GROUP BY top_report.app_version
+        ORDER BY COUNT(DISTINCT top_report.ip_hash) DESC
         LIMIT p_top_versions
     )
     SELECT
@@ -249,12 +249,12 @@ BEGIN
         (p_app_id_filter IS NULL OR r.app_id = p_app_id_filter) AND
         r.received_at >= p_start_date_filter AND
         r.received_at < (p_end_date_filter + INTERVAL '1 day') AND
-        r.app_version IN (SELECT app_version FROM top_versions)
+        r.app_version IN (SELECT top_versions.app_version FROM top_versions)
     GROUP BY
         DATE(r.received_at),
         r.app_version
     ORDER BY
-        report_date,
+        DATE(r.received_at),
         r.app_version;
 END;
 $$;
