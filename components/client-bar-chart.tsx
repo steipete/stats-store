@@ -3,6 +3,14 @@
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 import { useElementSize } from "@/hooks/use-element-size";
 import { valueFormatter } from "@/lib/formatters";
+import {
+  chartAxisTick,
+  chartTooltipContentStyle,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+  resolveSeriesColor,
+  toNumber,
+} from "@/lib/chart-theme";
 import { cn } from "@/lib/utils";
 
 export interface ClientBarChartProps<T extends object = Record<string, unknown>> {
@@ -15,43 +23,6 @@ export interface ClientBarChartProps<T extends object = Record<string, unknown>>
   yAxisWidth?: number;
   showAnimation?: boolean;
   stack?: boolean;
-}
-
-const colorMap: Record<string, string> = {
-  amber: "var(--chart-4)",
-  blue: "var(--chart-1)",
-  cyan: "var(--chart-3)",
-  green: "var(--chart-2)",
-  orange: "var(--chart-4)",
-  purple: "var(--chart-3)",
-  rose: "var(--chart-5)",
-  teal: "var(--chart-2)",
-};
-
-function resolveSeriesColor(colors: string[] | undefined, seriesIndex: number) {
-  const requested = colors?.[seriesIndex];
-  if (requested && requested in colorMap) {
-    return colorMap[requested];
-  }
-  const palette = [
-    "var(--chart-1)",
-    "var(--chart-2)",
-    "var(--chart-3)",
-    "var(--chart-4)",
-    "var(--chart-5)",
-  ];
-  return palette[seriesIndex % palette.length];
-}
-
-function toNumber(value: unknown): number {
-  if (typeof value === "number") {
-    return value;
-  }
-  if (typeof value === "string") {
-    const n = Number(value);
-    return Number.isFinite(n) ? n : 0;
-  }
-  return 0;
 }
 
 export function ClientBarChart<T extends object = Record<string, unknown>>({
@@ -77,15 +48,21 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
           height={size.height}
           data={data as unknown as Record<string, unknown>[]}
           layout={isVertical ? "vertical" : "horizontal"}
+          barCategoryGap="28%"
         >
-          <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
+          <CartesianGrid
+            stroke="var(--border)"
+            strokeOpacity={0.6}
+            vertical={isVertical}
+            horizontal={!isVertical}
+          />
           {isVertical ? (
             <>
               <XAxis
                 type="number"
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tick={chartAxisTick}
                 tickFormatter={(v) => valueFormatter(toNumber(v))}
               />
               <YAxis
@@ -94,7 +71,8 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
                 width={yAxisWidth}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tickMargin={6}
+                tick={chartAxisTick}
               />
             </>
           ) : (
@@ -103,33 +81,32 @@ export function ClientBarChart<T extends object = Record<string, unknown>>({
                 dataKey={index}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tickMargin={8}
+                tick={chartAxisTick}
               />
               <YAxis
                 width={yAxisWidth}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                tick={chartAxisTick}
                 tickFormatter={(v) => valueFormatter(toNumber(v))}
               />
             </>
           )}
           <Tooltip
             formatter={(v) => valueFormatter(toNumber(v))}
-            contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: 8,
-            }}
-            labelStyle={{ color: "hsl(var(--muted-foreground))" }}
-            itemStyle={{ color: "hsl(var(--foreground))" }}
+            contentStyle={chartTooltipContentStyle}
+            labelStyle={chartTooltipLabelStyle}
+            itemStyle={chartTooltipItemStyle}
+            cursor={{ fill: "var(--accent)", fillOpacity: 0.5 }}
           />
           {categories.map((category, seriesIndex) => (
             <Bar
               key={category}
               dataKey={category}
               fill={resolveSeriesColor(colors, seriesIndex)}
-              radius={4}
+              radius={3}
+              maxBarSize={isVertical ? 14 : 28}
               isAnimationActive={showAnimation}
               stackId={stack ? "a" : undefined}
             />

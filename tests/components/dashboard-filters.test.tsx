@@ -198,14 +198,14 @@ describe("DashboardFilters", () => {
       const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
       const grid = container.firstChild;
-      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "gap-4");
+      expect(grid).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "gap-3");
     });
 
     it("applies correct styling to inputs", () => {
       const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
       const selectWrapper = container.querySelector(".relative.w-full");
-      expect(selectWrapper).toHaveClass("rounded-lg", "border", "shadow-subtle");
+      expect(selectWrapper).toHaveClass("rounded-md", "border", "bg-input");
     });
 
     it("applies error styling when there is an error", () => {
@@ -222,7 +222,7 @@ describe("DashboardFilters", () => {
     it("shows chevron icon in select", () => {
       const { container } = render(<DashboardFilters apps={mockApps} currentAppId="all" />);
 
-      const chevron = container.querySelector(".h-5.w-5.text-muted-foreground");
+      const chevron = container.querySelector(".h-4.w-4.text-muted-foreground");
       expect(chevron).toBeInTheDocument();
     });
   });

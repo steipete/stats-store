@@ -25,18 +25,18 @@ export function RealtimeStatusFooter({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="mt-8 mb-4 flex items-center justify-between py-4"
+          className="mt-10 mb-2 flex items-center justify-between border-t border-border py-4"
         >
           <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="h-2 w-2 bg-green-500 rounded-full" />
+              <div className="h-2 w-2 bg-live rounded-full" />
               <motion.div
-                className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
+                className="absolute inset-0 h-2 w-2 bg-live rounded-full"
                 animate={{ opacity: [1, 0.5, 1], scale: [1, 1.5, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
             </div>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
               Real-time updates active
               {lastUpdate && (
                 <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>
@@ -47,7 +47,7 @@ export function RealtimeStatusFooter({
           <button
             type="button"
             onClick={() => setShowActivityFeed(!showActivityFeed)}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 rounded-md transition-colors"
+            className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs uppercase tracking-[0.14em] text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
           >
             <BellAlertIcon className="h-4 w-4" />
             Activity Feed

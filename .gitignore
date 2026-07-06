@@ -42,3 +42,4 @@ temp_url.txt
 
 # OS files
 .DS_Store
+.env*

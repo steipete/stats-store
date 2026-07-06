@@ -2,24 +2,20 @@
 
 ## Overview
 
-The dashboard uses KPI cards with optional hover info; we support two tooltip approaches depending on whether you want a client component or pure HTML.
+The dashboard uses KPI cells with optional hover info, implemented with `@radix-ui/react-tooltip`. It provides a fully accessible, customizable tooltip component.
 
-## Solution 1: Radix UI Tooltip (Recommended)
-
-This solution uses `@radix-ui/react-tooltip` which is already installed in the project. It provides a fully accessible, customizable tooltip component.
-
-### Components Created:
+### Components:
 
 1. **`/components/ui/tooltip.tsx`** - A reusable tooltip component using Radix UI primitives
-2. **`/components/kpi-card.tsx`** - A wrapper component for KPI cards with tooltip support
+2. **`/components/kpi-card.tsx`** - The KPI cell component with tooltip support
 
 ### Implementation:
 
-The KpiCard component is now used in `app/page.tsx` with the following tooltip texts:
+The KpiCard component is used (via `RealtimeKpiCard`) in the dashboard's KPI band with the following tooltip texts:
 
-- **Unique Users**: "Unique users (based on IP hash) from [start date] to [end date]"
-- **Total Reports**: "Total reports received from [start date] to [end date]"
-- **Latest Version**: "Highest reported application version (semantically sorted)"
+- **Unique Users**: "Distinct users identified by daily IP hash"
+- **Total Reports**: "All telemetry reports received"
+- **Latest Version**: "Most recent app version seen in reports"
 
 ### Features:
 
@@ -35,66 +31,14 @@ The KpiCard component is now used in `app/page.tsx` with the following tooltip t
 <KpiCard
   title="Unique Users"
   value={valueFormatter(data.kpis.unique_installs)}
-  icon={UsersIcon}
-  iconColor="blue"
-  tooltip="Unique users (based on IP hash) from Jan 1 to Jan 31"
+  iconName="users"
+  tooltip="Distinct users identified by daily IP hash"
 />
 ```
 
-## Solution 2: Native HTML Title Attribute (Simple Alternative)
+## Simple Alternative: Native HTML Title Attribute
 
-For a simpler approach without client-side JavaScript, we also created `KpiCardSimple` that uses the native HTML `title` attribute.
-
-### Component Created:
-
-**`/components/kpi-card-simple.tsx`** - A server component that uses the `title` attribute
-
-### Features:
-
-- No client-side JavaScript required
-- Works everywhere
-- Native browser behavior
-- Simple implementation
-
-### Limitations:
-
-- Less control over styling
-- Delay before tooltip appears is browser-dependent
-- No animations
-- Basic appearance
-
-### Usage Example:
-
-```tsx
-<KpiCardSimple
-  title="Unique Users"
-  value={valueFormatter(data.kpis.unique_installs)}
-  icon={UsersIcon}
-  iconColor="blue"
-  tooltip="Unique users (based on IP hash) from Jan 1 to Jan 31"
-/>
-```
-
-## Current Implementation
-
-The dashboard currently uses Solution 1 (Radix UI) as it provides a better user experience with:
-
-- Immediate tooltip display on hover
-- Consistent styling with the application theme
-- Better accessibility features
-- Professional appearance
-
-## Switching Between Solutions
-
-To switch to the simpler solution, replace the import in `app/page.tsx`:
-
-```tsx
-// Replace this:
-import { KpiCard } from "@/components/kpi-card";
-
-// With this:
-import { KpiCardSimple as KpiCard } from "@/components/kpi-card-simple";
-```
+If you ever need a tooltip without client-side JavaScript, pass a `title` attribute on a plain wrapper element instead. The previous `KpiCardSimple` component that demonstrated this was unused and has been removed.
 
 ## Styling Customization
 

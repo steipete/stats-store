@@ -13,9 +13,9 @@ import { cn } from "@/lib/utils";
 type IconName = "users" | "cube" | "tag" | "exclamation";
 
 interface KpiCardProps {
-  title?: string; // Made title optional
-  value?: string | number; // Made value optional
-  iconName?: IconName; // Made iconName optional
+  title?: string;
+  value?: string | number;
+  iconName?: IconName;
   iconColor?: string;
   iconVariant?: "simple" | "light" | "shadow" | "solid" | "outline";
   error?: boolean;
@@ -24,11 +24,14 @@ interface KpiCardProps {
   className?: string;
 }
 
+/**
+ * KPI cell in the hairline-divided stats band: quiet uppercase label,
+ * oversized tabular numeral. Icons stay muted; error turns destructive.
+ */
 export function KpiCard({
   title,
   value,
   iconName,
-  iconColor = "blue",
   error = false,
   tooltip,
   children,
@@ -43,41 +46,35 @@ export function KpiCard({
 
   const IconComponent = iconName && (error ? ExclamationCircleIcon : iconMap[iconName]);
 
-  const iconClassName = error
-    ? "text-destructive"
-    : iconColor === "green"
-      ? "text-emerald-500"
-      : iconColor === "amber"
-        ? "text-amber-500"
-        : iconColor === "teal"
-          ? "text-teal-500"
-          : iconColor === "purple"
-            ? "text-purple-500"
-            : iconColor === "rose"
-              ? "text-rose-500"
-              : "text-blue-500";
-
   const cardContent = (
     <div
       className={cn(
-        "rounded-lg bg-card text-card-foreground p-4 shadow-subtle border border-border",
-        error ? "border-destructive/50" : "",
+        "relative bg-transparent px-1 py-6 md:px-7 md:py-8",
+        error ? "text-destructive" : "text-foreground",
         className,
       )}
     >
       {(title || iconName) && (
-        <div className="flex items-start justify-between gap-3">
-          {title && <p className="text-sm text-muted-foreground">{title}</p>}
+        <div className="flex items-center justify-between gap-3">
+          {title && (
+            <p className="text-[11px] uppercase tracking-[0.28em] text-muted-foreground">{title}</p>
+          )}
           {IconComponent && iconName ? (
-            <IconComponent className={cn("h-5 w-5 shrink-0", iconClassName)} />
+            <IconComponent
+              className={cn(
+                "h-4 w-4 shrink-0",
+                error ? "text-destructive" : "text-muted-foreground/60",
+              )}
+            />
           ) : null}
         </div>
       )}
       {value ? (
         <div
           className={cn(
-            "text-2xl font-semibold text-foreground",
-            title || iconName ? "mt-2" : "mt-0",
+            "font-light tabular-nums tracking-tight",
+            "text-4xl md:text-[3.4rem] md:leading-[1.1]",
+            title || iconName ? "mt-3" : "mt-0",
           )}
         >
           {value}

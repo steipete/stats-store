@@ -79,9 +79,9 @@ export function DashboardFilters({
   };
 
   const commonInputBaseClasses =
-    "w-full h-10 rounded-lg bg-input text-foreground border border-input-border shadow-subtle focus-within:ring-2 focus-within:ring-ring focus-within:border-primary transition-colors duration-150 ease-in-out";
+    "w-full h-9 rounded-md bg-input text-foreground text-sm border border-input-border focus-within:ring-1 focus-within:ring-ring focus-within:border-primary transition-colors duration-150 ease-in-out";
   const commonErrorWarningClasses =
-    "flex items-center space-x-2 p-2.5 border rounded-lg h-10 text-sm";
+    "flex items-center space-x-2 px-2.5 border rounded-md h-9 text-xs";
 
   const renderAppFilter = () => {
     if (appsError) {
@@ -117,15 +117,15 @@ export function DashboardFilters({
 
     return (
       <div
-        className={cn(
-          "relative w-full overflow-hidden",
-          commonInputBaseClasses, // This already includes rounded-lg
-        )}
+        className={cn("relative flex w-full items-center overflow-hidden", commonInputBaseClasses)}
       >
+        <span className="pointer-events-none pl-3 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          App
+        </span>
         <select
           value={selectValue}
           onChange={(e) => handleAppChange(e.target.value)}
-          className="w-full h-full appearance-none pl-3 pr-10 py-0 bg-transparent text-foreground focus:outline-none rounded-lg"
+          className="h-full w-full appearance-none bg-transparent py-0 pl-3 pr-9 text-foreground focus:outline-none"
         >
           {options.map((opt) => (
             <option key={opt.id} value={opt.id} className="text-foreground bg-popover">
@@ -133,16 +133,19 @@ export function DashboardFilters({
             </option>
           ))}
         </select>
-        <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none" />
+        <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
       </div>
     );
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 items-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
       {renderAppFilter()}
-      <div className="grid grid-cols-2 gap-2">
-        <div className={cn(commonInputBaseClasses, "px-2 flex items-center")}>
+      <div className="grid grid-cols-2 gap-3">
+        <div className={cn(commonInputBaseClasses, "px-3 flex items-center gap-3")}>
+          <span className="pointer-events-none text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            From
+          </span>
           <label className="sr-only" htmlFor="date-from">
             From
           </label>
@@ -167,7 +170,10 @@ export function DashboardFilters({
             }}
           />
         </div>
-        <div className={cn(commonInputBaseClasses, "px-2 flex items-center")}>
+        <div className={cn(commonInputBaseClasses, "px-3 flex items-center gap-3")}>
+          <span className="pointer-events-none text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+            To
+          </span>
           <label className="sr-only" htmlFor="date-to">
             To
           </label>
