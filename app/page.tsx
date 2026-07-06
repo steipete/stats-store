@@ -95,7 +95,12 @@ export default async function DashboardPage({
     <div className="relative min-h-screen">
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:px-6 lg:px-8">
-          <Wordmark />
+          <div className="flex items-baseline gap-4">
+            <Wordmark />
+            <span className="hidden text-[10px] uppercase tracking-[0.22em] text-muted-foreground md:block">
+              Privacy-first Sparkle analytics
+            </span>
+          </div>
           <nav className="flex items-center gap-4">
             <a
               href="https://github.com/steipete/stats-store"
@@ -119,18 +124,11 @@ export default async function DashboardPage({
       </header>
 
       <main className="mx-auto max-w-7xl px-4 pb-16 md:px-6 lg:px-8">
-        <section className="pb-10 pt-12 md:pt-16">
-          <p className="reveal text-[11px] uppercase tracking-[0.4em] text-primary">
+        <section className="pb-6 pt-8">
+          <h1 className="reveal text-[11px] uppercase tracking-[0.4em] text-primary">
             Sparkle telemetry · {rangeLabel}
-          </p>
-          <h1 className="reveal reveal-1 mt-4 max-w-3xl font-display text-[clamp(2.4rem,6vw,4.25rem)] font-light leading-[1.04] tracking-tight text-balance">
-            Every Mac counted. <em className="italic text-primary">Nobody tracked.</em>
           </h1>
-          <p className="reveal reveal-2 mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Privacy-first analytics for Sparkle-enabled Mac apps. No IP addresses stored, no
-            fingerprints, no third parties — and free for open source.
-          </p>
-          <div className="reveal reveal-3 mt-10">
+          <div className="reveal reveal-1 mt-4">
             <Suspense
               fallback={
                 <div className="grid grid-cols-1 items-center gap-3 md:grid-cols-2">
@@ -152,7 +150,7 @@ export default async function DashboardPage({
           </div>
         </section>
 
-        <div className="reveal reveal-4">
+        <div className="reveal reveal-2">
           <RealtimeWrapper
             selectedAppId={selectedAppId}
             dateRange={{
