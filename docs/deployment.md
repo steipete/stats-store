@@ -17,6 +17,10 @@ This guide will help you deploy your own instance of stats.store.
    - Select a region close to your users
 
 2. **Run the database migrations**
+   - In the Supabase dashboard, open the SQL Editor
+   - Run every present numbered file in `scripts/` in numeric order
+     - Start with `01-create-apps-table.sql` and finish with `18-filter-unknown-values.sql`
+     - Gaps in the numbering are intentional
    - Install Supabase CLI (`supabase --version`)
    - Copy `.env.migrations.example` → `.env.migrations` and fill it in
    - Run:
@@ -25,7 +29,7 @@ This guide will help you deploy your own instance of stats.store.
      supabase link --project-ref "$SUPABASE_PROJECT_REF"
      supabase db push --password "$SUPABASE_DB_PASSWORD"
      \`\`\`
-   - This applies `supabase/migrations/*` to your remote database
+   - This applies the managed real-time infrastructure and later fixes from `supabase/migrations/*`
 
 3. **Enable real-time (optional but cool!)**
    - Go to Database → Replication

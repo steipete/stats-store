@@ -87,8 +87,8 @@ pnpm install
 cp .env.example .env.local
 # Edit .env.local with your Supabase credentials
 
-# Run database migrations (Supabase)
-# (requires Supabase CLI + DB password/connection string; see docs/deployment.md)
+# Bootstrap a new Supabase project by running every present scripts/*.sql file
+# in numeric order in the SQL Editor. Then apply managed migrations:
 supabase link --project-ref <your_project_ref>
 supabase db push
 
