@@ -15,25 +15,25 @@ Stats Store can act as a proxy for your Sparkle appcast feeds, allowing you to c
 
 ### 1. Add your appcast URL to the database
 
-\`\`\`sql
+```sql
 UPDATE apps
 SET appcast_base_url = 'https://github.com/yourname/yourrepo'
 WHERE bundle_identifier = 'com.yourcompany.yourapp';
-\`\`\`
+```
 
 ### 2. Update your Sparkle configuration
 
 Instead of pointing to your actual appcast URL, use:
 
-\`\`\`
+```
 https://stats.store/api/v1/appcast/appcast.xml
-\`\`\`
+```
 
 For prerelease/beta channels:
 
-\`\`\`
+```
 https://stats.store/api/v1/appcast/appcast-prerelease.xml
-\`\`\`
+```
 
 ## URL Patterns
 
@@ -76,9 +76,9 @@ The proxy intelligently handles cases where:
 
 Use the provided test script:
 
-\`\`\`bash
+```bash
 ./test-appcast-proxy.sh
-\`\`\`
+```
 
 ## Example Sparkle Requests
 
@@ -86,19 +86,19 @@ Use the provided test script:
 
 When Sparkle sends system profile data, the request includes query parameters:
 
-\`\`\`
+```
 GET /api/v1/appcast/appcast.xml?appName=MyApp&appVersion=123&osVersion=14.0&cputype=16777228&model=MacBookPro17,1&ncpu=8&lang=en&ramMB=16384
 User-Agent: MyApp/2.1.3 Sparkle/2.0.0
-\`\`\`
+```
 
 ### Without System Profiling (most requests)
 
 Most requests come without query parameters due to privacy throttling:
 
-\`\`\`
+```
 GET /api/v1/appcast/appcast.xml
 User-Agent: MyApp/2.1.3 Sparkle/2.0.0
-\`\`\`
+```
 
 **Important:** The proxy now intelligently handles both cases:
 
