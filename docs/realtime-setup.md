@@ -33,22 +33,22 @@ The real-time system uses an aggregated update approach (Option 2) that provides
 
 Complete the [base database setup](deployment.md#step-1-set-up-supabase), then apply the managed Supabase migrations:
 
-\`\`\`bash
+```bash
 
 # Recommended (CLI)
 
 supabase link --project-ref <your_project_ref>
 supabase db push
-\`\`\`
+```
 
 ### 2. Configure Environment Variables
 
 Ensure your `.env.local` includes the public Supabase keys:
 
-\`\`\`env
+```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-\`\`\`
+```
 
 ### 3. Enable Realtime in Supabase
 
@@ -111,34 +111,34 @@ Updates are batched to balance real-time feel with performance:
 
 In `supabase/migrations/20251227125800_realtime_tables_and_triggers.sql`, modify:
 
-\`\`\`sql
+```sql
 -- Change batch size (default: 10)
 IF v_pending_count >= 10 OR
 
 -- Change time interval (default: 30 seconds)
 v_last_aggregation < now() - INTERVAL '30 seconds' THEN
-\`\`\`
+```
 
 ### Add Custom Milestones
 
 Edit the milestones array in the trigger:
 
-\`\`\`sql
+```sql
 v_milestones INT[] := ARRAY[10, 50, 100, 500, 1000, 5000, 10000];
-\`\`\`
+```
 
 ### Customize Notifications
 
 Modify toast notifications in `components/realtime-dashboard-wrapper.tsx`:
 
-\`\`\`typescript
+```typescript
 onNewUser: (event) => {
 toast.success(`New user detected!`, {
 description: `App version: ${event.event_data.app_version}`,
 icon: <SparklesIcon className="h-4 w-4" />,
 })
 }
-\`\`\`
+```
 
 ## Troubleshooting
 
