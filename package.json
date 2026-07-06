@@ -61,8 +61,8 @@
     "embla-carousel-react": "latest",
     "framer-motion": "latest",
     "input-otp": "latest",
-    "lucide-react": "^1.22.0",
-    "next": "16.2.9",
+    "lucide-react": "^1.23.0",
+    "next": "16.2.10",
     "next-themes": "latest",
     "react": "^19.2.7",
     "react-day-picker": "latest",
@@ -85,7 +85,7 @@
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260701.1",
+    "@typescript/native-preview": "7.0.0-dev.20260705.1",
     "@vitest/browser": "latest",
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.1.9",
@@ -98,7 +98,7 @@
     "postcss": "^8.5.16",
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3",
-    "vite": "^8.1.2",
+    "vite": "^8.1.3",
     "vitest": "^4.1.9"
   },
   "engines": {
