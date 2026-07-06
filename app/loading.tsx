@@ -32,11 +32,9 @@ export default function Loading() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 pb-16 md:px-6 lg:px-8">
-        <section className="pb-10 pt-12 md:pt-16">
+        <section className="pb-6 pt-8">
           <SkeletonBox className="h-3 w-56" />
-          <SkeletonBox className="mt-5 h-14 w-full max-w-2xl" />
-          <SkeletonBox className="mt-5 h-4 w-full max-w-md" />
-          <div className="mt-10 grid grid-cols-1 items-center gap-3 md:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 items-center gap-3 md:grid-cols-2">
             <SkeletonBox className="h-9" />
             <div className="grid grid-cols-2 gap-3">
               <SkeletonBox className="h-9" />
