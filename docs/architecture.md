@@ -15,14 +15,14 @@ stats.store is built on a modern serverless architecture:
 
 ### Appcast Proxy Flow (Primary Method)
 
-\`\`\`mermaid
+```mermaid
 graph LR
 A[Mac App] -->|Update Check| B[stats.store/api/v1/appcast]
 B -->|1. Log Stats| C[Supabase DB]
 B -->|2. Fetch| D[Original Appcast URL]
 D -->|3. Return| B
 B -->|4. Serve| A
-\`\`\`
+```
 
 1. **App checks for updates**: Sparkle sends a request to stats.store instead of the original URL
 2. **stats.store logs the request**: Extracts system info from Sparkle's query parameters
@@ -33,11 +33,11 @@ B -->|4. Serve| A
 
 For apps that want more control, there's also a direct API endpoint:
 
-\`\`\`mermaid
+```mermaid
 graph LR
 A[Mac App] -->|POST| B[stats.store/api/v1/ingest]
 B -->|Validate & Store| C[Supabase DB]
-\`\`\`
+```
 
 ## Database Schema
 
@@ -47,7 +47,7 @@ B -->|Validate & Store| C[Supabase DB]
 
 Stores registered applications:
 
-\`\`\`sql
+```sql
 CREATE TABLE public.apps (
 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 name TEXT NOT NULL UNIQUE,
@@ -55,13 +55,13 @@ bundle_identifier TEXT NOT NULL UNIQUE,
 appcast_base_url TEXT, -- GitHub URL for appcast proxy
 created_at TIMESTAMPTZ DEFAULT now()
 );
-\`\`\`
+```
 
 #### `reports` Table
 
 Stores sanitized telemetry data:
 
-\`\`\`sql
+```sql
 CREATE TABLE public.reports (
 id BIGSERIAL PRIMARY KEY,
 app_id UUID NOT NULL REFERENCES public.apps(id) ON DELETE CASCADE,
@@ -75,7 +75,7 @@ language TEXT,
 model_identifier TEXT, -- e.g., "MacBookPro17,1"
 ram_mb INT
 );
-\`\`\`
+```
 
 ### Real-Time Tables (New)
 
@@ -83,7 +83,7 @@ ram_mb INT
 
 Pre-computed aggregates for real-time performance:
 
-\`\`\`sql
+```sql
 CREATE TABLE public.stats_cache (
 id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 app_id UUID REFERENCES public.apps(id) ON DELETE CASCADE,
@@ -93,13 +93,13 @@ period_start TIMESTAMPTZ,
 period_end TIMESTAMPTZ,
 updated_at TIMESTAMPTZ DEFAULT now()
 );
-\`\`\`
+```
 
 #### `realtime_events` Table
 
 Tracks events for live updates:
 
-\`\`\`sql
+```sql
 CREATE TABLE public.realtime_events (
 id BIGSERIAL PRIMARY KEY,
 app_id UUID REFERENCES public.apps(id) ON DELETE CASCADE,
@@ -107,7 +107,7 @@ event_type TEXT NOT NULL, -- 'new_user', 'milestone', etc.
 event_data JSONB NOT NULL,
 created_at TIMESTAMPTZ DEFAULT now()
 );
-\`\`\`
+```
 
 ## API Documentation
 
@@ -116,18 +116,19 @@ created_at TIMESTAMPTZ DEFAULT now()
 Direct telemetry endpoint for apps that want to send data explicitly.
 
 **Request:**
-\`\`\`json
+
+```json
 {
-"bundleIdentifier": "com.example.app",
-"appVersion": "1.0.0",
-"osVersion": "14.0",
-"cputype": "16777228", // Sparkle CPU type code
-"ncpu": "8",
-"lang": "en",
-"model": "MacBookPro17,1",
-"ramMB": "16384"
+  "bundleIdentifier": "com.example.app",
+  "appVersion": "1.0.0",
+  "osVersion": "14.0",
+  "cputype": "16777228", // Sparkle CPU type code
+  "ncpu": "8",
+  "lang": "en",
+  "model": "MacBookPro17,1",
+  "ramMB": "16384"
 }
-\`\`\`
+```
 
 **Response:**
 
@@ -140,9 +141,10 @@ Direct telemetry endpoint for apps that want to send data explicitly.
 Appcast proxy endpoint. This is where the magic happens!
 
 **URL Structure:**
-\`\`\`
+
+```
 https://stats.store/api/v1/appcast/appcast.xml?[sparkle-parameters]
-\`\`\`
+```
 
 **Sparkle Parameters (automatically sent by Sparkle):**
 
@@ -166,10 +168,11 @@ https://stats.store/api/v1/appcast/appcast.xml?[sparkle-parameters]
 5. **Fetch and return** the original appcast
 
 **Example Flow:**
-\`\`\`
+
+```
 App requests: https://stats.store/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app
 We fetch: https://raw.githubusercontent.com/example/app/main/appcast.xml
-\`\`\`
+```
 
 ## Privacy & Security Implementation
 
@@ -177,10 +180,10 @@ We fetch: https://raw.githubusercontent.com/example/app/main/appcast.xml
 
 IPs are never stored. Instead:
 
-\`\`\`typescript
-const dailySalt = format(new Date(), 'yyyy-MM-dd')
-const ipHash = sha256(ip + dailySalt)
-\`\`\`
+```typescript
+const dailySalt = format(new Date(), "yyyy-MM-dd");
+const ipHash = sha256(ip + dailySalt);
+```
 
 This means:
 
@@ -203,41 +206,45 @@ All incoming data is validated and sanitized:
 
 Database triggers automatically update aggregates:
 
-\`\`\`sql
+```sql
 -- After new report insert:
 -- 1. Check if new unique user
 -- 2. Update stats cache if needed
 -- 3. Emit real-time events
 -- 4. Check for milestones
-\`\`\`
+```
 
 ### WebSocket Subscriptions
 
 Clients subscribe to changes via Supabase Realtime:
 
-\`\`\`typescript
+```typescript
 supabase
-.channel('app-stats')
-.on('postgres_changes', {
-event: 'INSERT',
-schema: 'public',
-table: 'realtime_events'
-}, handleRealtimeUpdate)
-.subscribe()
-\`\`\`
+  .channel("app-stats")
+  .on(
+    "postgres_changes",
+    {
+      event: "INSERT",
+      schema: "public",
+      table: "realtime_events",
+    },
+    handleRealtimeUpdate,
+  )
+  .subscribe();
+```
 
 ## Performance Optimizations
 
 ### Database Indexes
 
-\`\`\`sql
+```sql
 CREATE INDEX idx_reports_app_id_received_at
 ON public.reports(app_id, received_at DESC);
 CREATE INDEX idx_reports_os_version
 ON public.reports(os_version);
 CREATE INDEX idx_reports_cpu_arch
 ON public.reports(cpu_arch);
-\`\`\`
+```
 
 ### Caching Strategy
 
@@ -249,7 +256,7 @@ ON public.reports(cpu_arch);
 
 ### Project Structure
 
-\`\`\`
+```
 stats-store/
 ├── app/ # Next.js App Router
 │ ├── api/v1/ # API endpoints
@@ -257,17 +264,17 @@ stats-store/
 │ │ └── appcast/ # Proxy endpoint
 │ ├── page.tsx # Dashboard (server component)
 │ └── globals.css # Tailwind styles
-├── components/  
+├── components/
 │ ├── ui/ # shadcn/ui components
 │ ├── client-_.tsx # Client-side charts
 │ └── realtime-_.tsx # Real-time components
 ├── hooks/ # Custom React hooks
-├── lib/  
+├── lib/
 │ ├── supabase/ # Database client
 │ └── utils.ts # Helpers
 ├── scripts/ # SQL migrations
 └── tests/ # Vitest tests
-\`\`\`
+```
 
 ### Testing Strategy
 
@@ -280,7 +287,7 @@ stats-store/
 
 ### Environment Variables
 
-\`\`\`env
+```env
 
 # Required for all environments
 
@@ -292,7 +299,7 @@ SUPABASE_SERVICE_ROLE_KEY=[service-key]
 
 NEXT_PUBLIC_SUPABASE_URL=https://[project].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
-\`\`\`
+```
 
 ### Vercel Configuration
 
@@ -316,23 +323,25 @@ Run scripts in order:
 ### Useful Queries
 
 **Daily active users:**
-\`\`\`sql
+
+```sql
 SELECT DATE(received_at) as day, COUNT(DISTINCT ip_hash) as users
 FROM reports
 WHERE app_id = '[app-id]'
 GROUP BY day
 ORDER BY day DESC;
-\`\`\`
+```
 
 **Version adoption:**
-\`\`\`sql
+
+```sql
 SELECT app_version, COUNT(DISTINCT ip_hash) as users
 FROM reports
 WHERE app_id = '[app-id]'
 AND received_at > NOW() - INTERVAL '30 days'
 GROUP BY app_version
 ORDER BY users DESC;
-\`\`\`
+```
 
 ### Common Issues
 
