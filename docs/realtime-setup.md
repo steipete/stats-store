@@ -31,7 +31,7 @@ The real-time system uses an aggregated update approach (Option 2) that provides
 
 ### 1. Run Database Migrations
 
-Apply the Supabase migration:
+Complete the [base database setup](deployment.md#step-1-set-up-supabase), then apply the managed Supabase migrations:
 
 \`\`\`bash
 
