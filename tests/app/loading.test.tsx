@@ -6,7 +6,9 @@ describe("app/loading", () => {
   it("renders loading UI", () => {
     render(<Loading />);
 
-    expect(screen.getByText("stats.store")).toBeInTheDocument();
-    expect(screen.getByText("Loading dashboard data...")).toBeInTheDocument();
+    expect(
+      screen.getByText((_, el) => el?.tagName === "P" && el.textContent === "✳stats.store"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Loading dashboard data…")).toBeInTheDocument();
   });
 });

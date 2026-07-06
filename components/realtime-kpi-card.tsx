@@ -58,13 +58,13 @@ export function RealtimeKpiCard({
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute top-2 right-2"
+            className="absolute top-6 right-1 md:right-7"
           >
             <div className="relative">
-              <div className="h-2 w-2 bg-green-500 rounded-full" />
+              <div className="h-2 w-2 rounded-full bg-live pulse-live" />
               {isUpdating && (
                 <motion.div
-                  className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
+                  className="absolute inset-0 h-2 w-2 bg-live rounded-full"
                   animate={{ opacity: [1, 0, 1], scale: [1, 2, 1] }}
                   transition={{ duration: 0.6 }}
                 />
@@ -77,9 +77,9 @@ export function RealtimeKpiCard({
         {isUpdating && (
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
+            animate={{ opacity: 0.08 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-primary rounded-lg pointer-events-none"
+            className="absolute inset-0 bg-primary pointer-events-none"
           />
         )}
       </div>

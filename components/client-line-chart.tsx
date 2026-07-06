@@ -1,8 +1,17 @@
 "use client";
 
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
+import { useId } from "react";
+import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 import { useElementSize } from "@/hooks/use-element-size";
 import { valueFormatter } from "@/lib/formatters";
+import {
+  chartAxisTick,
+  chartTooltipContentStyle,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+  resolveSeriesColor,
+  toNumber,
+} from "@/lib/chart-theme";
 import { cn } from "@/lib/utils";
 
 export interface ClientLineChartProps<T extends object = Record<string, unknown>> {
@@ -15,43 +24,6 @@ export interface ClientLineChartProps<T extends object = Record<string, unknown>
   yAxisWidth?: number;
 }
 
-const colorMap: Record<string, string> = {
-  amber: "var(--chart-4)",
-  blue: "var(--chart-1)",
-  cyan: "var(--chart-3)",
-  green: "var(--chart-2)",
-  orange: "var(--chart-4)",
-  purple: "var(--chart-3)",
-  rose: "var(--chart-5)",
-  teal: "var(--chart-2)",
-};
-
-function resolveSeriesColor(colors: string[] | undefined, seriesIndex: number) {
-  const requested = colors?.[seriesIndex];
-  if (requested && requested in colorMap) {
-    return colorMap[requested];
-  }
-  const palette = [
-    "var(--chart-1)",
-    "var(--chart-2)",
-    "var(--chart-3)",
-    "var(--chart-4)",
-    "var(--chart-5)",
-  ];
-  return palette[seriesIndex % palette.length];
-}
-
-function toNumber(value: unknown): number {
-  if (typeof value === "number") {
-    return value;
-  }
-  if (typeof value === "string") {
-    const n = Number(value);
-    return Number.isFinite(n) ? n : 0;
-  }
-  return 0;
-}
-
 export function ClientLineChart<T extends object = Record<string, unknown>>({
   className,
   data,
@@ -61,53 +33,77 @@ export function ClientLineChart<T extends object = Record<string, unknown>>({
   showAnimation = true,
   yAxisWidth = 48,
 }: ClientLineChartProps<T>) {
+  const gradientId = useId();
   const { ref, size } = useElementSize<HTMLDivElement>();
   const isReady = size.width > 0 && size.height > 0;
 
   return (
     <div ref={ref} className={cn("w-full", className)} data-testid="line-chart">
       {isReady ? (
-        <LineChart
+        <AreaChart
           width={size.width}
           height={size.height}
           data={data as unknown as Record<string, unknown>[]}
         >
-          <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.5} vertical={false} />
+          <defs>
+            {categories.map((category, seriesIndex) => (
+              <linearGradient
+                key={category}
+                id={`${gradientId}-${seriesIndex}`}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop
+                  offset="0%"
+                  stopColor={resolveSeriesColor(colors, seriesIndex)}
+                  stopOpacity={0.28}
+                />
+                <stop
+                  offset="100%"
+                  stopColor={resolveSeriesColor(colors, seriesIndex)}
+                  stopOpacity={0}
+                />
+              </linearGradient>
+            ))}
+          </defs>
+          <CartesianGrid stroke="var(--border)" strokeOpacity={0.6} vertical={false} />
           <XAxis
             dataKey={index}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            tickMargin={8}
+            tick={chartAxisTick}
           />
           <YAxis
             width={yAxisWidth}
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            tick={chartAxisTick}
             tickFormatter={(v) => valueFormatter(toNumber(v))}
           />
           <Tooltip
             formatter={(v) => valueFormatter(toNumber(v))}
-            contentStyle={{
-              background: "hsl(var(--popover))",
-              border: "1px solid hsl(var(--border))",
-              borderRadius: 8,
-            }}
-            labelStyle={{ color: "hsl(var(--muted-foreground))" }}
-            itemStyle={{ color: "hsl(var(--foreground))" }}
+            contentStyle={chartTooltipContentStyle}
+            labelStyle={chartTooltipLabelStyle}
+            itemStyle={chartTooltipItemStyle}
+            cursor={{ stroke: "var(--muted-foreground)", strokeDasharray: "3 3" }}
           />
           {categories.map((category, seriesIndex) => (
-            <Line
+            <Area
               key={category}
               type="monotone"
               dataKey={category}
               stroke={resolveSeriesColor(colors, seriesIndex)}
-              strokeWidth={2}
+              strokeWidth={1.75}
+              fill={`url(#${gradientId}-${seriesIndex})`}
               dot={false}
+              activeDot={{ r: 3, strokeWidth: 0 }}
               isAnimationActive={showAnimation}
             />
           ))}
-        </LineChart>
+        </AreaChart>
       ) : null}
     </div>
   );

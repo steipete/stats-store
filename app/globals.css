@@ -1,45 +1,170 @@
 @import "tailwindcss";
 
-/* Configure dark mode for class-based approach - MUST use @custom-variant */
+/* Class-based dark mode (next-themes toggles .dark on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Theme configuration */
-@theme {
-  /* Define semantic color names that Tailwind will use */
+/*
+ * stats.store design system — "Ink & Ember"
+ * Warm near-black observatory canvas, hairline borders, ember accent,
+ * phosphor-mint live signal. Fraunces for display, Spline Sans Mono for data.
+ */
+@theme inline {
   --color-background: var(--background);
-  --color-card: var(--card);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input-bg);
+  --color-input-border: var(--input-border);
   --color-ring: var(--ring);
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-destructive: var(--destructive);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-popover: var(--popover);
+  --color-live: var(--live);
+  --color-ember: var(--primary);
 
-  --color-tooltip: hsl(240 6% 10%);
-  --color-tooltip-foreground: hsl(0 0% 98%);
+  --color-tooltip: var(--tooltip-bg);
+  --color-tooltip-foreground: var(--tooltip-foreground);
 
-  --color-chart-1: hsl(221 83% 53%);
-  --color-chart-2: hsl(173 58% 39%);
-  --color-chart-3: hsl(240 50% 60%);
-  --color-chart-4: hsl(30 90% 55%);
-  --color-chart-5: hsl(340 80% 60%);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
-  --radius: 0.75rem;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-mono: var(--font-spline-mono), ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-spline-mono), ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
 
-  --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --shadow-subtle-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.03);
+  --radius: 0.375rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-subtle-md: 0 4px 6px -1px rgb(0 0 0 / 0.04), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-glow: 0 0 24px -6px var(--primary);
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    /* Light — warm paper, ink text, ember accent */
+    --background: oklch(0.968 0.007 85);
+    --foreground: oklch(0.26 0.02 55);
+    --card: oklch(0.99 0.004 85);
+    --card-foreground: oklch(0.26 0.02 55);
+    --popover: oklch(0.995 0.003 85);
+    --popover-foreground: oklch(0.26 0.02 55);
+    --primary: oklch(0.6 0.17 42);
+    --primary-foreground: oklch(0.985 0.005 85);
+    --secondary: oklch(0.93 0.01 83);
+    --secondary-foreground: oklch(0.3 0.02 55);
+    --muted: oklch(0.915 0.01 83);
+    --muted-foreground: oklch(0.5 0.018 65);
+    --accent: oklch(0.94 0.012 80);
+    --accent-foreground: oklch(0.26 0.02 55);
+    --destructive: oklch(0.55 0.2 27);
+    --destructive-foreground: oklch(0.985 0.005 85);
+    --border: oklch(0.885 0.012 80);
+    --input-bg: oklch(0.995 0.003 85);
+    --input-border: oklch(0.85 0.015 78);
+    --ring: oklch(0.6 0.17 42);
+    --live: oklch(0.6 0.14 165);
+    --tooltip-bg: oklch(0.23 0.015 60);
+    --tooltip-foreground: oklch(0.96 0.008 85);
+    --chart-1: oklch(0.62 0.17 42);
+    --chart-2: oklch(0.68 0.13 85);
+    --chart-3: oklch(0.62 0.11 168);
+    --chart-4: oklch(0.58 0.11 240);
+    --chart-5: oklch(0.6 0.13 315);
+    --grain-opacity: 0.35;
+    --glow-opacity: 0.05;
+  }
+
+  .dark {
+    /* Dark — night observatory */
+    --background: oklch(0.152 0.011 75);
+    --foreground: oklch(0.925 0.013 85);
+    --card: oklch(0.183 0.012 75);
+    --card-foreground: oklch(0.925 0.013 85);
+    --popover: oklch(0.21 0.013 75);
+    --popover-foreground: oklch(0.925 0.013 85);
+    --primary: oklch(0.72 0.16 45);
+    --primary-foreground: oklch(0.15 0.01 75);
+    --secondary: oklch(0.24 0.013 75);
+    --secondary-foreground: oklch(0.925 0.013 85);
+    --muted: oklch(0.255 0.013 75);
+    --muted-foreground: oklch(0.63 0.018 78);
+    --accent: oklch(0.235 0.014 75);
+    --accent-foreground: oklch(0.925 0.013 85);
+    --destructive: oklch(0.6 0.19 27);
+    --destructive-foreground: oklch(0.96 0.008 85);
+    --border: oklch(0.275 0.014 75);
+    --input-bg: oklch(0.172 0.012 75);
+    --input-border: oklch(0.33 0.016 75);
+    --ring: oklch(0.72 0.16 45);
+    --live: oklch(0.8 0.14 165);
+    --tooltip-bg: oklch(0.24 0.014 75);
+    --tooltip-foreground: oklch(0.94 0.012 85);
+    --chart-1: oklch(0.73 0.15 45);
+    --chart-2: oklch(0.8 0.12 88);
+    --chart-3: oklch(0.75 0.11 168);
+    --chart-4: oklch(0.7 0.1 240);
+    --chart-5: oklch(0.72 0.12 315);
+    --grain-opacity: 0.5;
+    --glow-opacity: 0.13;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  /* Thin refined scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--muted);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--muted-foreground);
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 }
 
 @layer utilities {
@@ -47,772 +172,123 @@ body {
     text-wrap: balance;
   }
 
-  /* Legacy color utilities */
-
-  /* Background colors */
-  .bg-blue-50 {
-    background-color: #eff6ff;
-  }
-  .bg-blue-100 {
-    background-color: #dbeafe;
-  }
-  .bg-blue-200 {
-    background-color: #bfdbfe;
-  }
-  .bg-blue-300 {
-    background-color: #93c5fd;
-  }
-  .bg-blue-400 {
-    background-color: #60a5fa;
-  }
-  .bg-blue-500 {
-    background-color: #3b82f6;
-  }
-  .bg-blue-600 {
-    background-color: #2563eb;
+  .font-display {
+    font-family: var(--font-display);
   }
 
-  .bg-teal-50 {
-    background-color: #f0fdfa;
-  }
-  .bg-teal-100 {
-    background-color: #ccfbf1;
-  }
-  .bg-teal-200 {
-    background-color: #99f6e4;
-  }
-  .bg-teal-300 {
-    background-color: #5eead4;
-  }
-  .bg-teal-400 {
-    background-color: #2dd4bf;
-  }
-  .bg-teal-500 {
-    background-color: #14b8a6;
-  }
-  .bg-teal-600 {
-    background-color: #0d9488;
+  /* Atmosphere: ember glow bleeding from the top edge */
+  .atmosphere::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      60rem 24rem at 50% -8rem,
+      color-mix(in oklch, var(--primary) calc(var(--glow-opacity) * 100%), transparent),
+      transparent 70%
+    );
   }
 
-  .bg-cyan-50 {
-    background-color: #ecfeff;
-  }
-  .bg-cyan-100 {
-    background-color: #cffafe;
-  }
-  .bg-cyan-200 {
-    background-color: #a5f3fc;
-  }
-  .bg-cyan-300 {
-    background-color: #67e8f9;
-  }
-  .bg-cyan-400 {
-    background-color: #22d3ee;
-  }
-  .bg-cyan-500 {
-    background-color: #06b6d4;
-  }
-  .bg-cyan-600 {
-    background-color: #0891b2;
+  /* Atmosphere: film grain */
+  .atmosphere::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    opacity: calc(var(--grain-opacity) * 0.06);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
   }
 
-  .bg-purple-50 {
-    background-color: #faf5ff;
+  /* Page-load reveal, staggered via .reveal-1..8 */
+  .reveal {
+    animation: reveal-rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  .bg-purple-100 {
-    background-color: #f3e8ff;
+  .reveal-1 {
+    animation-delay: 0.06s;
   }
-  .bg-purple-200 {
-    background-color: #e9d5ff;
+  .reveal-2 {
+    animation-delay: 0.12s;
   }
-  .bg-purple-300 {
-    background-color: #d8b4fe;
+  .reveal-3 {
+    animation-delay: 0.18s;
   }
-  .bg-purple-400 {
-    background-color: #c084fc;
+  .reveal-4 {
+    animation-delay: 0.24s;
   }
-  .bg-purple-500 {
-    background-color: #a855f7;
+  .reveal-5 {
+    animation-delay: 0.3s;
   }
-  .bg-purple-600 {
-    background-color: #9333ea;
+  .reveal-6 {
+    animation-delay: 0.36s;
   }
-
-  .bg-rose-50 {
-    background-color: #fff1f2;
+  .reveal-7 {
+    animation-delay: 0.42s;
   }
-  .bg-rose-100 {
-    background-color: #ffe4e6;
-  }
-  .bg-rose-200 {
-    background-color: #fecdd3;
-  }
-  .bg-rose-300 {
-    background-color: #fda4af;
-  }
-  .bg-rose-400 {
-    background-color: #fb7185;
-  }
-  .bg-rose-500 {
-    background-color: #f43f5e;
-  }
-  .bg-rose-600 {
-    background-color: #e11d48;
+  .reveal-8 {
+    animation-delay: 0.48s;
   }
 
-  /* SVG Fill colors - required for charts */
-  .fill-blue-50 {
-    fill: #eff6ff;
-  }
-  .fill-blue-100 {
-    fill: #dbeafe;
-  }
-  .fill-blue-200 {
-    fill: #bfdbfe;
-  }
-  .fill-blue-300 {
-    fill: #93c5fd;
-  }
-  .fill-blue-400 {
-    fill: #60a5fa;
-  }
-  .fill-blue-500 {
-    fill: #3b82f6;
-  }
-  .fill-blue-600 {
-    fill: #2563eb;
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal-1,
+    .reveal-2,
+    .reveal-3,
+    .reveal-4,
+    .reveal-5,
+    .reveal-6,
+    .reveal-7,
+    .reveal-8 {
+      animation: none;
+    }
   }
 
-  .fill-teal-50 {
-    fill: #f0fdfa;
-  }
-  .fill-teal-100 {
-    fill: #ccfbf1;
-  }
-  .fill-teal-200 {
-    fill: #99f6e4;
-  }
-  .fill-teal-300 {
-    fill: #5eead4;
-  }
-  .fill-teal-400 {
-    fill: #2dd4bf;
-  }
-  .fill-teal-500 {
-    fill: #14b8a6;
-  }
-  .fill-teal-600 {
-    fill: #0d9488;
-  }
-
-  .fill-cyan-50 {
-    fill: #ecfeff;
-  }
-  .fill-cyan-100 {
-    fill: #cffafe;
-  }
-  .fill-cyan-200 {
-    fill: #a5f3fc;
-  }
-  .fill-cyan-300 {
-    fill: #67e8f9;
-  }
-  .fill-cyan-400 {
-    fill: #22d3ee;
-  }
-  .fill-cyan-500 {
-    fill: #06b6d4;
-  }
-  .fill-cyan-600 {
-    fill: #0891b2;
-  }
-
-  .fill-purple-50 {
-    fill: #faf5ff;
-  }
-  .fill-purple-100 {
-    fill: #f3e8ff;
-  }
-  .fill-purple-200 {
-    fill: #e9d5ff;
-  }
-  .fill-purple-300 {
-    fill: #d8b4fe;
-  }
-  .fill-purple-400 {
-    fill: #c084fc;
-  }
-  .fill-purple-500 {
-    fill: #a855f7;
-  }
-  .fill-purple-600 {
-    fill: #9333ea;
-  }
-
-  .fill-rose-50 {
-    fill: #fff1f2;
-  }
-  .fill-rose-100 {
-    fill: #ffe4e6;
-  }
-  .fill-rose-200 {
-    fill: #fecdd3;
-  }
-  .fill-rose-300 {
-    fill: #fda4af;
-  }
-  .fill-rose-400 {
-    fill: #fb7185;
-  }
-  .fill-rose-500 {
-    fill: #f43f5e;
-  }
-  .fill-rose-600 {
-    fill: #e11d48;
-  }
-
-  /* Stroke colors for line charts */
-  .stroke-blue-50 {
-    stroke: #eff6ff;
-  }
-  .stroke-blue-100 {
-    stroke: #dbeafe;
-  }
-  .stroke-blue-200 {
-    stroke: #bfdbfe;
-  }
-  .stroke-blue-300 {
-    stroke: #93c5fd;
-  }
-  .stroke-blue-400 {
-    stroke: #60a5fa;
-  }
-  .stroke-blue-500 {
-    stroke: #3b82f6;
-  }
-  .stroke-blue-600 {
-    stroke: #2563eb;
-  }
-
-  .stroke-teal-50 {
-    stroke: #f0fdfa;
-  }
-  .stroke-teal-100 {
-    stroke: #ccfbf1;
-  }
-  .stroke-teal-200 {
-    stroke: #99f6e4;
-  }
-  .stroke-teal-300 {
-    stroke: #5eead4;
-  }
-  .stroke-teal-400 {
-    stroke: #2dd4bf;
-  }
-  .stroke-teal-500 {
-    stroke: #14b8a6;
-  }
-  .stroke-teal-600 {
-    stroke: #0d9488;
-  }
-
-  .stroke-cyan-50 {
-    stroke: #ecfeff;
-  }
-  .stroke-cyan-100 {
-    stroke: #cffafe;
-  }
-  .stroke-cyan-200 {
-    stroke: #a5f3fc;
-  }
-  .stroke-cyan-300 {
-    stroke: #67e8f9;
-  }
-  .stroke-cyan-400 {
-    stroke: #22d3ee;
-  }
-  .stroke-cyan-500 {
-    stroke: #06b6d4;
-  }
-  .stroke-cyan-600 {
-    stroke: #0891b2;
-  }
-
-  .stroke-purple-50 {
-    stroke: #faf5ff;
-  }
-  .stroke-purple-100 {
-    stroke: #f3e8ff;
-  }
-  .stroke-purple-200 {
-    stroke: #e9d5ff;
-  }
-  .stroke-purple-300 {
-    stroke: #d8b4fe;
-  }
-  .stroke-purple-400 {
-    stroke: #c084fc;
-  }
-  .stroke-purple-500 {
-    stroke: #a855f7;
-  }
-  .stroke-purple-600 {
-    stroke: #9333ea;
-  }
-
-  .stroke-rose-50 {
-    stroke: #fff1f2;
-  }
-  .stroke-rose-100 {
-    stroke: #ffe4e6;
-  }
-  .stroke-rose-200 {
-    stroke: #fecdd3;
-  }
-  .stroke-rose-300 {
-    stroke: #fda4af;
-  }
-  .stroke-rose-400 {
-    stroke: #fb7185;
-  }
-  .stroke-rose-500 {
-    stroke: #f43f5e;
-  }
-  .stroke-rose-600 {
-    stroke: #e11d48;
-  }
-
-  /* Text colors */
-  .text-blue-500 {
-    color: #3b82f6;
-  }
-  .text-teal-500 {
-    color: #14b8a6;
-  }
-  .text-cyan-500 {
-    color: #06b6d4;
-  }
-  .text-purple-500 {
-    color: #a855f7;
-  }
-  .text-rose-500 {
-    color: #f43f5e;
-  }
-
-  /* Border colors */
-  .border-blue-500 {
-    border-color: #3b82f6;
-  }
-  .border-teal-500 {
-    border-color: #14b8a6;
-  }
-  .border-cyan-500 {
-    border-color: #06b6d4;
-  }
-  .border-purple-500 {
-    border-color: #a855f7;
-  }
-  .border-rose-500 {
-    border-color: #f43f5e;
-  }
-
-  /* Ring colors */
-  .ring-blue-500 {
-    --tw-ring-color: #3b82f6;
-  }
-  .ring-teal-500 {
-    --tw-ring-color: #14b8a6;
-  }
-  .ring-cyan-500 {
-    --tw-ring-color: #06b6d4;
-  }
-  .ring-purple-500 {
-    --tw-ring-color: #a855f7;
-  }
-  .ring-rose-500 {
-    --tw-ring-color: #f43f5e;
-  }
-
-  /* Hover states */
-  .hover\:bg-blue-50:hover {
-    background-color: #eff6ff;
-  }
-  .hover\:bg-blue-100:hover {
-    background-color: #dbeafe;
-  }
-  .hover\:bg-teal-50:hover {
-    background-color: #f0fdfa;
-  }
-  .hover\:bg-teal-100:hover {
-    background-color: #ccfbf1;
-  }
-  .hover\:bg-cyan-50:hover {
-    background-color: #ecfeff;
-  }
-  .hover\:bg-cyan-100:hover {
-    background-color: #cffafe;
-  }
-  .hover\:bg-purple-50:hover {
-    background-color: #faf5ff;
-  }
-  .hover\:bg-purple-100:hover {
-    background-color: #f3e8ff;
-  }
-  .hover\:bg-rose-50:hover {
-    background-color: #fff1f2;
-  }
-  .hover\:bg-rose-100:hover {
-    background-color: #ffe4e6;
-  }
-
-  /* Opacity modifiers */
-  .bg-opacity-10 {
-    --tw-bg-opacity: 0.1;
-  }
-  .bg-opacity-20 {
-    --tw-bg-opacity: 0.2;
-  }
-  .bg-opacity-30 {
-    --tw-bg-opacity: 0.3;
-  }
-  .bg-opacity-40 {
-    --tw-bg-opacity: 0.4;
-  }
-  .bg-opacity-50 {
-    --tw-bg-opacity: 0.5;
-  }
-  .bg-opacity-60 {
-    --tw-bg-opacity: 0.6;
-  }
-  .bg-opacity-70 {
-    --tw-bg-opacity: 0.7;
-  }
-  .bg-opacity-80 {
-    --tw-bg-opacity: 0.8;
-  }
-  .bg-opacity-90 {
-    --tw-bg-opacity: 0.9;
+  /* Live signal pulse (phosphor dot) */
+  .pulse-live {
+    animation: pulse-live 2.4s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-live {
+      animation: none;
+    }
   }
 }
 
+@keyframes reveal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-live {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--live) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--live) 0%, transparent);
+  }
+}
+
+/* Recharts: quiet axis text and grid in both themes */
 @layer base {
-  :root {
-    /* Light mode colors */
-    --background: hsl(0 0% 98%);
-    --foreground: hsl(240 10% 3.9%);
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(240 10% 3.9%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(240 10% 3.9%);
-    --primary: hsl(221 83% 53%);
-    --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(0 0% 94%);
-    --secondary-foreground: hsl(240 10% 3.9%);
-    --muted: hsl(0 0% 90%);
-    --muted-foreground: hsl(240 5% 45%);
-    --accent: hsl(0 0% 96.1%);
-    --accent-foreground: hsl(240 10% 3.9%);
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 90%);
-    --input-bg: hsl(0 0% 100%);
-    --input-border: hsl(0 0% 86%);
-    --ring: hsl(221 83% 53%);
-    --tooltip-bg: hsl(240 6% 10%);
-    --tooltip-foreground: hsl(0 0% 98%);
-    --chart-1: hsl(221 83% 53%);
-    --chart-2: hsl(173 58% 39%);
-    --chart-3: hsl(240 50% 60%);
-    --chart-4: hsl(30 90% 55%);
-    --chart-5: hsl(340 80% 60%);
-    --radius: var(--radius-lg);
+  .recharts-cartesian-axis-tick-value,
+  .recharts-legend-item-text,
+  .recharts-text {
+    fill: var(--muted-foreground);
+    font-family: var(--font-mono);
   }
 
-  .dark {
-    /* Dark mode colors */
-    --background: hsl(240 6% 10%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(240 6% 12%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(240 6% 12%);
-    --popover-foreground: hsl(0 0% 98%);
-    --primary: hsl(217 91% 60%);
-    --primary-foreground: hsl(0 0% 100%);
-    --secondary: hsl(240 4% 18%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(240 4% 22%);
-    --muted-foreground: hsl(240 5% 65%);
-    --accent: hsl(240 4% 18%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 62.8% 30.6%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(240 4% 22%);
-    --input-bg: hsl(240 4% 15%);
-    --input-border: hsl(240 4% 25%);
-    --ring: hsl(217 91% 60%);
-    --tooltip-bg: hsl(240 10% 3.9%);
-    --tooltip-foreground: hsl(0 0% 98%);
-    --chart-1: hsl(217 91% 60%);
-    --chart-2: hsl(173 65% 55%);
-    --chart-3: hsl(240 50% 70%);
-    --chart-4: hsl(35 95% 65%);
-    --chart-5: hsl(340 85% 70%);
-  }
-}
-
-/* Define custom utilities that use our CSS variables */
-@layer utilities {
-  .bg-background {
-    background-color: var(--background);
-  }
-  .bg-card {
-    background-color: var(--card);
-  }
-  .bg-popover {
-    background-color: var(--popover);
-  }
-  .bg-primary {
-    background-color: var(--primary);
-  }
-  .bg-secondary {
-    background-color: var(--secondary);
-  }
-  .bg-muted {
-    background-color: var(--muted);
-  }
-  .bg-accent {
-    background-color: var(--accent);
-  }
-  .bg-destructive {
-    background-color: var(--destructive);
-  }
-  .bg-input {
-    background-color: var(--input-bg);
-  }
-
-  .text-foreground {
-    color: var(--foreground);
-  }
-  .text-card-foreground {
-    color: var(--card-foreground);
-  }
-  .text-popover-foreground {
-    color: var(--popover-foreground);
-  }
-  .text-primary-foreground {
-    color: var(--primary-foreground);
-  }
-  .text-secondary-foreground {
-    color: var(--secondary-foreground);
-  }
-  .text-muted-foreground {
-    color: var(--muted-foreground);
-  }
-  .text-accent-foreground {
-    color: var(--accent-foreground);
-  }
-  .text-destructive-foreground {
-    color: var(--destructive-foreground);
-  }
-
-  .border-border {
-    border-color: var(--border);
-  }
-  .border-input-border {
-    border-color: var(--input-border);
-  }
-
-  .ring-ring {
-    --tw-ring-color: var(--ring);
-  }
-
-  .shadow-subtle {
-    box-shadow: var(--shadow-subtle);
-  }
-
-  /* Tooltip backgrounds */
-  .bg-tooltip {
-    background-color: var(--tooltip-bg);
-  }
-  .text-tooltip-foreground {
-    color: var(--tooltip-foreground);
-  }
-
-  /* Dark mode shadow for cards */
-  .dark .shadow-subtle {
-    box-shadow:
-      0 1px 3px 0 rgb(0 0 0 / 0.1),
-      0 1px 2px -1px rgb(0 0 0 / 0.1);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border; /* Apply border color by default */
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Custom scrollbar for a more refined look */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-muted rounded-full;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-secondary;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  /* Recharts Dark Mode Text Overrides */
-  .dark .recharts-cartesian-axis-tick-value,
-  .dark .recharts-legend-item-text,
-  .dark text.recharts-text /* For labels inside charts like Donut */ {
-    fill: hsl(240 5% 65%) !important; /* Use muted-foreground for less emphasis */
-  }
-
-  .dark .recharts-label /* For axis labels if any */ {
-    fill: hsl(0 0% 98%) !important;
-  }
-
-  /* Dark mode chart grid and axis lines */
-  .dark .recharts-cartesian-grid-horizontal line,
-  .dark .recharts-cartesian-grid-vertical line {
-    stroke: hsl(240 4% 22%) !important;
-  }
-
-  .dark .recharts-cartesian-axis-line {
-    stroke: hsl(240 4% 22%) !important;
-  }
-
-  /* Dark mode chart text colors */
-  .dark .recharts-text {
-    fill: hsl(240 5% 65%) !important;
-  }
-
-  /* Dark mode donut chart center text */
-  .dark .recharts-pie-label-text {
-    fill: hsl(0 0% 98%) !important;
-  }
-
-  /* Fix any text elements inside SVGs */
-  .dark svg text {
-    fill: hsl(240 5% 65%) !important;
-  }
-
-  .dark svg .recharts-text {
-    fill: hsl(0 0% 98%) !important;
-  }
-
-  /* All tooltip backgrounds - fix transparency issue */
-  [role="tooltip"] {
-    background-color: var(--tooltip-bg) !important;
-    color: var(--tooltip-foreground) !important;
-    backdrop-filter: blur(12px) !important;
-    box-shadow:
-      0 10px 38px -10px rgba(0, 0, 0, 0.35),
-      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
-    padding: 6px 10px !important;
-    border-radius: 6px !important;
-    border: none !important;
-    font-size: 12px !important;
-    font-weight: 400 !important;
-    max-width: 250px !important;
-  }
-
-  .dark [role="tooltip"] {
-    background-color: hsl(240 10% 8%) !important;
-    color: hsl(0 0% 98%) !important;
-    border: none !important;
-  }
-
-  /* Recharts tooltip backgrounds - comprehensive fix */
-  .recharts-tooltip-wrapper,
-  .recharts-tooltip-wrapper .recharts-default-tooltip,
-  .recharts-tooltip-wrapper > div,
-  .recharts-tooltip-wrapper [role="tooltip"],
-  .recharts-tooltip-content-wrapper,
-  .recharts-default-tooltip {
-    background-color: var(--tooltip-bg) !important;
-    color: var(--tooltip-foreground) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: 6px !important;
-    box-shadow:
-      0 10px 38px -10px rgba(0, 0, 0, 0.35),
-      0 10px 20px -15px rgba(0, 0, 0, 0.2) !important;
-    backdrop-filter: blur(12px) !important;
-    padding: 8px 12px !important;
-  }
-
-  /* Force tooltip container backgrounds */
-  div[style*="pointer-events: none"] div[style*="position: absolute"] {
-    background-color: var(--tooltip-bg) !important;
-  }
-
-  /* Ensure tooltip text is visible */
-  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label,
-  .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item,
-  .recharts-tooltip-wrapper p,
-  .recharts-tooltip-wrapper span {
-    color: var(--tooltip-foreground) !important;
-  }
-
-  /* Ensure all Radix UI popovers have proper backgrounds */
-  [data-radix-popper-content-wrapper] {
-    --radix-popover-bg: var(--tooltip-bg);
-    --radix-popover-border: hsl(var(--border));
-  }
-
-  /* Global fix for any floating/popup elements */
-  [data-floating-ui-portal] > div,
-  [data-radix-presence] > div,
-  div[style*="z-index: 2147483647"] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-  }
-
-  /* Fix popover content with inline Radix styles */
-  div[data-state="open"][style*="--radix-popover"] {
-    background-color: hsl(var(--popover)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-    border-radius: var(--radius);
-  }
-
-  /* Radix Select content */
-  [data-radix-select-content] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Radix Dropdown Menu content */
-  [data-radix-dropdown-menu-content] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Radix Context Menu content */
-  [data-radix-context-menu-content] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Radix Popover content */
-  [data-radix-popover-content] {
-    background-color: hsl(var(--popover)) !important;
-    color: hsl(var(--popover-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line,
+  .recharts-cartesian-axis-line {
+    stroke: var(--border);
   }
 }

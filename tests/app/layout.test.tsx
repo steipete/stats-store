@@ -7,8 +7,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 // Mock next/font
 vi.mock("next/font/google", () => ({
-  Inter: () => ({
-    className: "inter-font",
+  Fraunces: () => ({
+    className: "fraunces-font",
+    variable: "--font-fraunces",
+  }),
+  Spline_Sans_Mono: () => ({
+    className: "spline-mono-font",
+    variable: "--font-spline-mono",
   }),
 }));
 

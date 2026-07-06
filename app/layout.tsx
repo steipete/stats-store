@@ -1,9 +1,23 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
+import { Fraunces, Spline_Sans_Mono } from "next/font/google";
 import type React from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeScript } from "./theme-script";
 import "./globals.css";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
+  variable: "--font-fraunces",
+});
+
+const splineSansMono = Spline_Sans_Mono({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  variable: "--font-spline-mono",
+});
 
 const siteConfig = {
   name: "stats.store",
@@ -85,11 +99,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fraunces.variable} ${splineSansMono.variable}`}
+    >
       <head>
         <ThemeScript />
       </head>
-      <body>
+      <body className="atmosphere">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

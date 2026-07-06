@@ -21,7 +21,7 @@ describe("KpiCard", () => {
     it("renders without any props", () => {
       const { container } = render(<KpiCard />);
 
-      expect(container.firstChild).toHaveClass("rounded-lg", "bg-card", "text-card-foreground");
+      expect(container.firstChild).toHaveClass("relative", "bg-transparent", "text-foreground");
     });
 
     it("renders with only title", () => {
@@ -83,7 +83,7 @@ describe("KpiCard", () => {
 
       expect(screen.getByText("Error")).toBeInTheDocument();
       expect(screen.getByText("Failed")).toBeInTheDocument();
-      expect(container.firstChild).toHaveClass("border-destructive/50");
+      expect(container.firstChild).toHaveClass("text-destructive");
     });
 
     it("overrides icon when error is true", () => {
@@ -91,7 +91,7 @@ describe("KpiCard", () => {
 
       // Should render exclamation icon instead of users icon
       expect(container.querySelector("svg")).toBeInTheDocument();
-      expect(container.firstChild).toHaveClass("border-destructive/50");
+      expect(container.firstChild).toHaveClass("text-destructive");
     });
   });
 
@@ -160,14 +160,14 @@ describe("KpiCard", () => {
       render(<KpiCard title="Title" value="Value" />);
 
       const metric = screen.getByText("Value");
-      expect(metric).toHaveClass("mt-2");
+      expect(metric).toHaveClass("mt-3");
     });
 
     it("applies correct margin to metric when only icon exists", () => {
       render(<KpiCard iconName="users" value="Value" />);
 
       const metric = screen.getByText("Value");
-      expect(metric).toHaveClass("mt-2");
+      expect(metric).toHaveClass("mt-3");
     });
 
     it("does not apply margin to metric when no title or icon", () => {
@@ -209,7 +209,7 @@ describe("KpiCard", () => {
       expect(screen.getByText("Error Card")).toBeInTheDocument();
       expect(screen.getByText("Failed")).toBeInTheDocument();
       expect(screen.getByText("Error info")).toBeInTheDocument();
-      expect(container.firstChild).toHaveClass("border-destructive/50");
+      expect(container.firstChild).toHaveClass("text-destructive");
     });
   });
 });

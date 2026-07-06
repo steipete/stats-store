@@ -91,9 +91,9 @@ export function RealtimeDashboard({
             >
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <div className="h-2 w-2 bg-green-500 rounded-full" />
+                  <div className="h-2 w-2 bg-live rounded-full" />
                   <motion.div
-                    className="absolute inset-0 h-2 w-2 bg-green-500 rounded-full"
+                    className="absolute inset-0 h-2 w-2 bg-live rounded-full"
                     animate={{ opacity: [1, 0.5, 1], scale: [1, 1.5, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
@@ -124,8 +124,8 @@ export function RealtimeDashboard({
         </AnimatePresence>
       )}
 
-      {/* KPI Cards with real-time updates */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      {/* KPI band: hairline-divided strip */}
+      <div className="mb-12 grid grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
         <RealtimeKpiCard
           title="Unique Users"
           value={
@@ -186,9 +186,9 @@ export function RealtimeDashboard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mb-6 p-4 bg-card border border-border rounded-lg overflow-hidden"
+            className="mb-6 rounded-lg border border-border bg-card/70 p-4 overflow-hidden"
           >
-            <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+            <h3 className="mb-3 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em]">
               <SparklesIcon className="h-4 w-4" />
               Recent Activity
             </h3>
@@ -204,7 +204,7 @@ export function RealtimeDashboard({
                   <div className="flex items-center gap-2">
                     {event.event_type === "new_user" && (
                       <>
-                        <div className="h-2 w-2 bg-green-500 rounded-full" />
+                        <div className="h-2 w-2 bg-live rounded-full" />
                         <span className="text-sm">
                           New user • {event.event_data.app_version} • {event.event_data.model}
                         </span>
@@ -212,20 +212,20 @@ export function RealtimeDashboard({
                     )}
                     {event.event_type === "milestone" && (
                       <>
-                        <div className="h-2 w-2 bg-yellow-500 rounded-full" />
+                        <div className="h-2 w-2 bg-chart-2 rounded-full" />
                         <span className="text-sm font-medium">{event.event_data.message}</span>
                       </>
                     )}
                     {event.event_type === "version_update" && (
                       <>
-                        <div className="h-2 w-2 bg-blue-500 rounded-full" />
+                        <div className="h-2 w-2 bg-chart-4 rounded-full" />
                         <span className="text-sm">
                           Version update: {event.event_data.new_version}
                         </span>
                       </>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs tabular-nums text-muted-foreground">
                     {format(new Date(event.created_at), "HH:mm:ss")}
                   </span>
                 </motion.div>
