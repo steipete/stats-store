@@ -130,8 +130,8 @@ The project recently migrated to Tailwind CSS v4. Key changes:
 To test the API endpoint locally:
 \`\`\`bash
 curl -X POST http://localhost:3000/api/v1/ingest \
- -H "Content-Type: application/json" \
- -d '{
+-H "Content-Type: application/json" \
+-d '{
 "bundle_identifier": "com.example.app",
 "version": "1.0.0",
 "os_version": "14.0",
