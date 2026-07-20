@@ -90,7 +90,7 @@
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
     "cross-env": "^10.1.0",
-    "happy-dom": "^20.10.6",
+    "happy-dom": "^20.11.0",
     "jsdom": "^29.1.1",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
