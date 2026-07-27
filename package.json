@@ -66,7 +66,7 @@
     "next-themes": "latest",
     "react": "^19.2.7",
     "react-day-picker": "latest",
-    "react-dom": "^19.2.7",
+    "react-dom": "^19.2.8",
     "react-hook-form": "latest",
     "react-resizable-panels": "latest",
     "recharts": "latest",
