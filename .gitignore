@@ -19,12 +19,8 @@ coverage/
 test-report.json
 
 # env files
-.env
-.env.local
-.env.*.local
+.env*
 !.env.example
-.env.migrations
-.env.migrations.local
 !.env.migrations.example
 
 # vercel
@@ -42,4 +38,6 @@ temp_url.txt
 
 # OS files
 .DS_Store
-.env*
+
+# agent-generated reports
+/TEST_SUMMARY.md
