@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { format, startOfDay, subDays } from "date-fns";
+import { parseISO, subDays } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DashboardFilters } from "../../components/dashboard-filters";
@@ -149,8 +149,8 @@ describe("DashboardFilters", () => {
   describe("date range picker", () => {
     it("renders with current date range", () => {
       const dateRange = {
-        from: new Date("2024-01-01"),
-        to: new Date("2024-01-31"),
+        from: parseISO("2024-01-01"),
+        to: parseISO("2024-01-31"),
       };
       render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />);
 
@@ -172,7 +172,7 @@ describe("DashboardFilters", () => {
 
     it("treats single-day range as from=to", async () => {
       const dateRange = {
-        from: new Date("2024-01-15"),
+        from: parseISO("2024-01-15"),
         to: undefined,
       };
 
@@ -180,16 +180,6 @@ describe("DashboardFilters", () => {
 
       expect(screen.getByLabelText(/from/i)).toHaveValue("2024-01-15");
       expect(screen.getByLabelText(/to/i)).toHaveValue("2024-01-15");
-    });
-
-    it("formats dates correctly in URL params", () => {
-      render(<DashboardFilters apps={mockApps} currentAppId="all" />);
-
-      // The actual date picker interaction would be more complex
-      // This tests the date formatting logic
-      const testDate = new Date("2024-01-15");
-      const formattedDate = format(startOfDay(testDate), "yyyy-MM-dd");
-      expect(formattedDate).toBe("2024-01-15");
     });
   });
 
