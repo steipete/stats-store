@@ -27,6 +27,7 @@ export function RealtimeKpiCard({
 
   useEffect(() => {
     if (value !== previousValue) {
+      // eslint-disable-next-line react/set-state-in-effect -- Start the timed highlight when a realtime value arrives.
       setIsUpdating(true);
       setDisplayValue(value);
 
