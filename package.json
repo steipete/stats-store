@@ -85,7 +85,6 @@
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
-    "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/browser": "latest",
     "@vitest/coverage-v8": "^4.1.11",
     "@vitest/ui": "^4.1.11",
@@ -97,7 +96,7 @@
     "oxlint-tsgolint": "^7.0.2001",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript": "^7.0.2",
     "vite": "^8.2.2",
     "vitest": "^4.1.11"
   },
