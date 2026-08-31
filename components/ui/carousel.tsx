@@ -96,6 +96,7 @@ const Carousel = React.forwardRef<
       return;
     }
 
+    // eslint-disable-next-line react/set-state-in-effect -- Initialize controls from Embla before handling its selection events.
     onSelect(api);
     api.on("reInit", onSelect);
     api.on("select", onSelect);

@@ -41,6 +41,7 @@ export function DashboardFilters({
   const [toValue, setToValue] = useState(() => derivedTo);
 
   useEffect(() => {
+    // eslint-disable-next-line react/set-state-in-effect -- Keep editable dates in sync with URL navigation.
     setFromValue(derivedFrom);
     setToValue(derivedTo);
   }, [derivedFrom, derivedTo]);

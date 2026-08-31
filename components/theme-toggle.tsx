@@ -9,6 +9,7 @@ export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react/set-state-in-effect -- Resolve the client theme only after hydration.
     setMounted(true);
   }, []);
 

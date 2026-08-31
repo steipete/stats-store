@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { act } from "react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -7,63 +7,49 @@ describe("useToast", () => {
     vi.resetModules();
     const { useToast } = await import("../../hooks/use-toast");
 
-    let api: ReturnType<typeof useToast> | null = null;
-
-    function Harness() {
-      api = useToast();
-      return null;
-    }
-
-    render(<Harness />);
+    const { result } = renderHook(() => useToast());
 
     act(() => {
-      api?.toast({ title: "A" });
+      result.current.toast({ title: "A" });
     });
 
-    await waitFor(() => expect(api?.toasts).toHaveLength(1));
-    expect(api?.toasts[0]?.title).toBe("A");
+    await waitFor(() => expect(result.current.toasts).toHaveLength(1));
+    expect(result.current.toasts[0]?.title).toBe("A");
 
     act(() => {
-      api?.toast({ title: "B" });
+      result.current.toast({ title: "B" });
     });
 
-    await waitFor(() => expect(api?.toasts).toHaveLength(1));
-    expect(api?.toasts[0]?.title).toBe("B");
+    await waitFor(() => expect(result.current.toasts).toHaveLength(1));
+    expect(result.current.toasts[0]?.title).toBe("B");
 
     act(() => {
-      api?.dismiss();
+      result.current.dismiss();
     });
 
-    await waitFor(() => expect(api?.toasts[0]?.open).toBe(false));
+    await waitFor(() => expect(result.current.toasts[0]?.open).toBe(false));
   });
 
   it("updates toast content", async () => {
     vi.resetModules();
     const { useToast } = await import("../../hooks/use-toast");
 
-    let api: ReturnType<typeof useToast> | null = null;
-
-    function Harness() {
-      api = useToast();
-      return null;
-    }
-
-    render(<Harness />);
+    const { result } = renderHook(() => useToast());
 
     const handle = (() => {
-      let result: { id: string; update: (props: unknown) => void } | null = null;
+      let toastHandle: ReturnType<typeof result.current.toast> | undefined;
       act(() => {
-        result = api?.toast({ title: "A" }) ?? null;
+        toastHandle = result.current.toast({ title: "A" });
       });
-      return result;
+      return toastHandle;
     })();
 
-    await waitFor(() => expect(api?.toasts).toHaveLength(1));
+    await waitFor(() => expect(result.current.toasts).toHaveLength(1));
 
     act(() => {
       handle?.update({ id: handle.id, open: true, title: "Updated" });
     });
 
-    await waitFor(() => expect(api?.toasts[0]?.title).toBe("Updated"));
+    await waitFor(() => expect(result.current.toasts[0]?.title).toBe("Updated"));
   });
 });
