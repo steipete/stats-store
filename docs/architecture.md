@@ -305,7 +305,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
 
 - **Build Command**: `pnpm build`
 - **Output Directory**: `.next`
-- **Node Version**: 20.x
+- **Node Version**: 24.x
 - **Environment**: Copy all env vars
 
 ### Database Migrations
