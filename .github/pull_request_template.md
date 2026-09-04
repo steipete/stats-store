@@ -19,8 +19,7 @@
 
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] All new and existing tests pass locally
-- [ ] I have tested on Node.js 20.x
-- [ ] I have tested on Node.js 22.x
+- [ ] I have tested on Node.js 24.x
 
 ## Checklist
 

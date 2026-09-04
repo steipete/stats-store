@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
 
 - OS: [e.g. macOS 14.0]
 - Browser: [e.g. Chrome, Safari]
-- Node.js version: [e.g. 20.x, 22.x]
+- Node.js version: [e.g. 24.x]
 - Stats Store version: [e.g. commit hash or version]
 
 **Additional context**
