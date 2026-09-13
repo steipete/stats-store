@@ -1,7 +1,6 @@
 interface SparkleUserAgent {
   appName: string;
   appVersion: string;
-  sparkleVersion?: string;
 }
 
 /**
@@ -15,7 +14,7 @@ export function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgen
   }
 
   // Match pattern: AppName/Version optionally followed by Sparkle/Version
-  const match = userAgent.match(/^([^/]+)\/([^\s]+)(?:\s+Sparkle\/([^\s]+))?/);
+  const match = userAgent.match(/^([^/]+)\/([^\s]+)/);
 
   if (!match) {
     return null;
@@ -24,7 +23,6 @@ export function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgen
   return {
     appName: match[1],
     appVersion: match[2],
-    sparkleVersion: match[3] || undefined,
   };
 }
 

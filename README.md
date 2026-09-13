@@ -47,7 +47,7 @@ For apps that send telemetry directly, the project also exposes `POST /api/v1/in
 
 The service stores a daily SHA-256 digest derived from the request IP, never the raw IP. Including the date makes the digest useful for counting daily unique clients without creating a stable identifier across days.
 
-When Sparkle supplies them, stats.store records the app and Sparkle versions, macOS version, CPU type and core count, language, hardware model, and memory. It does not receive in-app behavior events through the appcast proxy. Vercel Web Analytics is disabled unless a self-hosted deployment explicitly sets `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=1`.
+When Sparkle supplies them, stats.store records the app version, macOS version, CPU type and core count, language, hardware model, and memory. It does not receive in-app behavior events through the appcast proxy. Vercel Web Analytics is disabled unless a self-hosted deployment explicitly sets `NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS=1`.
 
 The [architecture notes](docs/architecture.md) describe the data flow, schema, endpoints, and aggregation model. The [project story](https://steipete.me/posts/2025/stats-store-privacy-first-sparkle-analytics) explains the motivation behind the hosted service.
 

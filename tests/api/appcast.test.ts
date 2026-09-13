@@ -5,6 +5,13 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "@/app/api/v1/appcast/[...path]/route";
 
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  after: (callback: () => unknown) => {
+    void callback();
+  },
+}));
+
 // Mock fetch
 const realFetch = global.fetch;
 const mockFetch = vi.fn();
@@ -17,7 +24,7 @@ vi.mock("@/lib/supabase/server", () => ({
       insert: vi.fn(() => Promise.resolve({ error: null })),
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() =>
+          maybeSingle: vi.fn(() =>
             Promise.resolve({
               data: {
                 id: "test-app-id",
@@ -45,7 +52,7 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   appcast_base_url: appcastBaseUrl,
@@ -163,7 +170,7 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   id: "test-app-id",
@@ -206,7 +213,7 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   id: "test-app-id",
@@ -372,7 +379,7 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   id: "test-app-id",
@@ -416,7 +423,7 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   id: "test-app-id",
@@ -604,10 +611,10 @@ describe("/api/v1/appcast/[...path]", () => {
         insert: vi.fn(() => Promise.resolve({ error: null })),
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() => Promise.resolve({ data: null, error: { message: "Not found" } })),
+            maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
           })),
           or: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   id: "test-app-id",
@@ -654,10 +661,10 @@ describe("/api/v1/appcast/[...path]", () => {
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: undefined,
-                error: { message: "Not found" },
+                error: null,
               }),
             ),
           })),
@@ -716,7 +723,7 @@ describe("/api/v1/appcast/[...path]", () => {
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: {
                   appcast_base_url: null,
@@ -761,7 +768,7 @@ describe("/api/v1/appcast/[...path]", () => {
           // First call for app check - succeeds
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() =>
+              maybeSingle: vi.fn(() =>
                 Promise.resolve({
                   data: {
                     appcast_base_url: "https://example.com/appcast.xml",
@@ -875,7 +882,7 @@ describe("/api/v1/appcast/[...path]", () => {
             insert: vi.fn(() => Promise.resolve({ error: null })),
             select: vi.fn(() => ({
               or: vi.fn(() => ({
-                single: vi.fn(() =>
+                maybeSingle: vi.fn(() =>
                   Promise.resolve({
                     data: {
                       id: "test-app-id",
@@ -920,10 +927,10 @@ describe("/api/v1/appcast/[...path]", () => {
           insert: vi.fn(() => Promise.resolve({ error: null })),
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() => Promise.resolve({ data: null, error: { message: "Not found" } })),
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
             })),
             or: vi.fn(() => ({
-              single: vi.fn(() =>
+              maybeSingle: vi.fn(() =>
                 Promise.resolve({
                   data: {
                     id: "test-app-id",
@@ -971,7 +978,7 @@ describe("/api/v1/appcast/[...path]", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() =>
+              maybeSingle: vi.fn(() =>
                 Promise.resolve({
                   data: {
                     appcast_base_url: "https://example.com/appcast.xml",
@@ -1027,7 +1034,7 @@ describe("/api/v1/appcast/[...path]", () => {
           .mockReturnValueOnce({
             select: vi.fn(() => ({
               eq: vi.fn(() => ({
-                single: vi.fn(() =>
+                maybeSingle: vi.fn(() =>
                   Promise.resolve({
                     data: {
                       appcast_base_url: "https://example.com/appcast.xml",

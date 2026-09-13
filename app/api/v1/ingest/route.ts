@@ -1,15 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { parseIngestPayload } from "@/lib/ingest";
-import { dailyIpHash } from "@/lib/telemetry";
+import { dailyIpHash, getRequestIp } from "@/lib/telemetry";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-function getIp(request: NextRequest): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-    request.headers.get("x-real-ip") ||
-    "unknown_ip"
-  );
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,7 +29,7 @@ export async function POST(request: NextRequest) {
     const { error: insertError } = await supabase.from("reports").insert({
       ...report,
       app_id: app.id,
-      ip_hash: dailyIpHash(ip || getIp(request)),
+      ip_hash: dailyIpHash(ip || getRequestIp(request)),
     });
     if (insertError) {
       console.error("Error inserting report:", insertError);
