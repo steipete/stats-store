@@ -31,8 +31,8 @@ pnpm test:ui
 - **API Tests** (`tests/api/`): Test API route handlers in isolation
 - **Component Tests** (`tests/components/`): Test React components
 - **Setup Files**:
-  - `setup.node.ts`: Node environment setup for API tests
-  - `setup.ts`: Browser environment setup for component tests
+  - `setup.node.ts`: Node environment setup for the `api` Vitest project
+  - `setup.ts`: jsdom environment setup for the `ui` Vitest project
 
 ### Key Test Files
 
@@ -110,4 +110,14 @@ Tests run automatically on:
 - Commits to main branch
 - Before deployment
 
-See `.github/workflows/ci.yml` and `.github/workflows/coverage.yml`.
+See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Linux, macOS, and Windows all run the tests and production build.
+
+## Database checks
+
+CI bootstraps every SQL migration in a disposable PostgreSQL 17 database and checks the report triggers and cached aggregates. To run locally with a fresh test database and `psql` installed:
+
+```sh
+PGHOST=localhost PGUSER=postgres PGDATABASE=stats_store_test bash scripts/test-database.sh
+```
+
+The database name must end in `_test`. Use a newly created disposable database: the script applies the full bootstrap schema before running the transactional checks in `tests/database/`.
