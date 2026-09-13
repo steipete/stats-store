@@ -20,12 +20,7 @@ interface TimeSeriesDataPoint {
   Installs: number;
 }
 
-interface OsBreakdownDataPoint {
-  name: string;
-  Users: number;
-}
-
-interface CpuBreakdownDataPoint {
+interface DistributionDataPoint {
   name: string;
   Users: number;
 }
@@ -33,21 +28,6 @@ interface CpuBreakdownDataPoint {
 interface TopModelsDataPoint {
   model: string;
   count: number;
-}
-
-interface LanguageDataPoint {
-  name: string;
-  Users: number;
-}
-
-interface RamDataPoint {
-  name: string;
-  Users: number;
-}
-
-interface CpuCoresDataPoint {
-  name: string;
-  Users: number;
 }
 
 interface VersionAdoptionDataPoint {
@@ -122,22 +102,35 @@ export interface DashboardData {
   };
   installs_timeseries: TimeSeriesDataPoint[];
   installs_timeseries_error?: string;
-  os_breakdown: OsBreakdownDataPoint[];
+  os_breakdown: DistributionDataPoint[];
   os_breakdown_error?: string;
-  cpu_breakdown: CpuBreakdownDataPoint[];
+  cpu_breakdown: DistributionDataPoint[];
   cpu_breakdown_error?: string;
   top_models: TopModelsDataPoint[];
   top_models_error?: string;
-  language_breakdown: LanguageDataPoint[];
+  language_breakdown: DistributionDataPoint[];
   language_breakdown_error?: string;
-  ram_breakdown: RamDataPoint[];
+  ram_breakdown: DistributionDataPoint[];
   ram_breakdown_error?: string;
-  cpu_cores_breakdown: CpuCoresDataPoint[];
+  cpu_cores_breakdown: DistributionDataPoint[];
   cpu_cores_breakdown_error?: string;
   version_adoption: VersionAdoptionDataPoint[];
   version_adoption_error?: string;
   hourly_activity: HourlyActivityDataPoint[];
   hourly_activity_error?: string;
+}
+
+function mapRows<Row, Point>(
+  result: { data: Row[] | null; error: { message: string } | null },
+  map: (row: Row) => Point,
+  context: string,
+  errorMessage: string,
+): { data: Point[]; error?: string } {
+  if (result.error) {
+    console.error(`Error fetching ${context} (RPC):`, result.error.message);
+    return { data: [], error: errorMessage };
+  }
+  return { data: (result.data ?? []).map(map) };
 }
 
 export async function getDashboardData(
@@ -292,77 +285,65 @@ export async function getDashboardData(
     });
   }
 
-  let osBreakdown: OsBreakdownDataPoint[] = [];
-  let osBreakdownErrorMessage: string | undefined;
-  if (osRes.error) {
-    console.error("Error fetching OS breakdown (RPC):", osRes.error.message);
-    osBreakdownErrorMessage = "Could not load OS distribution.";
-  } else if (osRes.data) {
-    osBreakdown = osRes.data.map((item: OsVersionRow) => ({
+  const { data: osBreakdown, error: osBreakdownErrorMessage } = mapRows(
+    osRes,
+    (item: OsVersionRow) => ({
       Users: Number(item.user_count) || 0,
       name: `macOS ${item.os_version_name}`,
-    }));
-  }
+    }),
+    "OS breakdown",
+    "Could not load OS distribution.",
+  );
 
-  let cpuBreakdown: CpuBreakdownDataPoint[] = [];
-  let cpuBreakdownErrorMessage: string | undefined;
-  if (cpuRes.error) {
-    console.error("Error fetching CPU breakdown (RPC):", cpuRes.error.message);
-    cpuBreakdownErrorMessage = "Could not load CPU architecture data.";
-  } else if (cpuRes.data) {
-    cpuBreakdown = cpuRes.data.map((item: CpuArchRow) => ({
+  const { data: cpuBreakdown, error: cpuBreakdownErrorMessage } = mapRows(
+    cpuRes,
+    (item: CpuArchRow) => ({
       Users: Number(item.user_count) || 0,
       name: item.cpu_arch_name,
-    }));
-  }
+    }),
+    "CPU breakdown",
+    "Could not load CPU architecture data.",
+  );
 
-  let topModels: TopModelsDataPoint[] = [];
-  let topModelsErrorMessage: string | undefined;
-  if (modelRes.error) {
-    console.error("Error fetching top models (RPC):", modelRes.error.message);
-    topModelsErrorMessage = "Could not load top models data.";
-  } else if (modelRes.data) {
-    topModels = modelRes.data.map((item: ModelRow) => ({
+  const { data: topModels, error: topModelsErrorMessage } = mapRows(
+    modelRes,
+    (item: ModelRow) => ({
       count: Number(item.report_count) || 0,
       model: item.model_name,
-    }));
-  }
+    }),
+    "top models",
+    "Could not load top models data.",
+  );
 
-  let languageBreakdown: LanguageDataPoint[] = [];
-  let languageBreakdownErrorMessage: string | undefined;
-  if (languageRes.error) {
-    console.error("Error fetching language breakdown (RPC):", languageRes.error.message);
-    languageBreakdownErrorMessage = "Could not load language distribution.";
-  } else if (languageRes.data) {
-    languageBreakdown = languageRes.data.map((item: LanguageRow) => ({
+  const { data: languageBreakdown, error: languageBreakdownErrorMessage } = mapRows(
+    languageRes,
+    (item: LanguageRow) => ({
       Users: Number(item.user_count) || 0,
       name: item.language_name,
-    }));
-  }
+    }),
+    "language breakdown",
+    "Could not load language distribution.",
+  );
 
-  let ramBreakdown: RamDataPoint[] = [];
-  let ramBreakdownErrorMessage: string | undefined;
-  if (ramRes.error) {
-    console.error("Error fetching RAM breakdown (RPC):", ramRes.error.message);
-    ramBreakdownErrorMessage = "Could not load RAM distribution.";
-  } else if (ramRes.data) {
-    ramBreakdown = ramRes.data.map((item: RamRow) => ({
+  const { data: ramBreakdown, error: ramBreakdownErrorMessage } = mapRows(
+    ramRes,
+    (item: RamRow) => ({
       Users: Number(item.user_count) || 0,
       name: item.ram_gb,
-    }));
-  }
+    }),
+    "RAM breakdown",
+    "Could not load RAM distribution.",
+  );
 
-  let cpuCoresBreakdown: CpuCoresDataPoint[] = [];
-  let cpuCoresBreakdownErrorMessage: string | undefined;
-  if (cpuCoresRes.error) {
-    console.error("Error fetching CPU cores breakdown (RPC):", cpuCoresRes.error.message);
-    cpuCoresBreakdownErrorMessage = "Could not load CPU cores distribution.";
-  } else if (cpuCoresRes.data) {
-    cpuCoresBreakdown = cpuCoresRes.data.map((item: CpuCoresRow) => ({
+  const { data: cpuCoresBreakdown, error: cpuCoresBreakdownErrorMessage } = mapRows(
+    cpuCoresRes,
+    (item: CpuCoresRow) => ({
       Users: Number(item.user_count) || 0,
       name: item.core_count,
-    }));
-  }
+    }),
+    "CPU cores breakdown",
+    "Could not load CPU cores distribution.",
+  );
 
   let versionAdoption: VersionAdoptionDataPoint[] = [];
   let versionAdoptionErrorMessage: string | undefined;
@@ -394,17 +375,15 @@ export async function getDashboardData(
       });
   }
 
-  let hourlyActivity: HourlyActivityDataPoint[] = [];
-  let hourlyActivityErrorMessage: string | undefined;
-  if (hourlyRes.error) {
-    console.error("Error fetching hourly activity (RPC):", hourlyRes.error.message);
-    hourlyActivityErrorMessage = "Could not load activity pattern.";
-  } else if (hourlyRes.data) {
-    hourlyActivity = hourlyRes.data.map((item: HourlyActivityRow) => ({
+  const { data: hourlyActivity, error: hourlyActivityErrorMessage } = mapRows(
+    hourlyRes,
+    (item: HourlyActivityRow) => ({
       Activity: Number(item.avg_reports) || 0,
       hour: `${item.hour_of_day}:00`,
-    }));
-  }
+    }),
+    "hourly activity",
+    "Could not load activity pattern.",
+  );
 
   return {
     apps: appsList,

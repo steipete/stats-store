@@ -32,7 +32,7 @@ export const generateDailyCountsData = (days: number = 30) => {
   for (let i = days - 1; i >= 0; i--) {
     const date = subDays(new Date(), i);
     data.push({
-      report_count: Math.floor(Math.random() * 100) + 50,
+      report_count: 50 + ((i * 17) % 100),
       report_day: format(date, "yyyy-MM-dd"),
     });
   }

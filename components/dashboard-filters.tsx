@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ChevronDownIcon,
-  ExclamationCircleIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { format, parseISO, startOfDay } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -101,20 +97,6 @@ export function DashboardFilters({
 
     const selectValue = currentAppId || "all";
     const options = [{ id: "all", name: "All Apps" }, ...apps];
-
-    if (options.length === 0 && !appsError) {
-      return (
-        <div
-          className={cn(
-            commonErrorWarningClasses,
-            "border-muted bg-muted/20 text-muted-foreground rounded-lg",
-          )}
-        >
-          <InformationCircleIcon className="h-5 w-5 shrink-0" />
-          <span className="truncate">No applications found.</span>
-        </div>
-      );
-    }
 
     return (
       <div

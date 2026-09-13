@@ -21,13 +21,13 @@ const splineSansMono = Spline_Sans_Mono({
 
 const siteConfig = {
   name: "stats.store",
-  url: "https://stats.store", // Assuming this is your production URL
-  ogImage: "/banner.png", // Using the banner.png from the public folder
+  url: "https://stats.store",
+  ogImage: "/banner.png",
   description:
     "Fast, open, privacy-first analytics for Sparkle-enabled Mac apps. Free for open source projects and indie developers.",
   author: "Peter Steinberger",
   twitterHandle: "@steipete",
-  twitterCardType: "summary_large_image" as const, // Explicitly type for Metadata
+  twitterCardType: "summary_large_image" as const,
 };
 
 export const metadata: Metadata = {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.author, url: "https://steipete.me" }],
   creator: siteConfig.author,
   publisher: siteConfig.author,
-  generator: "Next.js", // Or "v0.dev" if you prefer
+  generator: "Next.js",
   keywords: [
     "Sparkle",
     "macOS",
@@ -66,8 +66,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: siteConfig.ogImage,
-        width: 1200, // Assuming your banner.png is around this width
-        height: 630, // Assuming your banner.png is around this height for optimal OG aspect ratio
+        width: 1200,
+        height: 630,
         alt: `${siteConfig.name} - ${siteConfig.description}`,
       },
     ],
@@ -81,8 +81,8 @@ export const metadata: Metadata = {
     card: siteConfig.twitterCardType,
     title: siteConfig.name,
     description: siteConfig.description,
-    site: siteConfig.twitterHandle, // Your site's Twitter handle (optional)
-    creator: siteConfig.twitterHandle, // Your personal/creator Twitter handle
+    site: siteConfig.twitterHandle,
+    creator: siteConfig.twitterHandle,
     images: [siteConfig.ogImage],
   },
   icons: {
@@ -90,7 +90,6 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
   },
-  // Manifest: "/site.webmanifest", // If you have a web app manifest
 };
 
 export default function RootLayout({
