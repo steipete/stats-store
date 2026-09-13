@@ -1,35 +1,27 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { KpiCard } from "./kpi-card";
 
 interface RealtimeKpiCardProps {
   title: string;
   value: string | number;
-  previousValue?: string | number;
   iconName: "users" | "cube" | "tag";
-  iconColor: string;
   error?: boolean;
   tooltip?: string;
   isRealtime?: boolean;
-  lastUpdate?: Date;
 }
 
-export function RealtimeKpiCard({
-  value,
-  previousValue,
-  isRealtime,
-  ...props
-}: RealtimeKpiCardProps) {
-  const [displayValue, setDisplayValue] = useState(value);
+export function RealtimeKpiCard({ value, isRealtime, ...props }: RealtimeKpiCardProps) {
+  const previousValue = useRef(value);
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    if (value !== previousValue) {
+    if (value !== previousValue.current) {
+      previousValue.current = value;
       // eslint-disable-next-line react/set-state-in-effect -- Start the timed highlight when a realtime value arrives.
       setIsUpdating(true);
-      setDisplayValue(value);
 
       // Reset animation after 1 second
       const timeout = setTimeout(() => {
@@ -38,7 +30,7 @@ export function RealtimeKpiCard({
 
       return () => clearTimeout(timeout);
     }
-  }, [value, previousValue]);
+  }, [value]);
 
   return (
     <motion.div
@@ -52,7 +44,7 @@ export function RealtimeKpiCard({
       }
     >
       <div className="relative">
-        <KpiCard {...props} value={displayValue} />
+        <KpiCard {...props} value={value} />
 
         {/* Real-time indicator */}
         {isRealtime && (
