@@ -1,6 +1,6 @@
 # Stats Store Testing
 
-This project uses multiple testing approaches to ensure reliability:
+Vitest tests live under `tests/`; the HTTP integration script runs separately against a configured server.
 
 ## Unit Tests (Vitest)
 
@@ -54,7 +54,7 @@ node tests/appcast-integration.test.mjs
 TEST_URL=https://stats.store node tests/appcast-integration.test.mjs
 ```
 
-This tests the actual HTTP endpoint with real requests.
+This tests the actual HTTP endpoint with real requests. Use a test deployment: successful requests write telemetry, and the suite expects the registered Vibe Tunnel app and its upstream feeds. Do not use the production command for routine validation.
 
 ### Shell Script Tests
 
@@ -110,4 +110,4 @@ Tests run automatically on:
 - Commits to main branch
 - Before deployment
 
-Configure in `.github/workflows/test.yml` or your CI platform.
+See `.github/workflows/ci.yml` and `.github/workflows/coverage.yml`.

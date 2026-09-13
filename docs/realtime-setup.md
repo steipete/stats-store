@@ -4,9 +4,9 @@ This guide explains how to enable real-time analytics in stats.store using Supab
 
 ## Overview
 
-The real-time system uses an aggregated update approach (Option 2) that provides:
+The real-time system publishes database events and batched aggregates:
 
-- Near real-time updates (1-5 second delay)
+- Immediate new-user events when reports arrive
 - Efficient performance with batched updates
 - Live user counts and activity feeds
 - Milestone notifications
@@ -82,7 +82,7 @@ Updates are batched to balance real-time feel with performance:
 
 - Immediate updates for new users
 - Batch updates every 10 reports
-- Force update if 30 seconds have passed
+- Aggregate on the next report if 30 seconds have passed (there is no idle timer)
 - Milestone notifications at key user counts
 
 ## Features
