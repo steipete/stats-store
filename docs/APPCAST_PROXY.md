@@ -39,7 +39,7 @@ https://stats.store/api/v1/appcast/appcast-prerelease.xml
 
 ### GitHub Repositories
 
-- Input: `https://github.com/owner/repo`
+- Input: `https://github.com/owner/repo` (bare `github.com/owner/repo` and `.git` clone URLs are also accepted)
 - Proxy converts to: `https://raw.githubusercontent.com/owner/repo/refs/heads/main/[appcast-file]`
 
 ### Direct URLs (Folder)
@@ -129,3 +129,7 @@ This occurs when:
 ## Telemetry delivery
 
 Telemetry is scheduled with Next.js `after()` so serverless invocations finish the write after responding to Sparkle. A telemetry transport failure does not prevent feed delivery. Invalid hardware integers are recorded as absent rather than truncated; direct JSON ingest instead rejects invalid numeric fields. App names are matched literally, including commas, parentheses, quotes, and backslashes. Registry query failures return 500; an unknown application returns 404.
+
+## Download redirects
+
+`/download/[app]` matches registered names and bundle identifiers case-insensitively and literally. Wildcard characters in a name do not select other apps. GitHub release lookup requires an actual `github.com` HTTP(S) URL; lookalike hosts and URLs that merely contain `github.com` in their path are not GitHub repositories. `.git` suffixes and repository-page query strings are removed before querying releases.

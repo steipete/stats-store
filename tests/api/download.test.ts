@@ -10,10 +10,9 @@ vi.mock("@/lib/supabase/server", () => ({
 function makeSupabaseMock(singleResults: Array<{ data: unknown; error: unknown }>) {
   const single = vi.fn(async () => singleResults.shift() ?? { data: null, error: null });
   const builder = {
-    eq: vi.fn(() => builder),
-    ilike: vi.fn(() => builder),
+    filter: vi.fn(() => builder),
     select: vi.fn(() => builder),
-    single,
+    maybeSingle: single,
   };
   return {
     from: vi.fn(() => builder),

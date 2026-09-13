@@ -1,3 +1,5 @@
+import { parseGitHubRepository } from "@/lib/github";
+
 interface SparkleUserAgent {
   appName: string;
   appVersion: string;
@@ -79,9 +81,9 @@ export function constructAppcastUrl(baseUrl: string, appcastPath: string): strin
   }
 
   // Handle GitHub URLs - convert to raw.githubusercontent.com
-  const githubMatch = cleanBasePath.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/?$/);
-  if (githubMatch) {
-    const [, owner, repo] = githubMatch;
+  const repository = parseGitHubRepository(cleanBasePath);
+  if (repository?.isRoot) {
+    const { owner, repo } = repository;
     return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${appcastPath}`;
   }
 
