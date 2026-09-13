@@ -25,6 +25,8 @@ The endpoint expects a JSON payload with the following structure:
 }
 ```
 
+`bundleIdentifier` must be a non-empty string. Optional text fields accept strings or null. `ncpu` and `ramMB` accept whole non-negative integers (JSON numbers or numeric strings) up to 2,147,483,647; omitted, empty, and null values are stored as absent. Invalid fields are rejected before database access.
+
 ## Setting Up Your App
 
 1. **Register Your App**: First, ensure your app's bundle identifier is registered in the database:
@@ -38,8 +40,7 @@ The endpoint expects a JSON payload with the following structure:
 ## Response Codes
 
 - `201 Created`: Report successfully received
-- `400 Bad Request`: Missing required fields or invalid JSON
-- `403 Forbidden`: Unknown bundle identifier
+- `400 Bad Request`: Invalid JSON, missing/invalid fields, or an unknown bundle identifier
 - `500 Internal Server Error`: Database error
 
 ## Example Integration
