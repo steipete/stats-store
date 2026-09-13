@@ -8,6 +8,8 @@ import {
   type DateRangeValue,
 } from "@/lib/date-range";
 import { normalizeAppId } from "@/lib/dashboard/filters";
+import { getReportCounts } from "@/lib/dashboard/report-counts";
+import { getSeriesRows } from "@/lib/dashboard/series-rows";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 interface App {
@@ -149,22 +151,14 @@ export async function getDashboardData(
   };
 
   const appsPromise = supabase.from("apps").select("id, name").order("name");
-  const reportCountsPromise = (() => {
-    let query = supabase.from("reports").select("ip_hash", { count: "exact" });
-    if (p_app_id_filter) {
-      query = query.eq("app_id", p_app_id_filter);
-    }
-    return query
-      .gte("received_at", rpcParams.p_start_date_filter)
-      .lt("received_at", addUtcDays(queryToDay, 1).toISOString());
-  })();
+  const reportCountsPromise = getReportCounts(supabase, rpcParams);
 
   const latestVersionPromise = supabase.rpc("get_latest_app_version", {
     app_id_filter: p_app_id_filter,
     end_date_filter: rpcParams.p_end_date_filter,
     start_date_filter: rpcParams.p_start_date_filter,
   });
-  const dailyCountsPromise = supabase.rpc("get_daily_report_counts", {
+  const dailyCountsPromise = getSeriesRows<DailyCountRow>(supabase, "get_daily_report_counts", {
     app_id_filter: p_app_id_filter,
     end_date_filter: rpcParams.p_end_date_filter,
     start_date_filter: rpcParams.p_start_date_filter,
@@ -178,10 +172,14 @@ export async function getDashboardData(
   });
   const ramPromise = supabase.rpc("get_ram_distribution", rpcParams);
   const cpuCoresPromise = supabase.rpc("get_cpu_cores_distribution", rpcParams);
-  const versionPromise = supabase.rpc("get_version_adoption_timeline", {
-    ...rpcParams,
-    p_top_versions: 5,
-  });
+  const versionPromise = getSeriesRows<VersionAdoptionRow>(
+    supabase,
+    "get_version_adoption_timeline",
+    {
+      ...rpcParams,
+      p_top_versions: 5,
+    },
+  );
   const hourlyPromise = supabase.rpc("get_hourly_activity_pattern", {
     p_app_id_filter,
     p_end_date_filter: rpcParams.p_end_date_filter,
@@ -228,18 +226,14 @@ export async function getDashboardData(
   let uniqueInstallsCount: number | string = 0;
   let reportsThisPeriodCount: number | string = 0;
   let kpiErrorMessage: string | undefined;
-  if (reportCountsRes.error) {
-    console.error("Error fetching KPI report counts:", reportCountsRes.error.message);
+  if (reportCountsRes.error || !reportCountsRes.data) {
+    console.error("Error fetching KPI report counts:", reportCountsRes.error?.message);
     kpiErrorMessage = "Could not load report counts.";
     uniqueInstallsCount = "Error";
     reportsThisPeriodCount = "Error";
   } else {
-    reportsThisPeriodCount = reportCountsRes.count ?? 0;
-    const hashes =
-      reportCountsRes.data
-        ?.map((r) => r.ip_hash)
-        .filter((hash): hash is string => typeof hash === "string" && hash.length > 0) ?? [];
-    uniqueInstallsCount = new Set(hashes).size;
+    reportsThisPeriodCount = reportCountsRes.data.total_reports;
+    uniqueInstallsCount = reportCountsRes.data.unique_client_days;
   }
 
   let latestVersionValue = "N/A";

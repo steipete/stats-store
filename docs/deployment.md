@@ -30,6 +30,7 @@ This guide will help you deploy your own instance of stats.store.
      supabase db push --password "$SUPABASE_DB_PASSWORD"
      ```
    - This applies the managed real-time infrastructure and later fixes from `supabase/migrations/*`
+   - Apply each migration atomically. The CLI batches regular migration statements in one transaction; when using `psql` directly, use `--single-transaction -f <migration.sql>` so paired trigger changes become visible together.
 
 3. **Enable real-time (optional but cool!)**
    - Go to Database → Replication

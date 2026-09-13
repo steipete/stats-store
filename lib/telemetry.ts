@@ -33,3 +33,11 @@ export function getRequestIp(request: Pick<Request, "headers">): string {
     "unknown_ip"
   );
 }
+
+export function createReportIdentity(ip: string) {
+  const receivedAt = new Date();
+  return {
+    received_at: receivedAt.toISOString(),
+    ip_hash: dailyIpHash(ip, receivedAt),
+  };
+}

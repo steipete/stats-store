@@ -43,8 +43,10 @@ describe("Dashboard Page", () => {
 
     // Verify correct queries are made
     expect(mockClient.from).toHaveBeenCalledWith("apps");
-    expect(mockClient.from).toHaveBeenCalledWith("reports");
-    expect(mockClient.rpc).toHaveBeenCalledWith("get_daily_report_counts", expect.any(Object));
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_report_counts", expect.any(Object));
+    expect(mockClient.rpc).toHaveBeenCalledWith("get_daily_report_counts", expect.any(Object), {
+      count: "exact",
+    });
     expect(mockClient.rpc).toHaveBeenCalledWith("get_os_version_distribution", expect.any(Object));
     expect(mockClient.rpc).toHaveBeenCalledWith(
       "get_cpu_architecture_distribution",

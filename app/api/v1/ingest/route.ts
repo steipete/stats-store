@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { parseIngestPayload } from "@/lib/ingest";
-import { dailyIpHash, getRequestIp } from "@/lib/telemetry";
+import { createReportIdentity, getRequestIp } from "@/lib/telemetry";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const { error: insertError } = await supabase.from("reports").insert({
       ...report,
       app_id: app.id,
-      ip_hash: dailyIpHash(ip || getRequestIp(request)),
+      ...createReportIdentity(ip || getRequestIp(request)),
     });
     if (insertError) {
       console.error("Error inserting report:", insertError);

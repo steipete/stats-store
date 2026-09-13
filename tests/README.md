@@ -114,7 +114,7 @@ See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Lin
 
 ## Database checks
 
-CI bootstraps every SQL migration in a disposable PostgreSQL 17 database and checks the report triggers and cached aggregates. To run locally with a fresh test database and `psql` installed:
+CI bootstraps every SQL migration in a disposable PostgreSQL 17 database and checks the report triggers and cached aggregates. The concurrency regression uses PostgreSQL contrib's `dblink` extension and a lock barrier to coordinate independent transactions. To run locally with a fresh test database and `psql` installed:
 
 ```sh
 PGHOST=localhost PGUSER=postgres PGDATABASE=stats_store_test bash scripts/test-database.sh

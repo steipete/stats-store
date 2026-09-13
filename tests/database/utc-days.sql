@@ -18,7 +18,7 @@ BEGIN
     '33333333-3333-4333-8333-333333333333', '2024-03-10 00:00:00+00', '2024-03-10 00:00:00+00');
   SELECT SUM(user_count) INTO user_total FROM public.get_os_version_distribution(
     '33333333-3333-4333-8333-333333333333', '2024-03-10 00:00:00+00', '2024-03-10 00:00:00+00');
-  IF report_total <> 2 OR user_total <> 2 THEN
+  IF report_total IS DISTINCT FROM 2 OR user_total IS DISTINCT FROM 2 THEN
     RAISE EXCEPTION 'UTC day must include both boundary reports across DST: reports %, users %', report_total, user_total;
   END IF;
 END $$;

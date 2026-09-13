@@ -49,6 +49,15 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
     let data: unknown;
 
     switch (functionName) {
+      case "get_report_counts": {
+        const reports = mockData.reports ?? [];
+        const hashes = reports
+          .map((row) => (row as { ip_hash?: unknown }).ip_hash)
+          .filter((hash): hash is string => typeof hash === "string" && hash.length > 0);
+        data = [{ unique_client_days: new Set(hashes).size, total_reports: reports.length }];
+        break;
+      }
+
       case "get_daily_report_counts": {
         data = mockData.daily_counts ?? [];
         break;
@@ -69,12 +78,24 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
         data = mockData.latest_version ?? "N/A";
         break;
       }
+      case "get_language_distribution":
+      case "get_ram_distribution":
+      case "get_cpu_cores_distribution":
+      case "get_version_adoption_timeline":
+      case "get_hourly_activity_pattern": {
+        data = [];
+        break;
+      }
       default: {
-        data = null;
+        throw new Error(`Unexpected RPC in fixture: ${functionName}`);
       }
     }
 
-    return Promise.resolve({ data, error: undefined }) as unknown as Record<string, unknown>;
+    return Promise.resolve({
+      data,
+      count: Array.isArray(data) ? data.length : null,
+      error: undefined,
+    }) as unknown as Record<string, unknown>;
   };
 
   const mockClient: Partial<SupabaseClient> = {
