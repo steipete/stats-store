@@ -39,4 +39,6 @@ A `BEFORE INSERT` trigger holds the app lock and identifies new daily clients be
 
 ## Verification
 
+Charts use daily points for ranges of up to 1,000 days. Longer ranges sum daily rows into at most 1,000 equal-width calendar intervals; labels show the interval and its maximum day count. Filters and KPI totals retain the full requested range. Cross-year ranges include years in chart and range labels. Version chart keys are prefixed with `Version ` so arbitrary display versions cannot collide with date or object-property keys. The first chart counts reports, not installations.
+
 Vitest covers API handlers, data formatting, components, and hooks. The existing HTTP appcast integration script runs against a configured server and needs registered test apps. See [tests/README.md](../tests/README.md). CI runs lint, type checks, tests, coverage, and production builds. Vercel deploys the connected GitHub branch automatically.

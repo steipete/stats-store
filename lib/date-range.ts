@@ -50,14 +50,14 @@ export function formatDateInput(date: Date): string {
   return date.toISOString().split("T")[0];
 }
 
-export function formatChartDate(date: Date): string {
-  return chartDateFormatter.format(date);
+export function formatChartDate(date: Date, includeYear = false): string {
+  return includeYear ? rangeEndFormatter.format(date) : chartDateFormatter.format(date);
 }
 
 export function formatDateRange(range: { from: Date; to: Date }): string {
-  return `${rangeStartFormatter.format(range.from)} — ${rangeEndFormatter.format(range.to)}`;
-}
-
-export function* eachUtcDay(from: Date, to: Date) {
-  for (let day = from; day <= to; day = addUtcDays(day, 1)) yield day;
+  const start =
+    range.from.getUTCFullYear() === range.to.getUTCFullYear()
+      ? rangeStartFormatter.format(range.from)
+      : rangeEndFormatter.format(range.from);
+  return `${start} — ${rangeEndFormatter.format(range.to)}`;
 }

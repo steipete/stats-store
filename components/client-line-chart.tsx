@@ -74,6 +74,8 @@ export function ClientLineChart<T extends object = Record<string, unknown>>({
             tickLine={false}
             axisLine={false}
             tickMargin={8}
+            minTickGap={32}
+            interval="preserveStartEnd"
             tick={chartAxisTick}
           />
           <YAxis

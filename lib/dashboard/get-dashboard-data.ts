@@ -1,12 +1,5 @@
-import {
-  addUtcDays,
-  eachUtcDay,
-  formatChartDate,
-  formatDateInput,
-  normalizeDateRange,
-  parseDateParameter,
-  type DateRangeValue,
-} from "@/lib/date-range";
+import { createChartBuckets } from "@/lib/dashboard/chart-buckets";
+import { addUtcDays, normalizeDateRange, type DateRangeValue } from "@/lib/date-range";
 import { normalizeAppId } from "@/lib/dashboard/filters";
 import { getReportCounts } from "@/lib/dashboard/report-counts";
 import { getSeriesRows } from "@/lib/dashboard/series-rows";
@@ -19,7 +12,7 @@ interface App {
 
 interface TimeSeriesDataPoint {
   date: string;
-  Installs: number;
+  Reports: number;
 }
 
 interface DistributionDataPoint {
@@ -91,6 +84,7 @@ interface HourlyActivityRow {
 
 export interface DashboardData {
   apps: App[];
+  chart_bucket_days: number;
   appsError?: string;
   kpis: {
     unique_installs: number | string;
@@ -102,8 +96,8 @@ export interface DashboardData {
     reports_this_period?: string;
     latest_version?: string;
   };
-  installs_timeseries: TimeSeriesDataPoint[];
-  installs_timeseries_error?: string;
+  reports_timeseries: TimeSeriesDataPoint[];
+  reports_timeseries_error?: string;
   os_breakdown: DistributionDataPoint[];
   os_breakdown_error?: string;
   cpu_breakdown: DistributionDataPoint[];
@@ -246,21 +240,19 @@ export async function getDashboardData(
     latestVersionValue = latestVersionRes.data;
   }
 
-  let installsTimeseries: TimeSeriesDataPoint[] = [];
-  let installsTimeseriesErrorMessage: string | undefined;
+  const buckets = createChartBuckets(queryFromDay, queryToDay);
+  let reportsTimeseries: TimeSeriesDataPoint[] = [];
+  let reportsTimeseriesErrorMessage: string | undefined;
   if (dailyCountsRes.error) {
     console.error("Error fetching daily report counts (RPC):", dailyCountsRes.error.message);
-    installsTimeseriesErrorMessage = "Could not load installations data.";
+    reportsTimeseriesErrorMessage = "Could not load report data.";
   } else if (dailyCountsRes.data) {
-    const countsByDay = new Map<string, number>();
-    dailyCountsRes.data.forEach((row: DailyCountRow) => {
-      countsByDay.set(row.report_day, Number(row.report_count) || 0);
-    });
-    installsTimeseries = Array.from(eachUtcDay(queryFromDay, queryToDay), (dayInInterval) => {
-      const formattedDayKey = formatDateInput(dayInInterval);
-      const formattedDateLabel = formatChartDate(dayInInterval);
-      return { Installs: countsByDay.get(formattedDayKey) || 0, date: formattedDateLabel };
-    });
+    const counts = buckets.labels.map(() => 0);
+    for (const row of dailyCountsRes.data) {
+      const index = buckets.index(row.report_day);
+      if (index !== undefined) counts[index] += Number(row.report_count) || 0;
+    }
+    reportsTimeseries = buckets.labels.map((date, index) => ({ date, Reports: counts[index] }));
   }
 
   const { data: osBreakdown, error: osBreakdownErrorMessage } = mapRows(
@@ -329,28 +321,27 @@ export async function getDashboardData(
     console.error("Error fetching version adoption (RPC):", versionRes.error.message);
     versionAdoptionErrorMessage = "Could not load version adoption data.";
   } else if (versionRes.data) {
-    const versionsByDay = new Map<string, Map<string, number>>();
+    const versionsByBucket = new Map<number, Map<string, number>>();
     const allVersions = new Set<string>();
 
-    versionRes.data.forEach((row: VersionAdoptionRow) => {
-      const dayKey = row.report_date.slice(0, 10);
-      const perDay = versionsByDay.get(dayKey) ?? new Map<string, number>();
-      perDay.set(row.app_version, Number(row.user_count) || 0);
-      versionsByDay.set(dayKey, perDay);
-      allVersions.add(row.app_version);
-    });
+    for (const row of versionRes.data) {
+      const index = buckets.index(row.report_date);
+      if (index === undefined) continue;
+      const perBucket = versionsByBucket.get(index) ?? new Map<string, number>();
+      const version = `Version ${row.app_version}`;
+      perBucket.set(version, (perBucket.get(version) ?? 0) + (Number(row.user_count) || 0));
+      versionsByBucket.set(index, perBucket);
+      allVersions.add(version);
+    }
 
-    versionAdoption = [...versionsByDay.entries()]
-      .toSorted(([a], [b]) => a.localeCompare(b))
-      .map(([dayKey, versions]) => {
-        const parsed = parseDateParameter(dayKey);
-        const label = parsed ? formatChartDate(parsed) : dayKey;
-        const dataPoint: VersionAdoptionDataPoint = { date: label };
-        allVersions.forEach((version) => {
-          dataPoint[version] = versions.get(version) ?? 0;
-        });
-        return dataPoint;
-      });
+    versionAdoption = [...versionsByBucket.entries()]
+      .toSorted(([a], [b]) => a - b)
+      .map(([index, versions]) => ({
+        date: buckets.labels[index],
+        ...Object.fromEntries(
+          [...allVersions].map((version) => [version, versions.get(version) ?? 0]),
+        ),
+      }));
   }
 
   const { data: hourlyActivity, error: hourlyActivityErrorMessage } = mapRows(
@@ -365,6 +356,7 @@ export async function getDashboardData(
 
   return {
     apps: appsList,
+    chart_bucket_days: buckets.bucketDays,
     appsError: appsErrorMessage,
     cpu_breakdown: cpuBreakdown,
     cpu_breakdown_error: cpuBreakdownErrorMessage,
@@ -372,8 +364,8 @@ export async function getDashboardData(
     cpu_cores_breakdown_error: cpuCoresBreakdownErrorMessage,
     hourly_activity: hourlyActivity,
     hourly_activity_error: hourlyActivityErrorMessage,
-    installs_timeseries: installsTimeseries,
-    installs_timeseries_error: installsTimeseriesErrorMessage,
+    reports_timeseries: reportsTimeseries,
+    reports_timeseries_error: reportsTimeseriesErrorMessage,
     kpis: {
       unique_installs: uniqueInstallsCount,
       reports_this_period: reportsThisPeriodCount,

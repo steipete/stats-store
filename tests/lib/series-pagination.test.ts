@@ -36,7 +36,12 @@ it("loads complete daily and version series past the server row limit", async ()
   });
   vi.mocked(createSupabaseServerClient).mockReturnValue(client);
   const data = await getDashboardData("all", { from, to: addUtcDays(from, 1104) });
-  expect(data.installs_timeseries).toHaveLength(1105);
-  expect(data.installs_timeseries.at(-1)?.Installs).toBe(1);
-  expect(data.version_adoption).toHaveLength(1105);
+  expect(data.reports_timeseries).toHaveLength(553);
+  expect(data.reports_timeseries.at(-1)?.Reports).toBe(1);
+  expect(data.reports_timeseries.at(-1)?.date).toBe("Jan 9, 2023");
+  expect(data.version_adoption).toHaveLength(553);
+  expect(data.reports_timeseries.reduce((sum, row) => sum + row.Reports, 0)).toBe(1105);
+  expect(data.version_adoption.reduce((sum, row) => sum + Number(row["Version 1.0"]), 0)).toBe(
+    1105,
+  );
 });
