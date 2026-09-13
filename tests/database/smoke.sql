@@ -18,7 +18,7 @@ DECLARE
 BEGIN
   SELECT stat_data INTO STRICT kpis FROM public.stats_cache
   WHERE app_id = '11111111-1111-4111-8111-111111111111' AND stat_type = 'kpis';
-  IF (kpis->>'unique_users_today')::INT <> 1 OR (kpis->>'total_reports_today')::INT <> 2 THEN
+  IF (kpis->>'unique_users_today')::INT IS DISTINCT FROM 1 OR (kpis->>'total_reports_today')::INT IS DISTINCT FROM 2 THEN
     RAISE EXCEPTION 'KPI aggregation failed: %', kpis;
   END IF;
 

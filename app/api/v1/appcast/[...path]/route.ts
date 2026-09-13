@@ -1,7 +1,7 @@
 import { after, type NextRequest, NextResponse } from "next/server";
 import { constructAppcastUrl, parseSparkleUserAgent } from "@/lib/appcast";
 import {
-  dailyIpHash,
+  createReportIdentity,
   getRequestIp,
   mapCpuTypeToArch,
   parseTelemetryInteger,
@@ -101,7 +101,7 @@ export async function GET(
       cpu_freq_mhz: parseTelemetryInteger(sparkleParams.cpuFreqMHz),
       cpu_subtype: sparkleParams.cpusubtype || null,
       cpu_type_raw: sparkleParams.cputype || null,
-      ip_hash: dailyIpHash(getRequestIp(request)),
+      ...createReportIdentity(getRequestIp(request)),
       language: sparkleParams.lang || null,
       model_identifier: sparkleParams.model || null,
       os_version: sparkleParams.osVersion || null,

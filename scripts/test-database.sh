@@ -16,10 +16,12 @@ CREATE PUBLICATION supabase_realtime;
 SQL
 
 for migration in scripts/[0-9]*.sql supabase/migrations/*.sql; do
-  psql -X -v ON_ERROR_STOP=1 -q -f "$migration" >/dev/null
+  printf 'Apply %s\n' "$migration"
+  psql -X -v ON_ERROR_STOP=1 -q --single-transaction -f "$migration" >/dev/null
 done
 
 for test_file in tests/database/*.sql; do
+  printf 'Check %s\n' "$test_file"
   psql -X -v ON_ERROR_STOP=1 -q -f "$test_file"
 done
 printf 'Database bootstrap, migrations, and regression checks passed.\n'

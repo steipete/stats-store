@@ -139,6 +139,20 @@ describe("appcast lookup and request lifetime", () => {
     );
   });
 
+  it("keeps the hash day and receipt timestamp aligned across a delayed midnight write", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-12T23:59:59.900Z"));
+    expect((await request({ bundleIdentifier: "com.example.app" })).status).toBe(200);
+    vi.setSystemTime(new Date("2026-09-13T00:00:01Z"));
+    await flushTelemetry();
+    expect(mocks.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        received_at: "2026-09-12T23:59:59.900Z",
+        ip_hash: createHash("sha256").update("unknown_ip2026-09-12").digest("hex"),
+      }),
+    );
+  });
+
   it("contains telemetry transport rejections after returning the feed", async () => {
     mocks.insert.mockRejectedValue(new Error("Telemetry transport unavailable"));
     expect((await request({ bundleIdentifier: "com.example.app" })).status).toBe(200);

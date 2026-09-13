@@ -18,11 +18,15 @@ describe("dashboard calendar and app filters", () => {
     const client = createMockSupabaseClient();
     vi.mocked(createSupabaseServerClient).mockReturnValue(client);
     await Page({ searchParams: Promise.resolve({ from: "2026-09-01", to: "2026-09-01" }) });
-    expect(client.rpc).toHaveBeenCalledWith("get_daily_report_counts", {
-      app_id_filter: null,
-      start_date_filter: "2026-09-01T00:00:00.000Z",
-      end_date_filter: "2026-09-01T00:00:00.000Z",
-    });
+    expect(client.rpc).toHaveBeenCalledWith(
+      "get_daily_report_counts",
+      {
+        app_id_filter: null,
+        start_date_filter: "2026-09-01T00:00:00.000Z",
+        end_date_filter: "2026-09-01T00:00:00.000Z",
+      },
+      { count: "exact" },
+    );
   });
 
   it("keeps the selected dates when server and browser time zones differ", async () => {
@@ -45,6 +49,7 @@ describe("dashboard calendar and app filters", () => {
     expect(client.rpc).toHaveBeenCalledWith(
       "get_daily_report_counts",
       expect.objectContaining({ app_id_filter: appId.toLowerCase() }),
+      { count: "exact" },
     );
   });
 });

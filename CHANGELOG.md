@@ -6,6 +6,9 @@
 
 No tagged releases have been published yet; this section summarizes the existing service and its maintenance updates.
 
+- Keep receipt timestamps, daily IP hashes, event totals, and milestone dates aligned when telemetry writes cross UTC midnight.
+- Count every report and daily client hash and load complete long-range chart series beyond PostgREST row limits, with an aggregate RPC and pagination for deployments awaiting the migration.
+- Accept large numeric build versions and order numeric version notifications correctly; serialize concurrent check-ins so one daily client emits one new-user event.
 - **Compatibility:** Use UTC calendar days consistently in dashboard filters, chart labels, and SQL buckets; prevent browser time zones from shifting selected dates and accept UUID v7 app filters.
 - Resolve GitHub download and feed URLs by their actual host, normalize clone URLs, and match download identifiers literally.
 - Finish appcast telemetry writes after responding, match app names literally, and record the identifier that actually resolved the app.

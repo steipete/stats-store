@@ -1,5 +1,6 @@
+import { createHash } from "node:crypto";
 import { NextRequest } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "@/app/api/v1/ingest/route";
 
 const mocks = vi.hoisted(() => ({
@@ -36,6 +37,8 @@ beforeEach(() => {
   };
   mocks.from.mockReturnValue(query);
 });
+
+afterEach(() => vi.useRealTimers());
 
 describe("ingest payload validation", () => {
   it.each([null, [], true, 42, "text"])(
@@ -84,6 +87,24 @@ describe("ingest payload validation", () => {
     ).toBe(201);
     expect(mocks.insert).toHaveBeenCalledWith(
       expect.objectContaining({ app_version: null, core_count: null, ram_mb: null }),
+    );
+  });
+
+  it("stores the timestamp used for hashing before the database write crosses midnight", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-12T23:59:59.900Z"));
+    mocks.insert.mockImplementation(async () => {
+      vi.setSystemTime(new Date("2026-09-13T00:00:01Z"));
+      return { error: null };
+    });
+    expect((await submit({ bundleIdentifier: "com.example.app", ip: "198.51.100.9" })).status).toBe(
+      201,
+    );
+    expect(mocks.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        received_at: "2026-09-12T23:59:59.900Z",
+        ip_hash: createHash("sha256").update("198.51.100.92026-09-12").digest("hex"),
+      }),
     );
   });
 
