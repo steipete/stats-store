@@ -61,7 +61,3 @@ export function formatDateRange(range: { from: Date; to: Date }): string {
       : rangeEndFormatter.format(range.from);
   return `${start} — ${rangeEndFormatter.format(range.to)}`;
 }
-
-export function* eachUtcDay(from: Date, to: Date) {
-  for (let day = from; day <= to; day = addUtcDays(day, 1)) yield day;
-}

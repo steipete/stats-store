@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   addUtcDays,
-  eachUtcDay,
   formatChartDate,
   formatDateInput,
   normalizeDateRange,
@@ -17,9 +16,11 @@ describe.each(["UTC", "America/Los_Angeles", "Pacific/Kiritimati"])(
       const day = parseDateParameter("2024-03-10")!;
       expect(day.toISOString()).toBe("2024-03-10T00:00:00.000Z");
       expect(formatDateInput(day)).toBe("2024-03-10");
-      expect(
-        [...eachUtcDay(addUtcDays(day, -1), addUtcDays(day, 1))].map((day) => formatChartDate(day)),
-      ).toEqual(["Mar 09", "Mar 10", "Mar 11"]);
+      expect([-1, 0, 1].map((offset) => formatChartDate(addUtcDays(day, offset)))).toEqual([
+        "Mar 09",
+        "Mar 10",
+        "Mar 11",
+      ]);
     });
     it("defaults to thirty UTC days around midnight", () => {
       vi.stubEnv("TZ", timezone);

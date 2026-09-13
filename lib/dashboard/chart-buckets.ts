@@ -11,7 +11,9 @@ export function createChartBuckets(from: Date, to: Date) {
     const start = addUtcDays(from, index * bucketDays);
     const end = addUtcDays(from, Math.min((index + 1) * bucketDays, days) - 1);
     const label = formatChartDate(start, includeYear);
-    return bucketDays === 1 ? label : `${label} – ${formatChartDate(end, includeYear)}`;
+    return start.getTime() === end.getTime()
+      ? label
+      : `${label} – ${formatChartDate(end, includeYear)}`;
   });
   return {
     bucketDays,
