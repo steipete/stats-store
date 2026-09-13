@@ -125,3 +125,7 @@ This occurs when:
 1. The app identifier doesn't match any registered app in the database
 2. The app doesn't have an `appcast_base_url` configured
 3. Check that the app's `display_name` column matches what Sparkle sends
+
+## Telemetry delivery
+
+Telemetry is scheduled with Next.js `after()` so serverless invocations finish the write after responding to Sparkle. A telemetry transport failure does not prevent feed delivery. Invalid hardware integers are recorded as absent rather than truncated; direct JSON ingest instead rejects invalid numeric fields. App names are matched literally, including commas, parentheses, quotes, and backslashes. Registry query failures return 500; an unknown application returns 404.
