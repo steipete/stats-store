@@ -31,7 +31,7 @@ The endpoint expects a JSON payload with the following structure:
    - Access your Supabase dashboard
    - Add your app to the `apps` table with its `bundle_identifier`
 
-2. **Configure Sparkle**: In your macOS app's Sparkle configuration, set the update check URL to include this stats endpoint.
+2. **Send direct reports**: POST JSON from your own telemetry integration. Sparkle's `SUFeedURL` must point to an XML feed, not this endpoint. For automatic update-check collection, use [the appcast proxy](APPCAST_PROXY.md).
 
 3. **Privacy**: The API automatically hashes IP addresses with a daily salt for privacy. No personally identifiable information is stored.
 

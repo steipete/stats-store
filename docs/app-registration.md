@@ -23,7 +23,8 @@ To use the stats collection endpoint at `https://stats.store/api/v1/ingest`, you
 
 4. **Configure your Sparkle-enabled app**
    - Update your app's Sparkle configuration to point to the stats endpoint
-   - Set the stats URL to: `https://stats.store/api/v1/ingest`
+   - Set `SUFeedURL` to `https://stats.store/api/v1/appcast/appcast.xml` and configure `appcast_base_url` for the app; see [the appcast guide](APPCAST_PROXY.md).
+   - Direct JSON clients can separately POST reports to `/api/v1/ingest`; it is not an XML feed URL.
    - Ensure your app sends the correct bundle identifier with each request
 
 ## Example Bundle Identifiers
