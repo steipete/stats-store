@@ -60,8 +60,7 @@ export default async function DashboardPage({
     to: parseDateParameter(params?.to),
   });
   const data = await getDashboardData(selectedAppId, dateRange);
-  const showInstallationsChart =
-    !data.installs_timeseries_error && data.installs_timeseries.length > 0;
+  const showReportsChart = !data.reports_timeseries_error && data.reports_timeseries.length > 0;
   const showOsChart = !data.os_breakdown_error && data.os_breakdown.length > 0;
   const showCpuChart = !data.cpu_breakdown_error && data.cpu_breakdown.length > 0;
   const showTopModelsTable = !data.top_models_error && data.top_models.length > 0;
@@ -146,31 +145,38 @@ export default async function DashboardPage({
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
               <ChartCard
                 num="01"
-                title="Installations over time"
-                note={rangeLabel}
+                title="Reports over time"
+                note={`${rangeLabel} · ${data.chart_bucket_days === 1 ? "Daily totals" : `Up to ${data.chart_bucket_days}-day totals`}`}
                 className="lg:col-span-12"
               >
-                {showInstallationsChart ? (
+                {showReportsChart ? (
                   <ClientLineChart
                     className="h-80"
-                    data={data.installs_timeseries}
+                    data={data.reports_timeseries}
                     index="date"
-                    categories={["Installs"]}
+                    categories={["Reports"]}
                     yAxisWidth={48}
                     showAnimation
                   />
                 ) : (
                   <CardStatusDisplay
-                    error={data.installs_timeseries_error}
-                    noData={
-                      !data.installs_timeseries_error && data.installs_timeseries.length === 0
-                    }
+                    error={data.reports_timeseries_error}
+                    noData={!data.reports_timeseries_error && data.reports_timeseries.length === 0}
                     minHeightClassName="h-80"
                   />
                 )}
               </ChartCard>
 
-              <ChartCard num="02" title="Version adoption" className="lg:col-span-7">
+              <ChartCard
+                num="02"
+                title="Version adoption"
+                note={
+                  data.chart_bucket_days > 1
+                    ? `Up to ${data.chart_bucket_days}-day totals`
+                    : "Daily client counts"
+                }
+                className="lg:col-span-7"
+              >
                 {showVersionAdoptionChart ? (
                   <ClientLineChart
                     className="h-72"
@@ -372,7 +378,7 @@ export default async function DashboardPage({
                 rel="noopener noreferrer"
                 className="block transition-colors hover:text-primary"
               >
-                GitHub · MIT licensed
+                GitHub
               </a>
               <a
                 href="https://twitter.com/steipete"

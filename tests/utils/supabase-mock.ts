@@ -9,6 +9,7 @@ interface MockData {
   cpu_distribution?: unknown[];
   top_models?: unknown[];
   latest_version?: string;
+  version_adoption?: unknown[];
 }
 
 export function createMockSupabaseClient(mockData: MockData = {}) {
@@ -81,9 +82,12 @@ export function createMockSupabaseClient(mockData: MockData = {}) {
       case "get_language_distribution":
       case "get_ram_distribution":
       case "get_cpu_cores_distribution":
-      case "get_version_adoption_timeline":
       case "get_hourly_activity_pattern": {
         data = [];
+        break;
+      }
+      case "get_version_adoption_timeline": {
+        data = mockData.version_adoption || [];
         break;
       }
       default: {
