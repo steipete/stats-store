@@ -19,7 +19,7 @@ The proxy returns the app's registered upstream feed and records the profile fie
 
 The hosted service at [stats.store](https://stats.store) does not require an installation. [Email Peter](mailto:peter@steipete.me) with the app's display name, bundle identifier, and current appcast URL to register an open-source app.
 
-For your own deployment, use Node.js 24 or newer and pnpm 11.9 or newer, then follow the [deployment guide](docs/deployment.md) to configure Supabase, apply the database migrations, and deploy the Next.js app.
+For your own deployment, use Node.js 24 or newer and pnpm 12.4.1 or newer, then follow the [deployment guide](docs/deployment.md) to configure Supabase, apply the database migrations, and deploy the Next.js app.
 
 ## Quick start
 

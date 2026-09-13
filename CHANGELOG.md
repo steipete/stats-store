@@ -13,4 +13,5 @@ No tagged releases have been published yet; this section summarizes the existing
 - Redirect registered GitHub app download links to a DMG release asset, preferring stable releases over prereleases.
 - Clarify Supabase bootstrap and migration order, public dashboard access, app registration, direct-ingest versus feed URLs, and self-hosting configuration.
 - Refresh runtime and development dependencies, including Next.js 16.3.5, React 19.3, Supabase JS 2.116, Supabase SSR 0.12.7, Lucide 1.45, Zod 4.6, and TypeScript 7, and align CI with pnpm 11.26.0 while retaining Node.js 24 support. Thanks @dependabot.
-- Update react-resizable-panels to 4.12.4.
+- Remove unused UI dependencies, update testing to Vitest 5, and consolidate CI while retaining Linux, macOS, and Windows checks.
+- Build tooling now requires pnpm 12.4.1 to use the current stable package-manager toolchain; Node.js 24 remains supported.

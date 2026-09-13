@@ -3,32 +3,39 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    environment: "jsdom",
-    environmentMatchGlobs: [["**/tests/api/**", "node"]],
     globals: true,
-    setupFiles: "./tests/setup.ts",
     silent: true,
-    exclude: ["**/node_modules/**", "**/tests/appcast-integration.test.mjs"],
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "api",
+          environment: "node",
+          include: ["tests/api/**/*.test.ts"],
+          setupFiles: ["./tests/setup.node.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "ui",
+          environment: "jsdom",
+          include: ["tests/**/*.test.{ts,tsx}"],
+          exclude: ["tests/api/**"],
+          setupFiles: ["./tests/setup.ts"],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
-      reporter: ["text", "json", "html"],
-      all: true,
+      reporter: ["text", "json", "html", "lcov"],
       include: [
         "app/**/*.{ts,tsx}",
         "components/**/*.{ts,tsx}",
         "hooks/**/*.{ts,tsx}",
         "lib/**/*.{ts,tsx}",
       ],
-      exclude: [
-        "**/*.d.ts",
-        "**/*.config.*",
-        "**/mockServiceWorker.js",
-        "components/ui/**",
-        "tests/**",
-        "scripts/**",
-        ".next/**",
-        "node_modules/**",
-      ],
+      exclude: ["**/*.d.ts", "components/ui/**"],
       thresholds: {
         statements: 70,
         branches: 70,
