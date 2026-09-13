@@ -1,13 +1,13 @@
 import {
-  eachDayOfInterval,
-  endOfDay,
-  format,
-  isValid,
-  parseISO,
-  startOfDay,
-  subDays,
-} from "date-fns";
-import type { DateRangeValue } from "@/lib/date-range";
+  addUtcDays,
+  eachUtcDay,
+  formatChartDate,
+  formatDateInput,
+  normalizeDateRange,
+  parseDateParameter,
+  type DateRangeValue,
+} from "@/lib/date-range";
+import { normalizeAppId } from "@/lib/dashboard/filters";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 interface App {
@@ -139,27 +139,12 @@ export async function getDashboardData(
 ): Promise<DashboardData> {
   const supabase = createSupabaseServerClient();
 
-  const isUuid =
-    typeof selectedAppIdParam === "string" &&
-    selectedAppIdParam !== "all" &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      selectedAppIdParam,
-    );
-
-  const rangeFrom =
-    dateRange?.from && isValid(dateRange.from)
-      ? startOfDay(dateRange.from)
-      : startOfDay(subDays(new Date(), 29));
-  const rangeToStart =
-    dateRange?.to && isValid(dateRange.to) ? startOfDay(dateRange.to) : startOfDay(new Date());
-  const queryFromDay = rangeFrom <= rangeToStart ? rangeFrom : rangeToStart;
-  const queryToDay = rangeFrom <= rangeToStart ? rangeToStart : rangeFrom;
-  const queryTo = endOfDay(queryToDay);
-
-  const p_app_id_filter = isUuid ? selectedAppIdParam : null;
+  const selectedAppId = normalizeAppId(selectedAppIdParam);
+  const { from: queryFromDay, to: queryToDay } = normalizeDateRange(dateRange);
+  const p_app_id_filter = selectedAppId === "all" ? null : selectedAppId;
   const rpcParams = {
     p_app_id_filter,
-    p_end_date_filter: queryTo.toISOString(),
+    p_end_date_filter: queryToDay.toISOString(),
     p_start_date_filter: queryFromDay.toISOString(),
   };
 
@@ -171,7 +156,7 @@ export async function getDashboardData(
     }
     return query
       .gte("received_at", rpcParams.p_start_date_filter)
-      .lte("received_at", rpcParams.p_end_date_filter);
+      .lt("received_at", addUtcDays(queryToDay, 1).toISOString());
   })();
 
   const latestVersionPromise = supabase.rpc("get_latest_app_version", {
@@ -200,7 +185,7 @@ export async function getDashboardData(
   const hourlyPromise = supabase.rpc("get_hourly_activity_pattern", {
     p_app_id_filter,
     p_end_date_filter: rpcParams.p_end_date_filter,
-    p_start_date_filter: startOfDay(subDays(queryTo, 6)).toISOString(),
+    p_start_date_filter: addUtcDays(queryToDay, -6).toISOString(),
   });
 
   const [
@@ -277,10 +262,9 @@ export async function getDashboardData(
     dailyCountsRes.data.forEach((row: DailyCountRow) => {
       countsByDay.set(row.report_day, Number(row.report_count) || 0);
     });
-    const dateInterval = eachDayOfInterval({ end: queryToDay, start: queryFromDay });
-    installsTimeseries = dateInterval.map((dayInInterval) => {
-      const formattedDayKey = format(dayInInterval, "yyyy-MM-dd");
-      const formattedDateLabel = format(dayInInterval, "MMM dd");
+    installsTimeseries = Array.from(eachUtcDay(queryFromDay, queryToDay), (dayInInterval) => {
+      const formattedDayKey = formatDateInput(dayInInterval);
+      const formattedDateLabel = formatChartDate(dayInInterval);
       return { Installs: countsByDay.get(formattedDayKey) || 0, date: formattedDateLabel };
     });
   }
@@ -365,8 +349,8 @@ export async function getDashboardData(
     versionAdoption = [...versionsByDay.entries()]
       .toSorted(([a], [b]) => a.localeCompare(b))
       .map(([dayKey, versions]) => {
-        const parsed = parseISO(dayKey);
-        const label = isValid(parsed) ? format(parsed, "MMM dd") : dayKey;
+        const parsed = parseDateParameter(dayKey);
+        const label = parsed ? formatChartDate(parsed) : dayKey;
         const dataPoint: VersionAdoptionDataPoint = { date: label };
         allVersions.forEach((version) => {
           dataPoint[version] = versions.get(version) ?? 0;

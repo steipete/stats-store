@@ -6,6 +6,7 @@
 
 No tagged releases have been published yet; this section summarizes the existing service and its maintenance updates.
 
+- **Compatibility:** Use UTC calendar days consistently in dashboard filters, chart labels, and SQL buckets; prevent browser time zones from shifting selected dates and accept UUID v7 app filters.
 - Resolve GitHub download and feed URLs by their actual host, normalize clone URLs, and match download identifiers literally.
 - Finish appcast telemetry writes after responding, match app names literally, and record the identifier that actually resolved the app.
 - Reject malformed direct-ingest payloads and invalid integer fields before database access, and return a client error for unknown applications.

@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { parseISO, subDays } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DashboardFilters } from "../../components/dashboard-filters";
@@ -149,8 +148,8 @@ describe("DashboardFilters", () => {
   describe("date range picker", () => {
     it("renders with current date range", () => {
       const dateRange = {
-        from: parseISO("2024-01-01"),
-        to: parseISO("2024-01-31"),
+        from: "2024-01-01",
+        to: "2024-01-31",
       };
       render(<DashboardFilters apps={mockApps} currentAppId="all" currentDateRange={dateRange} />);
 
@@ -172,7 +171,7 @@ describe("DashboardFilters", () => {
 
     it("treats single-day range as from=to", async () => {
       const dateRange = {
-        from: parseISO("2024-01-15"),
+        from: "2024-01-15",
         to: undefined,
       };
 
@@ -220,8 +219,8 @@ describe("DashboardFilters", () => {
   describe("complex scenarios", () => {
     it("handles all props together", () => {
       const dateRange = {
-        from: subDays(new Date(), 30),
-        to: new Date(),
+        from: "2024-01-01",
+        to: "2024-01-31",
       };
 
       render(<DashboardFilters apps={mockApps} currentAppId="2" currentDateRange={dateRange} />);

@@ -1,10 +1,9 @@
 "use client";
 
 import { ChevronDownIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import { format, parseISO, startOfDay } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { DateRangeValue } from "@/lib/date-range";
+import type { DateRangeInput } from "@/lib/date-range";
 import { cn } from "@/lib/utils";
 
 interface App {
@@ -15,7 +14,7 @@ interface App {
 interface DashboardFiltersProps {
   apps: App[] | null;
   currentAppId: string;
-  currentDateRange?: DateRangeValue;
+  currentDateRange?: DateRangeInput;
   appsError?: string;
 }
 
@@ -30,8 +29,8 @@ export function DashboardFilters({
 
   const apps = initialApps || [];
 
-  const derivedFrom = currentDateRange?.from ? format(currentDateRange.from, "yyyy-MM-dd") : "";
-  const derivedTo = currentDateRange?.to ? format(currentDateRange.to, "yyyy-MM-dd") : derivedFrom;
+  const derivedFrom = currentDateRange?.from || "";
+  const derivedTo = currentDateRange?.to || derivedFrom;
 
   const [fromValue, setFromValue] = useState(() => derivedFrom);
   const [toValue, setToValue] = useState(() => derivedTo);
@@ -52,21 +51,15 @@ export function DashboardFilters({
     router.push(`/?${newParams.toString()}`);
   };
 
-  const pushDateRange = (nextFrom: string, nextTo: string) => {
-    const from = startOfDay(parseISO(nextFrom));
-    const to = startOfDay(parseISO(nextTo));
-    handleDateChange({ from, to });
-  };
-
-  const handleDateChange = (value: DateRangeValue | undefined) => {
+  const handleDateChange = (value: DateRangeInput | undefined) => {
     const newParams = new URLSearchParams(searchParams.toString());
     if (value?.from) {
-      newParams.set("from", format(startOfDay(value.from), "yyyy-MM-dd"));
+      newParams.set("from", value.from);
       if (value.to) {
-        newParams.set("to", format(startOfDay(value.to), "yyyy-MM-dd"));
+        newParams.set("to", value.to);
       } else {
         // If only 'from' is selected, set 'to' to the same day for a single-day range
-        newParams.set("to", format(startOfDay(value.from), "yyyy-MM-dd"));
+        newParams.set("to", value.from);
       }
     } else {
       newParams.delete("from");
@@ -149,7 +142,7 @@ export function DashboardFilters({
               const nextTo = toValue || nextFrom;
               setFromValue(nextFrom);
               setToValue(nextTo);
-              pushDateRange(nextFrom, nextTo);
+              handleDateChange({ from: nextFrom, to: nextTo });
             }}
           />
         </div>
@@ -175,14 +168,14 @@ export function DashboardFilters({
                   return;
                 }
                 setToValue(fromValue);
-                pushDateRange(fromValue, fromValue);
+                handleDateChange({ from: fromValue, to: fromValue });
                 return;
               }
 
               const nextFrom = fromValue || nextTo;
               setFromValue(nextFrom);
               setToValue(nextTo);
-              pushDateRange(nextFrom, nextTo);
+              handleDateChange({ from: nextFrom, to: nextTo });
             }}
           />
         </div>
