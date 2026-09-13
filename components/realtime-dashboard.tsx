@@ -1,236 +1,153 @@
 "use client";
 
-import { BellAlertIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Toaster } from "sonner";
-import { useRealtimeStats } from "@/hooks/use-realtime-stats";
+import { useRouter } from "next/navigation";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { Toaster, toast } from "sonner";
+import { type RealtimeEvent, useRealtimeStats } from "@/hooks/use-realtime-stats";
+import type { DashboardData } from "@/lib/dashboard/get-dashboard-data";
 import { valueFormatter } from "@/lib/formatters";
 import { RealtimeKpiCard } from "./realtime-kpi-card";
+import { RealtimeStatusFooter } from "./realtime-status-footer";
 
-interface RealtimeDashboardProps {
+export interface RealtimeDashboardProps {
   selectedAppId: string;
-  dateRange: { from: Date; to: Date };
-  initialData: {
-    kpis: {
-      unique_installs: number | string;
-      reports_this_period: number | string;
-      latest_version: string;
-    };
-    kpisError?: {
-      unique_installs?: string;
-      reports_this_period?: string;
-      latest_version?: string;
-    };
-  };
-  hideStatusIndicator?: boolean;
-  onStatusChange?: (status: {
-    isConnected: boolean;
-    lastUpdate?: Date;
-    realtimeEventsCount: number;
-  }) => void;
+  initialData: Pick<DashboardData, "kpis" | "kpisError">;
+  children?: ReactNode;
+}
+
+const metrics = [
+  {
+    key: "unique_installs",
+    title: "Unique Users",
+    iconName: "users",
+    tooltip:
+      "Distinct daily IP hashes across the selected dates; a client can count once on each day.",
+  },
+  {
+    key: "reports_this_period",
+    title: "Total Reports",
+    iconName: "cube",
+    tooltip: "All telemetry reports received in the selected date range.",
+  },
+  {
+    key: "latest_version",
+    title: "Latest Version",
+    iconName: "tag",
+    tooltip: "Highest numeric app version reported in the selected date range.",
+  },
+] as const;
+
+function eventDescription(event: RealtimeEvent): string {
+  switch (event.event_type) {
+    case "new_user":
+      return ["New daily client", event.event_data.app_version, event.event_data.model]
+        .filter(Boolean)
+        .join(" · ");
+    case "milestone":
+      return event.event_data.message;
+    case "version_update":
+      return `Version update: ${event.event_data.new_version}`;
+    case "report_batch":
+      return "Update checks received";
+  }
 }
 
 export function RealtimeDashboard({
   selectedAppId,
-  dateRange: _dateRange,
   initialData,
-  hideStatusIndicator = false,
-  onStatusChange,
+  children,
 }: RealtimeDashboardProps) {
+  const router = useRouter();
   const [showActivityFeed, setShowActivityFeed] = useState(false);
-  const [previousKpis, setPreviousKpis] = useState(initialData.kpis);
-
-  const { isConnected, lastUpdate, realtimeEvents, statsCache } = useRealtimeStats({
+  const activityId = useId();
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const { isConnected, lastUpdate, realtimeEvents } = useRealtimeStats({
     appId: selectedAppId,
+    onInvalidate: () => {
+      if (refreshTimer.current !== undefined) return;
+      refreshTimer.current = setTimeout(() => {
+        refreshTimer.current = undefined;
+        router.refresh();
+      }, 500);
+    },
+    onMilestone: (event) => {
+      if (selectedAppId !== "all") toast.success(event.event_data.message);
+    },
   });
-
-  // Notify parent of status changes
-  useEffect(() => {
-    if (onStatusChange) {
-      onStatusChange({
-        isConnected,
-        lastUpdate: lastUpdate ?? undefined,
-        realtimeEventsCount: realtimeEvents.length,
-      });
-    }
-  }, [isConnected, lastUpdate, realtimeEvents.length, onStatusChange]);
-
-  const currentKpis = useMemo(
-    () => ({
-      latest_version: statsCache.latest_version?.version ?? initialData.kpis.latest_version,
-      reports_this_period:
-        statsCache.kpis?.total_reports_today ?? initialData.kpis.reports_this_period,
-      unique_installs: statsCache.kpis?.unique_users_today ?? initialData.kpis.unique_installs,
-    }),
-    [statsCache.kpis, statsCache.latest_version, initialData.kpis],
+  useEffect(
+    () => () => {
+      if (refreshTimer.current !== undefined) clearTimeout(refreshTimer.current);
+      refreshTimer.current = undefined;
+    },
+    [selectedAppId],
   );
-
-  const currentKpisRef = useRef(currentKpis);
-  useEffect(() => {
-    if (currentKpisRef.current !== currentKpis) {
-      setPreviousKpis(currentKpisRef.current);
-      currentKpisRef.current = currentKpis;
-    }
-  }, [currentKpis]);
 
   return (
     <>
       <Toaster position="top-right" richColors />
-
-      {/* Connection Status */}
-      {!hideStatusIndicator && (
-        <AnimatePresence>
-          {isConnected && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="mb-4 flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <div className="h-2 w-2 bg-live rounded-full" />
-                  <motion.div
-                    className="absolute inset-0 h-2 w-2 bg-live rounded-full"
-                    animate={{ opacity: [1, 0.5, 1], scale: [1, 1.5, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  Real-time updates active
-                  {lastUpdate && (
-                    <span className="ml-2">• Last update: {format(lastUpdate, "HH:mm:ss")}</span>
-                  )}
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowActivityFeed(!showActivityFeed)}
-                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 rounded-md transition-colors"
-              >
-                <BellAlertIcon className="h-4 w-4" />
-                Activity Feed
-                {realtimeEvents.length > 0 && (
-                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-full">
-                    {realtimeEvents.length}
-                  </span>
-                )}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-
-      {/* KPI band: hairline-divided strip */}
       <div className="mb-12 grid grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
-        <RealtimeKpiCard
-          title="Unique Users"
-          value={
-            typeof currentKpis.unique_installs === "string"
-              ? currentKpis.unique_installs
-              : valueFormatter(currentKpis.unique_installs)
-          }
-          previousValue={
-            typeof previousKpis.unique_installs === "string"
-              ? previousKpis.unique_installs
-              : valueFormatter(previousKpis.unique_installs)
-          }
-          iconName="users"
-          iconColor="blue"
-          error={Boolean(initialData.kpisError?.unique_installs)}
-          tooltip="Distinct users identified by daily IP hash"
-          isRealtime={isConnected}
-          lastUpdate={lastUpdate || undefined}
-        />
-
-        <RealtimeKpiCard
-          title="Total Reports"
-          value={
-            typeof currentKpis.reports_this_period === "string"
-              ? currentKpis.reports_this_period
-              : valueFormatter(currentKpis.reports_this_period)
-          }
-          previousValue={
-            typeof previousKpis.reports_this_period === "string"
-              ? previousKpis.reports_this_period
-              : valueFormatter(previousKpis.reports_this_period)
-          }
-          iconName="cube"
-          iconColor="green"
-          error={Boolean(initialData.kpisError?.reports_this_period)}
-          tooltip="All telemetry reports received"
-          isRealtime={isConnected}
-          lastUpdate={lastUpdate || undefined}
-        />
-
-        <RealtimeKpiCard
-          title="Latest Version"
-          value={currentKpis.latest_version}
-          previousValue={previousKpis.latest_version}
-          iconName="tag"
-          iconColor="amber"
-          error={Boolean(initialData.kpisError?.latest_version)}
-          tooltip="Most recent app version seen in reports"
-          isRealtime={isConnected}
-          lastUpdate={lastUpdate || undefined}
-        />
+        {metrics.map((metric) => {
+          const value = initialData.kpis[metric.key];
+          return (
+            <RealtimeKpiCard
+              key={metric.key}
+              title={metric.title}
+              value={typeof value === "number" ? valueFormatter(value) : value}
+              iconName={metric.iconName}
+              tooltip={metric.tooltip}
+              error={Boolean(initialData.kpisError?.[metric.key])}
+              isRealtime={isConnected}
+            />
+          );
+        })}
       </div>
-
-      {/* Activity Feed */}
+      {children}
+      <RealtimeStatusFooter
+        isConnected={isConnected}
+        lastUpdate={lastUpdate}
+        realtimeEventsCount={realtimeEvents.length}
+        showActivityFeed={showActivityFeed}
+        activityId={activityId}
+        onToggleActivityFeed={() => setShowActivityFeed((value) => !value)}
+      />
       <AnimatePresence>
-        {showActivityFeed && realtimeEvents.length > 0 && (
+        {showActivityFeed && (
           <motion.div
+            id={activityId}
+            role="region"
+            aria-labelledby={`${activityId}-title`}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             className="mb-6 rounded-lg border border-border bg-card/70 p-4 overflow-hidden"
           >
-            <h3 className="mb-3 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em]">
+            <h3
+              id={`${activityId}-title`}
+              className="mb-3 flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em]"
+            >
               <SparklesIcon className="h-4 w-4" />
               Recent Activity
             </h3>
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {realtimeEvents.map((event, index) => (
-                <motion.div
-                  key={event.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-center justify-between p-2 rounded-md hover:bg-secondary/20 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    {event.event_type === "new_user" && (
-                      <>
-                        <div className="h-2 w-2 bg-live rounded-full" />
-                        <span className="text-sm">
-                          New user • {event.event_data.app_version} • {event.event_data.model}
-                        </span>
-                      </>
-                    )}
-                    {event.event_type === "milestone" && (
-                      <>
-                        <div className="h-2 w-2 bg-chart-2 rounded-full" />
-                        <span className="text-sm font-medium">{event.event_data.message}</span>
-                      </>
-                    )}
-                    {event.event_type === "version_update" && (
-                      <>
-                        <div className="h-2 w-2 bg-chart-4 rounded-full" />
-                        <span className="text-sm">
-                          Version update: {event.event_data.new_version}
-                        </span>
-                      </>
-                    )}
+            {realtimeEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No recent activity yet.</p>
+            ) : (
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {realtimeEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className="flex items-center justify-between gap-3 p-2 rounded-md hover:bg-secondary/20 transition-colors"
+                  >
+                    <span className="text-sm">{eventDescription(event)}</span>
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                      {format(new Date(event.created_at), "HH:mm:ss")}
+                    </span>
                   </div>
-                  <span className="text-xs tabular-nums text-muted-foreground">
-                    {format(new Date(event.created_at), "HH:mm:ss")}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

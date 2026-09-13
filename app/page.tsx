@@ -138,7 +138,6 @@ export default async function DashboardPage({
         <div className="reveal reveal-2">
           <RealtimeWrapper
             selectedAppId={selectedAppId}
-            dateRange={dateRange}
             initialData={{
               kpis: data.kpis,
               kpisError: data.kpisError,

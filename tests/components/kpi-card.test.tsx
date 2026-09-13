@@ -61,20 +61,6 @@ describe("KpiCard", () => {
 
       expect(container.querySelector("svg")).toBeInTheDocument();
     });
-
-    it("renders with custom icon color", () => {
-      render(<KpiCard title="Test" iconName="users" iconColor="red" />);
-
-      // Icon should be rendered with the specified color
-      expect(screen.getByText("Test")).toBeInTheDocument();
-    });
-
-    it("renders with icon variant prop", () => {
-      render(<KpiCard title="Test" iconName="users" iconVariant="solid" />);
-
-      expect(screen.getByText("Test")).toBeInTheDocument();
-      // The component accepts the iconVariant prop without errors
-    });
   });
 
   describe("error state", () => {
@@ -185,8 +171,6 @@ describe("KpiCard", () => {
           title="Complex Card"
           value="999"
           iconName="users"
-          iconColor="green"
-          iconVariant="solid"
           tooltip="This is a complex card"
           className="custom-card"
         >

@@ -1,54 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { RealtimeDashboard } from "./realtime-dashboard";
-import { RealtimeStatusFooter } from "./realtime-status-footer";
+import type { ReactNode } from "react";
+import { RealtimeDashboard, type RealtimeDashboardProps } from "./realtime-dashboard";
 
-interface RealtimeWrapperProps {
-  selectedAppId: string;
-  dateRange: { from: Date; to: Date };
-  initialData: {
-    kpis: {
-      unique_installs: number | string;
-      reports_this_period: number | string;
-      latest_version: string;
-    };
-    kpisError?: {
-      unique_installs?: string;
-      reports_this_period?: string;
-      latest_version?: string;
-    };
-  };
-  children: React.ReactNode;
-}
+type RealtimeWrapperProps = RealtimeDashboardProps & { children: ReactNode };
 
-export function RealtimeWrapper({
-  selectedAppId,
-  dateRange,
-  initialData,
-  children,
-}: RealtimeWrapperProps) {
-  const [realtimeStatus, setRealtimeStatus] = useState<{
-    isConnected: boolean;
-    lastUpdate?: Date;
-    realtimeEventsCount: number;
-  }>({ isConnected: false, realtimeEventsCount: 0 });
-
-  return (
-    <>
-      <RealtimeDashboard
-        selectedAppId={selectedAppId}
-        dateRange={dateRange}
-        initialData={initialData}
-        hideStatusIndicator={true}
-        onStatusChange={setRealtimeStatus}
-      />
-      {children}
-      <RealtimeStatusFooter
-        isConnected={realtimeStatus.isConnected}
-        lastUpdate={realtimeStatus.lastUpdate}
-        realtimeEventsCount={realtimeStatus.realtimeEventsCount}
-      />
-    </>
-  );
+export function RealtimeWrapper(props: RealtimeWrapperProps) {
+  return <RealtimeDashboard key={props.selectedAppId} {...props} />;
 }

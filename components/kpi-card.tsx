@@ -16,8 +16,6 @@ interface KpiCardProps {
   title?: string;
   value?: string | number;
   iconName?: IconName;
-  iconColor?: string;
-  iconVariant?: "simple" | "light" | "shadow" | "solid" | "outline";
   error?: boolean;
   tooltip?: string;
   children?: React.ReactNode;
@@ -48,6 +46,9 @@ export function KpiCard({
 
   const cardContent = (
     <div
+      tabIndex={tooltip ? 0 : undefined}
+      role={tooltip ? "group" : undefined}
+      aria-label={tooltip ? title : undefined}
       className={cn(
         "relative bg-transparent px-1 py-6 md:px-7 md:py-8",
         error ? "text-destructive" : "text-foreground",
@@ -69,7 +70,7 @@ export function KpiCard({
           ) : null}
         </div>
       )}
-      {value ? (
+      {value != null && value !== "" ? (
         <div
           className={cn(
             "font-light tabular-nums tracking-tight",
