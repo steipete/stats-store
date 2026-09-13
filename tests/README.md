@@ -110,11 +110,11 @@ Tests run automatically on:
 - Commits to main branch
 - Before deployment
 
-See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Linux, macOS, and Windows all run the tests and production build.
+See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Linux, macOS, and Windows all run the tests and production build on Node.js 24. Linux also checks the current Node.js 26 release.
 
 ## Database checks
 
-CI bootstraps every SQL migration in a disposable PostgreSQL 17 database and checks the report triggers and cached aggregates. The concurrency regression uses PostgreSQL contrib's `dblink` extension and a lock barrier to coordinate independent transactions. To run locally with a fresh test database and `psql` installed:
+CI bootstraps every SQL migration in disposable PostgreSQL 17 and 18 databases and checks the report triggers and cached aggregates. The concurrency regression uses PostgreSQL contrib's `dblink` extension and a lock barrier to coordinate independent transactions. To run locally with a fresh test database and `psql` installed:
 
 ```sh
 PGHOST=localhost PGUSER=postgres PGDATABASE=stats_store_test bash scripts/test-database.sh

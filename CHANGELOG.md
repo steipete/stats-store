@@ -6,6 +6,7 @@
 
 No tagged releases have been published yet; this section summarizes the existing service and its maintenance updates.
 
+- Update tailwind-merge to 3.7.0, align Recharts' react-is peer with React 19.3, and refresh transitive dependencies; verify Node.js 26 and PostgreSQL 18 alongside the existing Node.js 24 and PostgreSQL 17 checks.
 - Keep filtered KPIs and charts consistent during live updates, isolate subscription lifetimes, connect the activity feed, and render zero values and keyboard-accessible KPI explanations.
 - Bound long-range charts to 1,000 intervals without dropping totals, distinguish years and bucket widths, and label report counts accurately.
 - Keep receipt timestamps, daily IP hashes, event totals, and milestone dates aligned when telemetry writes cross UTC midnight.
