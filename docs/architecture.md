@@ -31,7 +31,7 @@ The server client uses `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`; it bypass
 
 ## Dashboard and live updates
 
-`app/page.tsx` parses the `app`, `from`, and `to` query parameters. The default date range is 30 calendar days. `lib/dashboard/get-dashboard-data.ts` queries KPI counts and distribution RPCs concurrently, formats chart rows, and preserves individual section errors.
+`app/page.tsx` parses the `app`, `from`, and `to` query parameters. The default date range is 30 UTC calendar days. `from` and `to` accept ISO dates; explicit timestamp offsets are normalized to UTC. Date inputs receive calendar strings so browser time zones cannot shift them during hydration. App filters accept canonical UUIDs of any version. SQL RPCs receive midnight of the inclusive end day, while direct report queries use an exclusive next-day boundary. `lib/dashboard/get-dashboard-data.ts` queries KPI counts and distribution RPCs concurrently, formats chart rows, and preserves individual section errors.
 
 The chart wrappers in `components/client-*-chart.tsx` use Recharts, the shared chart theme, and a ResizeObserver hook. `RealtimeWrapper` connects the KPI dashboard to the connection footer. `useRealtimeStats` loads `stats_cache` and subscribes to `realtime_events` inserts and `stats_cache` updates.
 

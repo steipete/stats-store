@@ -1,4 +1,3 @@
-import { format, isValid, parseISO, startOfDay, subDays } from "date-fns";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CardStatusDisplay } from "@/components/card-status-display";
@@ -18,7 +17,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getDashboardData } from "@/lib/dashboard/get-dashboard-data";
-import type { DateRangeValue } from "@/lib/date-range";
+import {
+  formatDateInput,
+  formatDateRange,
+  normalizeDateRange,
+  parseDateParameter,
+} from "@/lib/date-range";
+import { normalizeAppId } from "@/lib/dashboard/filters";
 import { valueFormatter } from "@/lib/formatters";
 
 export const metadata: Metadata = {
@@ -49,31 +54,11 @@ export default async function DashboardPage({
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const appParam = typeof params?.app === "string" ? params.app : "all";
-  const selectedAppId =
-    appParam === "all" ||
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(appParam)
-      ? appParam
-      : "all";
-  const defaultFrom = startOfDay(subDays(new Date(), 29));
-  const defaultTo = startOfDay(new Date());
-
-  const fromParam = typeof params?.from === "string" ? parseISO(params.from) : undefined;
-  const toParam = typeof params?.to === "string" ? parseISO(params.to) : undefined;
-  const from = fromParam && isValid(fromParam) ? startOfDay(fromParam) : undefined;
-  const to = toParam && isValid(toParam) ? startOfDay(toParam) : undefined;
-  const baseDateRange: DateRangeValue =
-    from || to
-      ? {
-          from: from ?? startOfDay(subDays(to ?? defaultTo, 29)),
-          to: to ?? defaultTo,
-        }
-      : { from: defaultFrom, to: defaultTo };
-
-  const dateRange =
-    baseDateRange.from && baseDateRange.to && baseDateRange.from > baseDateRange.to
-      ? { from: baseDateRange.to, to: baseDateRange.from }
-      : baseDateRange;
+  const selectedAppId = normalizeAppId(params?.app);
+  const dateRange = normalizeDateRange({
+    from: parseDateParameter(params?.from),
+    to: parseDateParameter(params?.to),
+  });
   const data = await getDashboardData(selectedAppId, dateRange);
   const showInstallationsChart =
     !data.installs_timeseries_error && data.installs_timeseries.length > 0;
@@ -86,10 +71,7 @@ export default async function DashboardPage({
   const showVersionAdoptionChart = !data.version_adoption_error && data.version_adoption.length > 0;
   const showHourlyActivityChart = !data.hourly_activity_error && data.hourly_activity.length > 0;
 
-  const rangeLabel =
-    dateRange.from && dateRange.to
-      ? `${format(dateRange.from, "MMM d")} — ${format(dateRange.to, "MMM d, yyyy")}`
-      : "Last 30 days";
+  const rangeLabel = formatDateRange(dateRange);
 
   return (
     <div className="relative min-h-screen">
@@ -143,7 +125,10 @@ export default async function DashboardPage({
               <DashboardFilters
                 apps={data.apps}
                 currentAppId={selectedAppId}
-                currentDateRange={dateRange}
+                currentDateRange={{
+                  from: formatDateInput(dateRange.from),
+                  to: formatDateInput(dateRange.to),
+                }}
                 appsError={data.appsError}
               />
             </Suspense>
@@ -153,10 +138,7 @@ export default async function DashboardPage({
         <div className="reveal reveal-2">
           <RealtimeWrapper
             selectedAppId={selectedAppId}
-            dateRange={{
-              from: dateRange.from || defaultFrom,
-              to: dateRange.to || defaultTo,
-            }}
+            dateRange={dateRange}
             initialData={{
               kpis: data.kpis,
               kpisError: data.kpisError,
