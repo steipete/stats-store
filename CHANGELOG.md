@@ -6,6 +6,7 @@
 
 No tagged releases have been published yet; this section summarizes the existing service and its maintenance updates.
 
+- Reject malformed direct-ingest payloads and invalid integer fields before database access, and return a client error for unknown applications.
 - Proxy Sparkle update checks identified by bundle identifier, app name, or User-Agent, preserving custom stable XML feed URLs and prerelease channel mapping.
 - Show daily users, version adoption, macOS versions, CPU architecture, hardware models, languages, memory, core counts, and hourly activity in a redesigned light and dark dashboard with app and date filters.
 - Restore the version-adoption timeline, validate app filters, and handle partial dashboard data failures independently.

@@ -1,79 +1,44 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { dailyIpHash, mapCpuTypeToArch } from "@/lib/telemetry";
+import { parseIngestPayload } from "@/lib/ingest";
+import { dailyIpHash } from "@/lib/telemetry";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-interface SparkleReportPayload {
-  bundleIdentifier: string;
-  ip?: string;
-  appVersion?: string;
-  osVersion?: string;
-  cputype?: string;
-  ncpu?: string;
-  lang?: string;
-  model?: string;
-  ramMB?: string;
-}
-
 function getIp(request: NextRequest): string {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim();
-  if (ip) {
-    return ip;
-  }
-  const realIp = request.headers.get("x-real-ip");
-  if (realIp) {
-    return realIp;
-  }
-  return "unknown_ip";
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown_ip"
+  );
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const payload = (await request.json()) as SparkleReportPayload;
-    const clientIp = payload.ip || getIp(request);
-
-    if (!payload.bundleIdentifier) {
-      return NextResponse.json({ error: "Missing bundleIdentifier" }, { status: 400 });
+    const parsed = parseIngestPayload(await request.json());
+    if (parsed.data === null) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
 
+    const { bundleIdentifier, ip, report } = parsed.data;
     const supabase = createSupabaseServerClient();
-
     const { data: app, error: appError } = await supabase
       .from("apps")
       .select("id")
-      .eq("bundle_identifier", payload.bundleIdentifier)
-      .single();
+      .eq("bundle_identifier", bundleIdentifier)
+      .maybeSingle();
 
     if (appError) {
-      console.error(
-        "App validation error:",
-        appError.message,
-        "Bundle ID:",
-        payload.bundleIdentifier,
-      );
+      console.error("App validation error:", appError.message);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
-
     if (!app) {
-      console.error("App not found:", payload.bundleIdentifier);
       return NextResponse.json({ error: "Unknown bundle identifier" }, { status: 400 });
     }
 
-    const ipHash = dailyIpHash(clientIp);
-
-    const reportData = {
+    const { error: insertError } = await supabase.from("reports").insert({
+      ...report,
       app_id: app.id,
-      app_version: payload.appVersion || null,
-      core_count: payload.ncpu ? Number.parseInt(payload.ncpu, 10) : null,
-      cpu_arch: mapCpuTypeToArch(payload.cputype),
-      ip_hash: ipHash,
-      language: payload.lang || null,
-      model_identifier: payload.model || null,
-      os_version: payload.osVersion || null,
-      ram_mb: payload.ramMB ? Number.parseInt(payload.ramMB, 10) : null,
-    };
-
-    const { error: insertError } = await supabase.from("reports").insert(reportData);
-
+      ip_hash: dailyIpHash(ip || getIp(request)),
+    });
     if (insertError) {
       console.error("Error inserting report:", insertError);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -81,10 +46,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ message: "Report received" }, { status: 201 });
   } catch (error) {
-    console.error("Ingest API error:", error);
     if (error instanceof SyntaxError) {
       return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
     }
+    console.error("Ingest API error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

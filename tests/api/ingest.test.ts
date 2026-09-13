@@ -5,7 +5,7 @@ import { POST } from "@/app/api/v1/ingest/route";
 
 const supabaseMocks = vi.hoisted(() => ({
   insert: vi.fn(),
-  single: vi.fn(),
+  maybeSingle: vi.fn(),
 }));
 
 // Mock Supabase
@@ -15,7 +15,7 @@ vi.mock("@/lib/supabase/server", () => ({
       insert: supabaseMocks.insert,
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: supabaseMocks.single,
+          maybeSingle: supabaseMocks.maybeSingle,
         })),
       })),
     })),
@@ -26,7 +26,7 @@ describe("/api/v1/ingest", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     supabaseMocks.insert.mockResolvedValue({ error: null });
-    supabaseMocks.single.mockResolvedValue({
+    supabaseMocks.maybeSingle.mockResolvedValue({
       data: { id: "test-app-id" },
       error: null,
     });
@@ -128,7 +128,7 @@ describe("/api/v1/ingest", () => {
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: undefined,
                 error: { message: "Database connection failed" },
@@ -161,7 +161,7 @@ describe("/api/v1/ingest", () => {
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({
                 data: undefined,
                 error: undefined,
@@ -197,7 +197,7 @@ describe("/api/v1/ingest", () => {
           // First call for app check - succeeds
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() =>
+              maybeSingle: vi.fn(() =>
                 Promise.resolve({
                   data: { id: "test-app-id" },
                   error: undefined,
@@ -284,6 +284,8 @@ describe("/api/v1/ingest", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(201);
-    // In a real test, we'd verify the parsed values were inserted correctly
+    expect(supabaseMocks.insert).toHaveBeenCalledWith(
+      expect.objectContaining({ core_count: 8, ram_mb: 16384 }),
+    );
   });
 });

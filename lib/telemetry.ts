@@ -18,3 +18,10 @@ export function dailyIpHash(ip: string, date = new Date()): string {
     .update(ip + date.toISOString().slice(0, 10))
     .digest("hex");
 }
+
+export function parseTelemetryInteger(value: unknown): number | null {
+  if (typeof value !== "string" && typeof value !== "number") return null;
+  if (typeof value === "string" && !/^[+-]?\d+$/.test(value.trim())) return null;
+  const number = Number(value);
+  return Number.isInteger(number) && number >= 0 && number <= 2147483647 ? number : null;
+}
