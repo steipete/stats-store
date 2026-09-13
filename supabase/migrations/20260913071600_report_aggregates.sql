@@ -57,6 +57,8 @@ DECLARE
   v_report_day DATE := DATE(NEW.received_at);
   v_unique_clients BIGINT;
   v_reports BIGINT;
+  v_users_today BIGINT;
+  v_reports_today BIGINT;
 BEGIN
   -- This upsert holds the app lock until commit, including through the AFTER trigger.
   INSERT INTO public.aggregation_state (app_id, last_report_id, pending_count)
@@ -74,6 +76,15 @@ BEGIN
     FROM public.reports
     WHERE app_id = NEW.app_id AND DATE(received_at) = v_report_day;
 
+    v_users_today := v_unique_clients;
+    v_reports_today := v_reports;
+    IF v_report_day <> CURRENT_DATE THEN
+      SELECT COUNT(DISTINCT NULLIF(ip_hash, '')), COUNT(*)
+      INTO v_users_today, v_reports_today
+      FROM public.reports
+      WHERE app_id = NEW.app_id AND DATE(received_at) = CURRENT_DATE;
+    END IF;
+
     INSERT INTO public.realtime_events (app_id, event_type, event_data)
     VALUES (NEW.app_id, 'new_user', jsonb_build_object(
       'ip_hash', NEW.ip_hash,
@@ -81,8 +92,10 @@ BEGIN
       'os_version', NEW.os_version,
       'model', NEW.model_identifier,
       'report_day', v_report_day,
-      'unique_users_today', v_unique_clients,
-      'total_reports_today', v_reports
+      'unique_users_report_day', v_unique_clients,
+      'total_reports_report_day', v_reports,
+      'unique_users_today', v_users_today,
+      'total_reports_today', v_reports_today
     ));
   END IF;
   RETURN NEW;
@@ -105,10 +118,14 @@ BEGIN
 
   -- Check for version updates
   IF NEW.app_version IS NOT NULL THEN
-    IF NEW.app_version ~ '^[0-9]+(\.[0-9]+)*$' THEN
+    IF NOT EXISTS (
+      SELECT FROM public.reports WHERE app_id = NEW.app_id
+        AND received_at >= now() - INTERVAL '7 days'
+        AND app_version !~ '^[0-9]+(\.[0-9]+)*$'
+    ) THEN
       v_new_version := public.get_latest_app_version(NEW.app_id, now() - INTERVAL '7 days', CURRENT_DATE);
     ELSE
-      -- Preserve existing notifications for opaque display-version formats.
+      -- Preserve lexical ordering for opaque versions, independent of the arriving format.
       SELECT MAX(app_version) INTO v_new_version
       FROM public.reports
       WHERE app_id = NEW.app_id
@@ -159,7 +176,7 @@ BEGIN
 END;
 $$;
 
--- Existing *_today payload keys describe report_day, which can precede processing day.
+-- Separate report-day totals preserve the legacy meaning of *_today for deployed clients.
 CREATE OR REPLACE FUNCTION public.check_milestones() RETURNS TRIGGER
 LANGUAGE plpgsql
 SET timezone TO 'UTC'
@@ -169,7 +186,7 @@ DECLARE
   v_report_day DATE;
 BEGIN
   IF NEW.event_type = 'new_user' THEN
-    v_total_users := (NEW.event_data->>'unique_users_today')::BIGINT;
+    v_total_users := COALESCE(NEW.event_data->>'unique_users_report_day', NEW.event_data->>'unique_users_today')::BIGINT;
     v_report_day := COALESCE((NEW.event_data->>'report_day')::DATE, DATE(NEW.created_at));
     IF v_total_users = ANY(ARRAY[10, 50, 100, 500, 1000, 5000, 10000, 50000, 100000]) AND NOT EXISTS (
       SELECT 1 FROM public.realtime_events AS event

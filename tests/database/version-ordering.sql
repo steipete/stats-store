@@ -32,4 +32,16 @@ DO $$ BEGIN
     RAISE EXCEPTION 'Opaque version notifications must remain supported';
   END IF;
 END $$;
+-- Repeated mixed-format reports must not alternate the cached winner or emit duplicate updates.
+INSERT INTO public.reports (app_id, ip_hash, app_version)
+SELECT '77777777-7777-4777-8777-777777777777', 'mixed-client', version
+FROM unnest(ARRAY['1.10', 'preview-build', '1.10', 'preview-build']) AS version;
+DO $$ BEGIN
+  IF (SELECT COUNT(*) FROM public.realtime_events
+    WHERE app_id = '77777777-7777-4777-8777-777777777777' AND event_type = 'version_update') <> 1
+    OR (SELECT stat_data->>'version' FROM public.stats_cache
+      WHERE app_id = '77777777-7777-4777-8777-777777777777' AND stat_type = 'latest_version') IS DISTINCT FROM 'preview-build' THEN
+    RAISE EXCEPTION 'Mixed formats must keep a stable winner';
+  END IF;
+END $$;
 ROLLBACK;

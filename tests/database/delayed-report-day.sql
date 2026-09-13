@@ -13,10 +13,12 @@ BEGIN
   SELECT event_data INTO event_payload FROM public.realtime_events
   WHERE app_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' AND event_type = 'new_user'
   ORDER BY id DESC LIMIT 1;
-  IF (event_payload->>'unique_users_today')::BIGINT IS DISTINCT FROM 10
-    OR (event_payload->>'total_reports_today')::BIGINT IS DISTINCT FROM 10
+  IF (event_payload->>'unique_users_report_day')::BIGINT IS DISTINCT FROM 10
+    OR (event_payload->>'total_reports_report_day')::BIGINT IS DISTINCT FROM 10
+    OR (event_payload->>'unique_users_today')::BIGINT IS DISTINCT FROM 1
+    OR (event_payload->>'total_reports_today')::BIGINT IS DISTINCT FROM 1
     OR event_payload->>'report_day' IS DISTINCT FROM (CURRENT_DATE - 1)::TEXT THEN
-    RAISE EXCEPTION 'Delayed report borrowed current-day totals: %', event_payload;
+    RAISE EXCEPTION 'Report-day and legacy current-day totals must stay separate: %', event_payload;
   END IF;
   IF (SELECT COUNT(*) FROM public.realtime_events
     WHERE app_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' AND event_type = 'milestone'
