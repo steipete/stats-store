@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { type NextRequest, NextResponse } from "next/server";
+import { dailyIpHash, mapCpuTypeToArch } from "@/lib/telemetry";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 interface SparkleReportPayload {
@@ -14,20 +14,7 @@ interface SparkleReportPayload {
   ramMB?: string;
 }
 
-function mapCpuTypeToArch(cputype?: string): string | undefined {
-  if (!cputype) {
-    return undefined;
-  }
-  if (cputype === "16777228") {
-    return "arm64";
-  }
-  if (cputype === "16777223") {
-    return "x86_64";
-  }
-  return "unknown";
-}
-
-async function getIp(request: NextRequest): Promise<string> {
+function getIp(request: NextRequest): string {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim();
   if (ip) {
     return ip;
@@ -42,7 +29,7 @@ async function getIp(request: NextRequest): Promise<string> {
 export async function POST(request: NextRequest) {
   try {
     const payload = (await request.json()) as SparkleReportPayload;
-    const clientIp = payload.ip || (await getIp(request));
+    const clientIp = payload.ip || getIp(request);
 
     if (!payload.bundleIdentifier) {
       return NextResponse.json({ error: "Missing bundleIdentifier" }, { status: 400 });
@@ -71,10 +58,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unknown bundle identifier" }, { status: 400 });
     }
 
-    const dailySalt = new Date().toISOString().slice(0, 10);
-    const ipHash = createHash("sha256")
-      .update(clientIp + dailySalt)
-      .digest("hex");
+    const ipHash = dailyIpHash(clientIp);
 
     const reportData = {
       app_id: app.id,

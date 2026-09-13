@@ -50,15 +50,6 @@ export function RealtimeDashboardWrapper({
     },
   });
 
-  // Merge real-time KPIs with initial data
-  // Const realtimeKpis = statsCache.kpis
-  //   ? {
-  //       Unique_installs: statsCache.kpis.unique_users_today,
-  //       Reports_this_period: statsCache.kpis.total_reports_today,
-  //       Latest_version: statsCache.latest_version?.version || initialKpis?.latest_version || "N/A",
-  //     }
-  //   : initialKpis
-
   return (
     <div className="relative">
       {/* Real-time connection indicator */}
@@ -105,11 +96,7 @@ export function RealtimeDashboardWrapper({
         )}
       </AnimatePresence>
 
-      {/* Pass real-time data to children via context or props */}
-      <div className="space-y-6">
-        {/* We'll need to modify children components to accept real-time props */}
-        {children}
-      </div>
+      <div className="space-y-6">{children}</div>
 
       {/* Real-time activity feed (optional) */}
       {realtimeEvents.length > 0 && (
