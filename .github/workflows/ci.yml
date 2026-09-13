@@ -22,6 +22,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node-version: [24.x]
+        include:
+          - os: ubuntu-latest
+            node-version: 26.x
 
     steps:
       - uses: actions/checkout@v7
@@ -66,9 +69,13 @@ jobs:
 
   database:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres-version: [17, 18]
     services:
       postgres:
-        image: postgres:17-alpine
+        image: postgres:${{ matrix.postgres-version }}-alpine
         env:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: stats_store_test
