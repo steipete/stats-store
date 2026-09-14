@@ -1,5 +1,7 @@
 # Changelog
 
+## Unreleased
+
 ## 0.1.1 - 2026-09-14
 
 **Highlights:** Privacy-focused Sparkle appcast proxying and a live analytics dashboard, with complete report aggregation, reliable live filters, and consistent UTC calendar-day handling.
