@@ -51,7 +51,7 @@
     "cross-env": "^10.1.0",
     "jsdom": "^30.0.1",
     "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0",
+    "oxlint": "^1.83.0",
     "oxlint-tsgolint": "^7.0.2001",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",
