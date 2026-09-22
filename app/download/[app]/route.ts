@@ -3,7 +3,6 @@ import { parseGitHubRepository } from "@/lib/github";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 interface GitHubRelease {
-  prerelease: boolean;
   draft: boolean;
   assets: { name: string; browser_download_url: string }[];
 }
@@ -34,18 +33,26 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ ap
       return NextResponse.json({ error: "Download not available for this app" }, { status: 404 });
     }
     const { owner, repo } = repository;
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases`, {
+    const releasesUrl = `https://api.github.com/repos/${owner}/${repo}/releases`;
+    const options = {
       headers: {
         Accept: "application/vnd.github.v3+json",
         "User-Agent": "stats-store-app-downloader",
       },
       next: { revalidate: 300 },
-    });
-    if (!response.ok) throw new Error(`GitHub API responded with ${response.status}`);
-
-    const releases: GitHubRelease[] = await response.json();
-    const published = releases.filter((release) => !release.draft);
-    const latest = published.find((release) => !release.prerelease) ?? published[0];
+    };
+    const response = await fetch(`${releasesUrl}/latest`, options);
+    let latest: GitHubRelease | undefined;
+    if (response.ok) {
+      latest = await response.json();
+    } else if (response.status === 404) {
+      const fallback = await fetch(releasesUrl, options);
+      if (!fallback.ok) throw new Error(`GitHub API responded with ${fallback.status}`);
+      const releases: GitHubRelease[] = await fallback.json();
+      latest = releases.find((release) => !release.draft);
+    } else {
+      throw new Error(`GitHub API responded with ${response.status}`);
+    }
     if (!latest) return NextResponse.json({ error: "No releases found" }, { status: 404 });
     const dmg = latest.assets.find((asset) => asset.name.toLowerCase().endsWith(".dmg"));
     if (!dmg) {

@@ -72,14 +72,12 @@ describe("app/download/[app] route", () => {
 
     const fetchMock = vi.fn(async () => ({
       ok: true,
-      json: async () => [
-        {
-          assets: [{ browser_download_url: "https://example.com/app.dmg", name: "app.dmg" }],
-          draft: false,
-          prerelease: false,
-          tag_name: "v1.0.0",
-        },
-      ],
+      json: async () => ({
+        assets: [{ browser_download_url: "https://example.com/app.dmg", name: "app.dmg" }],
+        draft: false,
+        prerelease: false,
+        tag_name: "v1.0.0",
+      }),
     }));
     vi.stubGlobal("fetch", fetchMock);
 

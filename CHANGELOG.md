@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep app downloads on the latest stable GitHub release even when more than 30 newer prereleases exist; fall back to prereleases only when no stable release exists.
+
 ## 0.1.1 - 2026-09-14
 
 **Highlights:** Privacy-focused Sparkle appcast proxying and a live analytics dashboard, with complete report aggregation, reliable live filters, and consistent UTC calendar-day handling.
