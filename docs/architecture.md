@@ -11,6 +11,8 @@ stats.store is a Next.js App Router application deployed on Vercel, with Postgre
 | `GET /download/[app]`           | Find a registered app's GitHub releases and redirect to a DMG, preferring a stable release.            |
 | `GET /`                         | Fetch aggregates for the selected app/date range and render the dashboard.                             |
 
+Downloads use GitHub’s latest published stable release, even when newer prereleases span multiple API pages. Only a missing stable release enables the fallback to the first published release; upstream failures remain errors. The selected release must contain a DMG.
+
 The appcast lookup tries `bundleIdentifier`, then the query's `appName`, then the User-Agent app name. `lib/appcast.ts` owns User-Agent parsing and URL mapping, including custom stable filenames and prerelease channels. See [the appcast guide](APPCAST_PROXY.md) for the full mapping contract and [direct ingest](SPARKLE_INTEGRATION.md) for JSON payloads.
 
 Both ingest routes use `lib/telemetry.ts` for CPU architecture conversion and SHA-256 hashing of the client IP with the UTC date. Reports store the digest, not the raw IP. Both ingestion routes capture the receipt timestamp and hash day together before writing, including post-response writes. New-user events preserve current-day totals in the legacy `*_today` keys; separate `*_report_day` totals and `report_day` describe the receipt day. Delayed milestones name that date instead of claiming to be today. The date changes the digest each day; this is pseudonymization, not a guarantee that an IP cannot be guessed. Counts over multiple days therefore do not identify persistent installations.

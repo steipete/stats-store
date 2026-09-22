@@ -38,15 +38,11 @@ beforeEach(() => {
   appAt("https://github.com/owner/repo");
   mocks.fetch.mockResolvedValue(
     new Response(
-      JSON.stringify([
-        {
-          draft: false,
-          prerelease: false,
-          assets: [
-            { name: "Fixture.dmg", browser_download_url: "https://example.com/Fixture.dmg" },
-          ],
-        },
-      ]),
+      JSON.stringify({
+        draft: false,
+        prerelease: false,
+        assets: [{ name: "Fixture.dmg", browser_download_url: "https://example.com/Fixture.dmg" }],
+      }),
     ),
   );
   vi.stubGlobal("fetch", mocks.fetch);
@@ -68,9 +64,79 @@ describe("download app and GitHub URL matching", () => {
     appAt("https://github.com/owner/repo.git?tab=readme");
     expect((await download()).headers.get("location")).toBe("https://example.com/Fixture.dmg");
     expect(mocks.fetch).toHaveBeenCalledWith(
+      "https://api.github.com/repos/owner/repo/releases/latest",
+      expect.any(Object),
+    );
+  });
+
+  it("finds the stable release beyond the first page of prereleases", async () => {
+    const stable = {
+      draft: false,
+      prerelease: false,
+      assets: [{ name: "Stable.dmg", browser_download_url: "https://example.com/Stable.dmg" }],
+    };
+    const beta = {
+      draft: false,
+      prerelease: true,
+      assets: [{ name: "Beta.dmg", browser_download_url: "https://example.com/Beta.dmg" }],
+    };
+    mocks.fetch.mockImplementation(async (url: string) =>
+      Response.json(url.endsWith("/latest") ? stable : Array.from({ length: 30 }, () => beta)),
+    );
+
+    expect((await download()).headers.get("location")).toBe("https://example.com/Stable.dmg");
+    expect(mocks.fetch).toHaveBeenCalledOnce();
+  });
+
+  it("falls back to the first published prerelease only when no stable release exists", async () => {
+    mocks.fetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
+    mocks.fetch.mockResolvedValueOnce(
+      Response.json([
+        { draft: true, assets: [] },
+        {
+          draft: false,
+          prerelease: true,
+          assets: [{ name: "Beta.dmg", browser_download_url: "https://example.com/Beta.dmg" }],
+        },
+      ]),
+    );
+    expect((await download()).headers.get("location")).toBe("https://example.com/Beta.dmg");
+    expect(mocks.fetch).toHaveBeenNthCalledWith(
+      2,
       "https://api.github.com/repos/owner/repo/releases",
       expect.any(Object),
     );
+  });
+
+  it.each([403, 429, 500])(
+    "does not fall back when the stable lookup fails with %i",
+    async (status) => {
+      mocks.fetch.mockResolvedValueOnce(new Response(null, { status }));
+      expect((await download()).status).toBe(500);
+      expect(mocks.fetch).toHaveBeenCalledOnce();
+    },
+  );
+
+  it("reports a failed prerelease lookup", async () => {
+    mocks.fetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
+    mocks.fetch.mockResolvedValueOnce(new Response(null, { status: 503 }));
+    expect((await download()).status).toBe(500);
+  });
+
+  it("returns 404 when neither stable nor prerelease releases exist", async () => {
+    mocks.fetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
+    mocks.fetch.mockResolvedValueOnce(Response.json([]));
+    expect((await download()).status).toBe(404);
+  });
+
+  it("does not substitute a beta when the stable release has no DMG", async () => {
+    mocks.fetch.mockResolvedValueOnce(
+      Response.json({ draft: false, prerelease: false, assets: [] }),
+    );
+    const response = await download();
+    expect(response.status).toBe(404);
+    expect(await response.json()).toEqual({ error: "No DMG file found in the latest release" });
+    expect(mocks.fetch).toHaveBeenCalledOnce();
   });
 
   it("matches names literally, including PostgREST LIKE aliases", async () => {
