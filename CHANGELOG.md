@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Compatibility:** Align the supported Node range with the existing jsdom requirement: Node 24.15+ (24.x) or 26+; verify the exact minimum in CI and refresh runtime/development dependencies and pnpm. Thanks @dependabot.
+
 - Keep app downloads on the latest stable GitHub release even when more than 30 newer prereleases exist; fall back to prereleases only when no stable release exists.
 
 ## 0.1.1 - 2026-09-14

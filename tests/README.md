@@ -110,7 +110,7 @@ Tests run automatically on:
 - Commits to main branch
 - Before deployment
 
-See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Linux, macOS, and Windows all run the tests and production build on Node.js 24. Linux also checks the current Node.js 26 release.
+See `.github/workflows/ci.yml`. Linux runs coverage and the lint/type gates; Linux, macOS, and Windows all run the tests and production build on Node.js 24. Linux also checks the exact Node.js 24.15.0 minimum and the current Node.js 26 release.
 
 ## Database checks
 

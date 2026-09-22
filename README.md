@@ -3,7 +3,7 @@
 ![stats.store banner](assets/banner.png)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/steipete/stats-store/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/steipete/stats-store/actions/workflows/ci.yml)
-[![Node.js 24+](https://img.shields.io/badge/node-%3E%3D24-339933?style=flat-square&logo=node.js&logoColor=white)](package.json)
+[![Node.js 24.15+ / 26+](https://img.shields.io/badge/node-24.15%2B%20%2F%2026%2B-339933?style=flat-square&logo=node.js&logoColor=white)](package.json)
 [![License](https://img.shields.io/github/license/steipete/stats-store?style=flat-square)](https://github.com/steipete/stats-store)
 
 stats.store proxies [Sparkle](https://sparkle-project.org/) appcast requests and presents the attached update statistics in a dashboard for macOS app maintainers. The hosted service is free for open-source apps, and the project can also be self-hosted with Supabase and Vercel.
@@ -19,7 +19,7 @@ The proxy returns the app's registered upstream feed and records the profile fie
 
 The hosted service at [stats.store](https://stats.store) does not require an installation. [Email Peter](mailto:peter@steipete.me) with the app's display name, bundle identifier, and current appcast URL to register an open-source app.
 
-For your own deployment, use Node.js 24 or newer and pnpm 12.4.1 or newer, then follow the [deployment guide](docs/deployment.md) to configure Supabase, apply the database migrations, and deploy the Next.js app.
+For your own deployment, use Node.js 24.15+ (24.x) or 26+, and pnpm 12.4.1 or newer, then follow the [deployment guide](docs/deployment.md) to configure Supabase, apply the database migrations, and deploy the Next.js app.
 
 ## Quick start
 

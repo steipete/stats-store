@@ -4,7 +4,7 @@ Report reproducible bugs and discuss feature proposals in [GitHub Issues](https:
 
 ## Local development
 
-Use Node.js 24 or newer and the pnpm version pinned in `package.json`. Fork and clone the repository, then follow [the deployment guide](docs/deployment.md) to bootstrap a local or test Supabase project. Copy `.env.example` to `.env.local` and fill in the application configuration. Keep migration credentials in the separate `.env.migrations` file.
+Use Node.js 24.15+ (24.x) or 26+, and the pnpm version pinned in `package.json`. Fork and clone the repository, then follow [the deployment guide](docs/deployment.md) to bootstrap a local or test Supabase project. Copy `.env.example` to `.env.local` and fill in the application configuration. Keep migration credentials in the separate `.env.migrations` file.
 
 ```sh
 pnpm install --frozen-lockfile
