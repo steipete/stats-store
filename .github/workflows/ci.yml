@@ -24,6 +24,8 @@ jobs:
         node-version: [24.x]
         include:
           - os: ubuntu-latest
+            node-version: 24.15.0
+          - os: ubuntu-latest
             node-version: 26.x
 
     steps:

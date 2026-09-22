@@ -4,7 +4,7 @@ Next.js App Router application for Sparkle telemetry and a public Supabase-backe
 
 ## Development
 
-Use Node.js 24+ and the pnpm version pinned in package.json.
+Use Node.js 24.15+ (24.x) or 26+, and the pnpm version pinned in package.json.
 
 ```sh
 pnpm install --frozen-lockfile

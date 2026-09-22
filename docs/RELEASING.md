@@ -17,7 +17,7 @@ for this hosted service.
    finalize `## Unreleased` as `## <version> - YYYY-MM-DD`, using the local date.
    Preserve every entry and contributor credit, put capabilities and user-visible
    fixes first, and include a one-sentence `**Highlights:**` line for notable work.
-3. Run the full local gate with the pinned pnpm version and Node.js 24 or newer:
+3. Run the full local gate with the pinned pnpm version and Node.js 24.15+ (24.x) or 26+:
 
    ```sh
    pnpm install --frozen-lockfile
