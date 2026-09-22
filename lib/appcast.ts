@@ -15,7 +15,6 @@ export function parseSparkleUserAgent(userAgent: string | null): SparkleUserAgen
     return null;
   }
 
-  // Match pattern: AppName/Version optionally followed by Sparkle/Version
   const match = userAgent.match(/^([^/]+)\/([^\s]+)/);
 
   if (!match) {
@@ -58,8 +57,6 @@ export function constructAppcastUrl(baseUrl: string, appcastPath: string): strin
   const cleanBasePath = baseUrlParts.path.replace(/\/$/, "");
   const cleanBaseUrl = `${cleanBasePath}${baseUrlParts.suffix}`;
 
-  // Check if the base URL already ends with the appcast filename
-  // This handles cases where the full appcast URL is stored in the database
   if (cleanBasePath.endsWith(".xml")) {
     const storedFileName = appcastFileName(cleanBasePath);
 
@@ -74,25 +71,16 @@ export function constructAppcastUrl(baseUrl: string, appcastPath: string): strin
       return withProtocol(cleanBaseUrl);
     }
 
-    // If requesting a different appcast file, replace the filename
     const baseWithoutFile = cleanBasePath.slice(0, cleanBasePath.lastIndexOf("/"));
     const replacedPath = baseWithoutFile ? `${baseWithoutFile}/${appcastPath}` : appcastPath;
     return withProtocol(`${replacedPath}${baseUrlParts.suffix}`);
   }
 
-  // Handle GitHub URLs - convert to raw.githubusercontent.com
   const repository = parseGitHubRepository(cleanBasePath);
   if (repository?.isRoot) {
     const { owner, repo } = repository;
     return `https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/${appcastPath}`;
   }
 
-  // For other URLs, append the appcast path
-  // If baseUrl already includes protocol, use as-is
-  if (cleanBasePath.startsWith("http://") || cleanBasePath.startsWith("https://")) {
-    return `${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`;
-  }
-
-  // Otherwise, add https://
-  return `https://${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`;
+  return withProtocol(`${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`);
 }
