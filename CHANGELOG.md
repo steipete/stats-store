@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update Next.js to 16.3.6 for the upstream `next/og` security fix and refresh Supabase, Framer Motion, Vite, and type-aware lint tooling. Thanks @dependabot.
+
 - **Compatibility:** Align the supported Node range with the existing jsdom requirement: Node 24.15+ (24.x) or 26+; verify the exact minimum in CI and refresh runtime/development dependencies and pnpm. Thanks @dependabot.
 
 - Keep app downloads on the latest stable GitHub release even when more than 30 newer prereleases exist; fall back to prereleases only when no stable release exists.
