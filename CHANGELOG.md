@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refresh Next.js, Vitest, formatter, lint tooling, and pnpm while keeping Node.js 24 types aligned with the supported runtime.
+
 - Update Next.js to 16.3.6 for the upstream `next/og` security fix and refresh Supabase, Framer Motion, Vite, and type-aware lint tooling. Thanks @dependabot.
 
 - **Compatibility:** Align the supported Node range with the existing jsdom requirement: Node 24.15+ (24.x) or 26+; verify the exact minimum in CI and refresh runtime/development dependencies and pnpm. Thanks @dependabot.

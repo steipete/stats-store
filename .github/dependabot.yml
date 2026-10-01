@@ -8,6 +8,10 @@ updates:
       day: "monday"
       time: "04:00"
     open-pull-requests-limit: 10
+    # Type-check against the oldest supported Node major.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       radix-ui:
         patterns:
