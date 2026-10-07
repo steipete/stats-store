@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refresh Framer Motion, Vite, and Node.js 24 types while preserving the supported runtime range. Thanks @dependabot.
+
 ## 0.1.2 - 2026-10-01
 
 **Highlights:** Reliable stable app downloads, refreshed dependencies and security fixes, and verified Node.js 24 compatibility.
