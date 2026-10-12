@@ -1,101 +1,57 @@
 # Releasing stats.store
 
-stats.store is a Vercel-hosted Next.js application. A release consists of a signed
-`v<version>` Git tag and a GitHub Release containing the finalized changelog.
-Vercel automatically deploys `main`; there are no npm packages or binary assets
-to publish. GitHub provides the source archives.
+Numbered releases publish the versioned source on GitHub. The package is private;
+there is no npm publication, Homebrew handoff, or application-signing credential.
+Deployment is separate from release publication.
 
-This manual release workflow follows the changelog, tag, and GitHub Release
-sequence used by the sibling `steipete/osc-progress` and
-`steipete/SweetCookieKit` repositories, with a signed tag and production checks
-for this hosted service.
+## Prepare
 
-## Prepare and land
+1. Update `package.json` and any lockfile root version for the next release.
+2. Finalize one `## X.Y.Z - YYYY-MM-DD` section in `CHANGELOG.md`, preserving
+   contributor credit and release highlights. Keep an empty `## Unreleased` above it.
+3. Land the reviewed release preparation PR on protected `main`. Wait for every
+   independent push CI check on that exact merged commit to pass.
 
-1. Start from a clean `main` at `origin/main` and pull with `git pull --ff-only`.
-2. Create a release branch. Update `package.json` to the release version and
-   finalize `## Unreleased` as `## <version> - YYYY-MM-DD`, using the local date.
-   Preserve every entry and contributor credit, put capabilities and user-visible
-   fixes first, and include a one-sentence `**Highlights:**` line for notable work.
-3. Run the full local gate with the pinned pnpm version and Node.js 24.15+ (24.x) or 26+:
+## No-publish proof
 
-   ```sh
-   pnpm install --frozen-lockfile
-   pnpm lint
-   pnpm typecheck
-   pnpm test
-   SKIP_ENV_VALIDATION=true pnpm build
-   ```
-
-   CI also verifies PostgreSQL 17 and 18 migrations and runs tests/builds on
-   Linux, macOS, and Windows, including Node.js 26 on Linux. See
-   [the testing guide](../tests/README.md) for the disposable database checks.
-
-4. Review the release changes, commit as `chore: release <version>`, and open a
-   pull request. Squash-merge after the PR checks pass, then switch back to
-   `main` and verify the exact resulting release commit:
-
-   ```sh
-   git switch main
-   git pull --ff-only
-   test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
-   git status -sb
-   ```
-
-   The checkout must be clean. Wait for the CI workflow on this exact `main`
-   commit to succeed; the pre-squash release-branch commit is not the release.
-
-5. Check the GitHub `Production` deployment and its status for that same commit.
-   It must succeed, and `https://stats.store/` must return HTTP 200. Do not use the
-   appcast integration suite against production: it writes telemetry.
-
-## Tag and publish
-
-Immediately before tagging, inspect both local/remote tags and the GitHub Release
-list. Stop if the target tag or release already exists. Never retag a release or
-tag a commit without successful CI and production verification.
-
-Using the configured maintainer signing key:
+Run the **Release** workflow on current `main`, with the version from `package.json`
+and `dry_run=true` (the dispatch default):
 
 ```sh
-version=0.1.1 # Replace for the next authorized release.
-test "$(git branch --show-current)" = main
-release_sha="$(git rev-parse HEAD)"
-test "$release_sha" = "$(git rev-parse origin/main)"
-git tag -s "v$version" "$release_sha" -m "stats.store $version"
-git verify-tag "v$version"
-git push origin "v$version"
+gh workflow run release.yml --repo steipete/stats-store --ref main -f version=X.Y.Z -F dry_run=true
 ```
 
-Extract the version section of `CHANGELOG.md` into a temporary Markdown file,
-excluding the version heading so the Highlights paragraph comes first:
+A rehearsal freezes current protected `main`, even if that version already has a
+historical tag or release. It validates the version and dated changelog, requires
+exact-commit push CI, runs `scripts/verify-release.sh` with Node.js 24.15.0, assembles
+source archives, and independently verifies their inventory and SHA-256 checksums.
+It creates no tag, draft, release, or deployment. No secrets are needed.
 
-```sh
-notes_file="$(mktemp)"
-awk -v version="$version" '$1 == "##" { emit = ($2 == version); next } emit { print }' CHANGELOG.md > "$notes_file"
-test -s "$notes_file"
-```
+The local verification script only installs dependencies, builds, and tests. Run
+it with Node.js 24.15+ and the repository's package manager. It does not publish.
 
-Append links to the hosted service, the changelog at the release commit, and the
-successful CI run to this file. Inspect it, then create the GitHub Release:
+## Publish an explicitly authorized release
 
-```sh
-gh release create "v$version" --verify-tag --title "$version" --notes-file "$notes_file" --latest
-```
+After the rehearsal succeeds, create an SSH-signed annotated `vX.Y.Z` tag on the
+verified commit using a key listed in `.github/release-allowed-signers`. Verify it
+locally and push the tag. The tag push is the publication entrypoint; do not run
+`gh release create` or a local publish helper.
 
-No release workflow runs on tag push; publication is the explicit command above.
-The existing CI workflow and Vercel integration run when the release PR lands.
+`.github/workflows/release.yml` calls
+`openclaw/release-workflows/.github/workflows/release-source.yml@v1`. It verifies
+the signed tag, protected-branch ancestry, exact version metadata, dated notes,
+and green push CI, then builds and verifies the frozen source before publishing.
+Live dispatches also require a pre-existing signed tag; an unsigned workflow-created
+tag cannot satisfy this repository's policy. Never move tags or republish a version.
 
-## Verify and close out
+The GitHub Release contains the exact changelog section, commit-based `.tar.gz`
+and `.zip` source archives, `ASSET-INVENTORY.json`, and `SHA256SUMS`. The two source
+verifiers run without publication credentials. The publisher checks the frozen
+inventory and tag again before publishing. Read back the release and verify the
+checksums and tag commit after completion. Leave `main` current and clean.
 
-- Read the GitHub Release and tag through the API. Confirm the release is
-  published, targets the signed release commit, contains the finalized changelog,
-  and has no attached binary assets.
-- Confirm the successful Production deployment identifies the release commit,
-  and repeat the HTTP 200 check against `https://stats.store/` before closeout.
-- Add an empty `## Unreleased` section above the released section. Leave the
-  package version at the published version until the next release preparation.
-- Review, commit as `chore: open <next-version> unreleased`, and squash-merge a
-  closeout PR after checks pass.
-- Pull `main`, verify it matches `origin/main`, remove the task branches, and
-  remove local build outputs created during the release.
+## Vercel boundary
+
+Vercel continues to deploy its connected GitHub branch automatically. The release
+workflow does not inspect, trigger, or alter that integration. Sparkle appcasts
+served by this project belong to client apps, not to a stats.store binary release.
