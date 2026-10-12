@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version with a dated CHANGELOG section (X.Y.Z)
+        required: true
+        type: string
+      dry_run:
+        description: Validate, build, and verify without publishing
+        default: true
+        type: boolean
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.repository }}-${{ inputs.version || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    permissions:
+      actions: read
+      checks: read
+      contents: write
+      statuses: read
+    uses: openclaw/release-workflows/.github/workflows/release-source.yml@v1
+    with:
+      version: ${{ inputs.version || github.ref_name }}
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+      require-signed-tag: true
+      strict-checks: true
+      ci-check-events: '["push"]'
+      source-archives: true
+      test-command: >-
+        npx --yes --package=node@24.15.0 --package=pnpm@12.8.1
+        --call 'bash scripts/verify-release.sh'
