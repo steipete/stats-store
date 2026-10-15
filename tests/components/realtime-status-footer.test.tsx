@@ -1,7 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import { RealtimeStatusFooter } from "@/components/realtime-status-footer";
-vi.mock("framer-motion", async () => import("@/tests/utils/motion"));
 const controls = { showActivityFeed: false, activityId: "activity", onToggleActivityFeed: vi.fn() };
 it("keeps connection status and activity controls visible without any events", () => {
   render(<RealtimeStatusFooter {...controls} isConnected={false} realtimeEventsCount={0} />);
