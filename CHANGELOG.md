@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Refresh Next.js, Supabase, Radix Tooltip, Framer Motion, and development tooling while retaining the supported Node.js range. Thanks @dependabot.
 - Refresh Framer Motion, Vite, and Node.js 24 types while preserving the supported runtime range. Thanks @dependabot.
 
 ## 0.1.2 - 2026-10-01
