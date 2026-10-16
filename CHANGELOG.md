@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.1.3 - 2026-10-16
+
+**Highlights:** Refresh Next.js, Supabase, and dashboard dependencies while retaining the supported Node.js runtime range.
+
 - Refresh Next.js, Supabase, Radix Tooltip, Framer Motion, and development tooling while retaining the supported Node.js range. Thanks @dependabot.
 - Refresh Framer Motion, Vite, and Node.js 24 types while preserving the supported runtime range. Thanks @dependabot.
 
