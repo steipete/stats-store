@@ -27,4 +27,6 @@ SKIP_ENV_VALIDATION=true pnpm build
 
 Open a pull request with the problem, resulting behavior, and relevant validation. Include sanitized before/after captures for visible UI changes. Maintainers add user-visible changelog entries when landing contributor work.
 
+CI checks Linux, Windows, and macOS 27 on the Apple Silicon `xcode-27` runner.
+
 The repository does not currently include a license file. Contact the maintainer for licensing clarification.
