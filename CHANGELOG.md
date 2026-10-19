@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Move macOS CI to the macOS 27 `xcode-27` runner.
+- Refresh Next.js, React, Supabase, Radix, Framer Motion, and test tooling while retaining the supported Node.js range. Thanks @dependabot.
+
 ## 0.1.3 - 2026-10-16
 
 **Highlights:** Refresh Next.js, Supabase, and dashboard dependencies while retaining the supported Node.js runtime range.
