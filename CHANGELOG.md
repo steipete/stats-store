@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Refresh Framer Motion, Vite, PostCSS, formatter, and type-aware lint tooling while preserving the supported Node.js range. Thanks @dependabot. (#381, #382, #383, #384, #385, #386)
 - Move macOS CI to the macOS 27 `xcode-27` runner.
 - Refresh Next.js, React, Supabase, Radix, Framer Motion, and test tooling while retaining the supported Node.js range. Thanks @dependabot.
 
