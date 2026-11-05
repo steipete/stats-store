@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Patch the transitive source-map-js denial-of-service vulnerability in Tailwind's build dependency chain.
 - Refresh Next.js, Framer Motion, PostCSS, Oxfmt, and Oxlint while preserving the supported Node.js range. Thanks @dependabot. (#387, #388, #389, #390, #391)
 - Refresh Framer Motion, Vite, PostCSS, formatter, and type-aware lint tooling while preserving the supported Node.js range. Thanks @dependabot. (#381, #382, #383, #384, #385, #386)
 - Move macOS CI to the macOS 27 `xcode-27` runner.
