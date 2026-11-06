@@ -84,3 +84,60 @@ export function constructAppcastUrl(baseUrl: string, appcastPath: string): strin
 
   return withProtocol(`${cleanBasePath}/${appcastPath}${baseUrlParts.suffix}`);
 }
+
+const FEED_MEDIA_TYPES = new Set([
+  "application/atom+xml",
+  "application/rdf+xml",
+  "application/rss+xml",
+  "application/xml",
+  "text/xml",
+]);
+
+// GitHub raw serves appcast XML as text/plain. Some object stores use octet-stream.
+const XML_BODY_MEDIA_TYPES = new Set(["application/octet-stream", "text/plain"]);
+
+function mediaTypeParts(value: string | null): { charset?: string; mediaType: string } | null {
+  if (!value) return null;
+  const [rawType, ...parameters] = value
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  if (!rawType || !/^[\w!#$&^_.+-]+\/[\w!#$&^_.+-]+$/.test(rawType)) return null;
+
+  let charset: string | undefined;
+  for (const parameter of parameters) {
+    const separator = parameter.indexOf("=");
+    if (separator === -1) continue;
+    const name = parameter.slice(0, separator).trim().toLowerCase();
+    const rawCharset = parameter
+      .slice(separator + 1)
+      .trim()
+      .replaceAll('"', "");
+    if (name === "charset" && /^[A-Za-z0-9._+-]+$/.test(rawCharset)) charset = rawCharset;
+  }
+
+  return { charset, mediaType: rawType.toLowerCase() };
+}
+
+function withCharset(mediaType: string, charset?: string): string {
+  return charset ? `${mediaType}; charset=${charset}` : mediaType;
+}
+
+function looksLikeXmlFeed(body: string): boolean {
+  const start = body.replace(/^\uFEFF/, "").trimStart();
+  return /^<(?:\?xml\b|rss\b|feed\b)/i.test(start);
+}
+
+export function appcastProxyContentType(
+  upstreamContentType: string | null,
+  body: string,
+): string | null {
+  const parsed = mediaTypeParts(upstreamContentType);
+  if (parsed && FEED_MEDIA_TYPES.has(parsed.mediaType)) {
+    return withCharset(parsed.mediaType, parsed.charset);
+  }
+  if (looksLikeXmlFeed(body) && (!parsed || XML_BODY_MEDIA_TYPES.has(parsed.mediaType))) {
+    return withCharset("application/xml", parsed?.charset ?? "utf-8");
+  }
+  return null;
+}
