@@ -9,7 +9,9 @@ Stats Store can act as a proxy for your Sparkle appcast feeds, allowing you to c
 3. When Sparkle checks for updates, Stats Store:
    - Captures telemetry data from the request
    - Fetches the actual appcast from your configured URL
-   - Returns the appcast to Sparkle
+   - Returns the appcast to Sparkle when the document is XML
+
+The proxy refuses an upstream HTML page instead of serving that page from the stats.store origin. A feed whose server labels XML as `text/plain` or `application/octet-stream`, which is what GitHub raw does, is returned as `application/xml`. Successful responses set `X-Content-Type-Options: nosniff`.
 
 ## Configuration
 

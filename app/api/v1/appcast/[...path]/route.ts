@@ -1,5 +1,5 @@
 import { after, type NextRequest, NextResponse } from "next/server";
-import { constructAppcastUrl, parseSparkleUserAgent } from "@/lib/appcast";
+import { appcastProxyContentType, constructAppcastUrl, parseSparkleUserAgent } from "@/lib/appcast";
 import {
   createReportIdentity,
   getRequestIp,
@@ -126,16 +126,24 @@ export async function GET(
       return NextResponse.json({ error: "Failed to fetch appcast" }, { status: 502 });
     }
 
+    const body = await appcastResponse.text();
+    const contentType = appcastProxyContentType(appcastResponse.headers.get("Content-Type"), body);
+    if (!contentType) {
+      console.error("Upstream appcast is not XML");
+      return NextResponse.json({ error: "Upstream appcast is not XML" }, { status: 502 });
+    }
+
     const responseHeaders = new Headers({
       "Cache-Control": "no-cache, no-store, must-revalidate",
-      "Content-Type": appcastResponse.headers.get("Content-Type") || "application/xml",
+      "Content-Type": contentType,
+      "X-Content-Type-Options": "nosniff",
       "X-Stats-Store-Proxied": "true",
     });
     for (const header of ["Last-Modified", "ETag"]) {
       const value = appcastResponse.headers.get(header);
       if (value) responseHeaders.set(header, value);
     }
-    return new NextResponse(await appcastResponse.text(), {
+    return new NextResponse(body, {
       headers: responseHeaders,
       status: 200,
     });
