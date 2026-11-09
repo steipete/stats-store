@@ -49,7 +49,7 @@
     "@vitest/coverage-v8": "5.0.5",
     "@vitest/ui": "5.0.5",
     "cross-env": "^10.1.0",
-    "jsdom": "^30.1.3",
+    "jsdom": "^31.0.0",
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
     "oxlint-tsgolint": "^7.0.2005",
