@@ -106,6 +106,28 @@ describe("/api/v1/appcast/[...path]", () => {
     };
   }
 
+  async function startTypedUpstream(files: Record<string, { body: string; contentType?: string }>) {
+    const server = createServer((request, response) => {
+      const file = files[request.url || ""];
+      if (!file) {
+        response.statusCode = 404;
+        response.end("missing");
+        return;
+      }
+      if (file.contentType) response.setHeader("Content-Type", file.contentType);
+      response.end(file.body);
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address() as AddressInfo;
+    return {
+      close: () =>
+        new Promise<void>((resolve, reject) => {
+          server.close((error) => (error ? reject(error) : resolve()));
+        }),
+      origin: `http://127.0.0.1:${address.port}`,
+    };
+  }
+
   it("should proxy appcast and capture telemetry", async () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss><channel><item></item></channel></rss>';
 
@@ -593,6 +615,97 @@ describe("/api/v1/appcast/[...path]", () => {
     }
   });
 
+  it("refuses an upstream HTML page on the proxy origin", async () => {
+    const html = "<!doctype html><html><script>alert(1)</script></html>";
+    const upstream = await startTypedUpstream({
+      "/feeds/page.html": { body: html, contentType: "text/html; charset=utf-8" },
+    });
+    global.fetch = realFetch;
+
+    try {
+      await mockAppcastBaseUrl(`${upstream.origin}/feeds`);
+      const request = new NextRequest(
+        "http://localhost:3000/api/v1/appcast/page.html?bundleIdentifier=com.example.app",
+        { method: "GET" },
+      );
+      const response = await GET(request, { params: Promise.resolve({ path: ["page.html"] }) });
+      const payload = await response.text();
+
+      expect(response.status).toBe(502);
+      expect(response.headers.get("Content-Type")).not.toContain("text/html");
+      expect(payload).not.toContain("alert(1)");
+      expect(payload).toContain("Upstream appcast is not XML");
+    } finally {
+      await upstream.close();
+    }
+  });
+
+  it("sandboxes plain-text XML containing active namespaces", async () => {
+    const xml =
+      '<?xml version="1.0"?><rss><html:script xmlns:html="http://www.w3.org/1999/xhtml">alert(1)</html:script></rss>';
+    const upstream = await startTypedUpstream({
+      "/feeds/appcast.xml": { body: xml, contentType: "text/plain; charset=utf-8" },
+    });
+    global.fetch = realFetch;
+
+    try {
+      await mockAppcastBaseUrl(`${upstream.origin}/feeds`);
+      const request = new NextRequest(
+        "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+        { method: "GET" },
+      );
+      const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("Content-Type")).toBe("application/xml; charset=utf-8");
+      expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
+      expect(response.headers.get("Content-Security-Policy")).toBe("sandbox; default-src 'none'");
+      expect(await response.text()).toBe(xml);
+    } finally {
+      await upstream.close();
+    }
+  });
+
+  it("keeps an XML media type and refuses a plain-text HTML document", async () => {
+    const upstream = await startTypedUpstream({
+      "/feeds/appcast.xml": {
+        body: "<rss><channel></channel></rss>",
+        contentType: "application/rss+xml; charset=utf-8",
+      },
+      "/feeds/README.md": {
+        body: "<!doctype html><html><body>notes</body></html>",
+        contentType: "text/plain; charset=utf-8",
+      },
+    });
+    global.fetch = realFetch;
+
+    try {
+      await mockAppcastBaseUrl(`${upstream.origin}/feeds`);
+      const xmlRequest = new NextRequest(
+        "http://localhost:3000/api/v1/appcast/appcast.xml?bundleIdentifier=com.example.app",
+        { method: "GET" },
+      );
+      const xmlResponse = await GET(xmlRequest, {
+        params: Promise.resolve({ path: ["appcast.xml"] }),
+      });
+      expect(xmlResponse.status).toBe(200);
+      expect(xmlResponse.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
+      expect(xmlResponse.headers.get("X-Content-Type-Options")).toBe("nosniff");
+
+      const htmlRequest = new NextRequest(
+        "http://localhost:3000/api/v1/appcast/README.md?bundleIdentifier=com.example.app",
+        { method: "GET" },
+      );
+      const htmlResponse = await GET(htmlRequest, {
+        params: Promise.resolve({ path: ["README.md"] }),
+      });
+      expect(htmlResponse.status).toBe(502);
+      expect(await htmlResponse.text()).not.toContain("notes");
+    } finally {
+      await upstream.close();
+    }
+  });
+
   it("should parse app identification from User-Agent when no params provided", async () => {
     const mockAppcastXML = '<?xml version="1.0"?><rss></rss>';
 
@@ -845,6 +958,7 @@ describe("/api/v1/appcast/[...path]", () => {
     const response = await GET(request, { params: Promise.resolve({ path: ["appcast.xml"] }) });
 
     expect(response.headers.get("Content-Type")).toBe("application/xml");
+    expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect(response.headers.get("Last-Modified")).toBe("Wed, 01 Jan 2024 00:00:00 GMT");
     expect(response.headers.get("ETag")).toBe('"123456"');
   });
