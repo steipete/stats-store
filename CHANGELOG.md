@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Refuse upstream HTML from the appcast proxy while preserving plain-text XML feeds and sandboxing browser rendering with CSP and `nosniff`. Thanks @SebTardif. (#394)
+- Remove realtime events older than 24 hours after event inserts. Thanks @SebTardif. (#395)
+- Refresh Next.js, Supabase, animation, CSS, test, and lint dependencies while preserving the supported Node.js range. Thanks @dependabot. (#396–#405)
+
 - Patch the transitive source-map-js denial-of-service vulnerability in Tailwind's build dependency chain.
 - Refresh Next.js, Framer Motion, PostCSS, Oxfmt, and Oxlint while preserving the supported Node.js range. Thanks @dependabot. (#387, #388, #389, #390, #391)
 - Refresh Framer Motion, Vite, PostCSS, formatter, and type-aware lint tooling while preserving the supported Node.js range. Thanks @dependabot. (#381, #382, #383, #384, #385, #386)
