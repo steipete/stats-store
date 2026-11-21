@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refresh Supabase, Recharts, tailwind-merge, Testing Library user-event, Vitest, PostCSS, Oxfmt, and Oxlint with compatible updates while retaining the supported Node.js range. Thanks @dependabot. (#407)
+
 - Refuse upstream HTML from the appcast proxy while preserving plain-text XML feeds and sandboxing browser rendering with CSP and `nosniff`. Thanks @SebTardif. (#394)
 - Remove realtime events older than 24 hours after event inserts. Thanks @SebTardif. (#395)
 - Refresh Next.js, Supabase, animation, CSS, test, and lint dependencies while preserving the supported Node.js range. Thanks @dependabot. (#396–#405)
